@@ -19,4 +19,4 @@ colors = np.array([[255,0,0],[0,255,0],[0,0,255]])  # Define corresponding color
 viz.show_pointclouds([points], [colors])  # Display point cloud
 ```
 
-<p align="center"><img height="50%" src="docs/img/minimal_example.png" /></p>
+<p align="center"><img width="20%" src="docs/img/minimal_example.png" /></p>
