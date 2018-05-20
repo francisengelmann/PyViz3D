@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='pyviz3d',
-      version='0.1',
+      version='0.0',
       description='PyViz3D is a Python package to visualize 3D point clouds.',
       url='https://github.com/francisengelmann/pyviz3d',
       author='Francis Engelmann',
