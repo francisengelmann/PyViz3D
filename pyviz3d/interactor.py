@@ -8,7 +8,6 @@ class MyInteractorStyle(vtk.vtkInteractorStyleTrackballCamera):
 
     def keyPressEvent(self, obj, event):
         key = self.parent.GetKeySym()
-        print('asd')
         if key == '+':
             point_size = self.pointcloud.vtkActor.GetProperty().GetPointSize()
             self.pointcloud.vtkActor.GetProperty().SetPointSize(point_size + 1)
