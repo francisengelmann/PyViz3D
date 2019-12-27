@@ -20,3 +20,9 @@ viz.show_pointclouds([points], [colors])  # Display point cloud
 ```
 
 <p align="center"><img width="20%" src="docs/img/minimal_example.png" /></p>
+
+### Development
+We recommend developing in a conda environment:
+- conda create --name <environment_name> --python=3.7
+- conda activate <environment_name>
+ 
