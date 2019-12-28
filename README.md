@@ -33,3 +33,5 @@ We rely on Anaconda Cloud to host the pyviz3d package, as described in https://d
 Two files are required: build.sh and meta.yaml
 
 - conda build .
+
+It's great to add a new release on github: https://github.com/francisengelmann/pyviz3d/releases
