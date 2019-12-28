@@ -27,7 +27,10 @@ We recommend developing in a conda environment:
 - conda activate <environment_name>
 
 #### Distribution with PyPI
-
+https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56
+- pip install twine
+- python setup.py sdist
+- twine upload dist/*
 
 #### Distribution with Anaconda Cloud
 
