@@ -26,8 +26,7 @@ We recommend developing in a conda environment:
 - conda create --name <environment_name> python=3.7
 - conda activate <environment_name>
 
-#### Distribution with PyPI
-[[1]](https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56)
+#### Distribution with PyPI [[1]](https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56)
 
 - pip install twine
 
@@ -41,7 +40,7 @@ To upload the tested release:
 #### Distribution with Anaconda Cloud
 
 We rely on Anaconda Cloud to host the pyviz3d package
-[2]( https://docs.anaconda.com/anaconda-cloud/user-guide/tasks/work-with-packages/)
+[[2]]( https://docs.anaconda.com/anaconda-cloud/user-guide/tasks/work-with-packages/)
 - conda install anaconda-client conda-build conda-verify
 - conda config --set anaconda_upload no
 
