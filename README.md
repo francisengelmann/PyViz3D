@@ -29,7 +29,12 @@ We recommend developing in a conda environment:
 #### Distribution with PyPI
 https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56
 - pip install twine
-- python setup.py sdist
+To test the release without messing around with pypi release:
+twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
+
+To upload the test release:
+- python setup.py sdist bdist_wheel
 - twine upload dist/*
 
 #### Distribution with Anaconda Cloud
