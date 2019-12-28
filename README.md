@@ -26,14 +26,15 @@ We recommend developing in a conda environment:
 - conda create --name <environment_name> python=3.7
 - conda activate <environment_name>
 
-#### Distribution with PyPI
-https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56
+#### Distribution with PyPI [1](
+(https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56)
+
 - pip install twine
+
 To test the release without messing around with pypi release:
-twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+- twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 
-
-To upload the test release:
+To upload the tested release:
 - python setup.py sdist bdist_wheel
 - twine upload dist/*
 
