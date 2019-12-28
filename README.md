@@ -26,6 +26,11 @@ We recommend developing in a conda environment:
 - conda create --name <environment_name> python=3.7
 - conda activate <environment_name>
 
+#### Distribution with PyPI
+
+
+#### Distribution with Anaconda Cloud
+
 We rely on Anaconda Cloud to host the pyviz3d package, as described in https://docs.anaconda.com/anaconda-cloud/user-guide/tasks/work-with-packages/
 - conda install anaconda-client conda-build conda-verify
 - conda config --set anaconda_upload no
