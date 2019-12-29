@@ -2,16 +2,17 @@ import vtk
 import numpy as np
 from .pointcloud import PointCloud
 
-def test():
-    print("Hello PyViz3D")
+render_window = None
 
-def show_pointclouds(points, colors, title="Default"):
+
+def show_pointclouds(points, colors, point_size=3, title="Default"):
     """ Show multiple point clouds specified as lists. First clouds at the bottom.
     points: list of pointclouds, item: numpy (N x 3) XYZ
     colors: list of corresponding colors, item: numpy (N x 3) RGB [0..255]
     title:  window title
     """
 
+    global render_window
     assert isinstance(points, type([])),  "Pointclouds argument must be a list!"
     assert isinstance(colors, type([])),  "Colors argument must be a list!"
     assert len(points) == len(colors), \
@@ -19,11 +20,11 @@ def show_pointclouds(points, colors, title="Default"):
 
     num_pointclouds = len(points)  # Number of pointclouds to be displayed in this window
 
-    pointclouds = [PointCloud() for _ in range(num_pointclouds)]
+    pointclouds = [PointCloud(point_size=point_size) for _ in range(num_pointclouds)]
     renderers = [vtk.vtkRenderer() for _ in range(num_pointclouds)]
 
-    height = 1.0/num_pointclouds
-    viewports = [(i*height, (i+1)*height) for i in range(num_pointclouds)]
+    height = 1.0 / num_pointclouds
+    viewports = [(i * height, (i + 1) * height) for i in range(num_pointclouds)]
 
     # Iterate over all given point clouds
     for i, pc in enumerate(points):
@@ -47,14 +48,20 @@ def show_pointclouds(points, colors, title="Default"):
         renderers[i].ResetCamera()
 
     # Render Window
-    render_window = vtk.vtkRenderWindow()
+    if not render_window:
+       print("Creating new render window");
+       render_window = vtk.vtkRenderWindow()
+       render_window.SetWindowName(title)
+       render_window.SetSize(1200, 800)
     for renderer in renderers:
         render_window.AddRenderer(renderer)
 
+    # Window interactor
     render_window_interactor = vtk.vtkRenderWindowInteractor()
     render_window_interactor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
     render_window_interactor.SetRenderWindow(render_window)
 
+    # Set camera
     [center_x, center_y, center_z] = np.mean(points[0].squeeze(), axis=0)
     camera = vtk.vtkCamera()
     d = 10
@@ -67,6 +74,4 @@ def show_pointclouds(points, colors, title="Default"):
 
     # Begin Interaction
     render_window.Render()
-    render_window.SetWindowName(title)
-    render_window.SetSize(1200, 800)
     render_window_interactor.Start()

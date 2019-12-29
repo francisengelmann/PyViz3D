@@ -1,10 +1,14 @@
 import vtk
 import random
 
+
 class PointCloud:
-    def __init__(self, max_num_points=1e8):
+    def __init__(self, point_size, max_num_points=1e8):
         self.maxNumPoints = max_num_points
         self.vtkPolyData = vtk.vtkPolyData()
+        self.vtkPoints = None
+        self.vtkCells = None
+        self.vtkDepth = None
         self.clear_points()
 
         self.colors = vtk.vtkUnsignedCharArray()
@@ -16,7 +20,7 @@ class PointCloud:
 
         self.vtkActor = vtk.vtkActor()
         self.vtkActor.SetMapper(mapper)
-        self.vtkActor.GetProperty().SetPointSize(20)
+        self.vtkActor.GetProperty().SetPointSize(point_size)
 
     def add_point(self, point, color):
         if self.vtkPoints.GetNumberOfPoints() < self.maxNumPoints:
