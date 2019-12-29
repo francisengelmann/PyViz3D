@@ -4,8 +4,11 @@
 PyViz3D is a Python package to visualize 3D point clouds.
 
 ### Installation
-Using pip:
+Using [pip](https://pypi.org/project/pyviz3d/):
 ```pip install pyviz3d```
+
+Using [conda](https://anaconda.org/francisengelmann/pyviz3d):
+```conda install -c francisengelmann pyviz3d```
 
 ### Getting started
 Minimal example:
