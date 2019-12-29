@@ -4,7 +4,7 @@
 PyViz3D is a Python package to visualize 3D point clouds.
 
 ### Installation
-Run this command:
+Using pip:
 ```pip install pyviz3d```
 
 ### Getting started
@@ -21,31 +21,53 @@ viz.show_pointclouds([points], [colors])  # Display point cloud
 
 <p align="center"><img width="20%" src="docs/img/minimal_example.png" /></p>
 
-### Development
-We recommend developing in a conda environment:
-- conda create --name <environment_name> python=3.7
-- conda activate <environment_name>
+### Contributing
+You are more then welcome to contribute your own changes via github pull requests. 
 
-#### Distribution with PyPI [[1]](https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56)
+We recommend developing in a conda environment.
+From your console, create a new conda environment (using python <=3.7, required for VTK) and activate it:
+```bash
+$ conda create --name <environment_name> python=3.7
+$ conda activate <environment_name>
+```
 
-- pip install twine
+#### Distributing
+The maintainers of the package keep the recent version of the ```pyviz3d``` package available on [PyPy](https://packaging.python.org/tutorials/packaging-projects/) and Anaconda.
+The anaconda package is created from the pypi package.
 
-To test the release without messing around with pypi release:
-- twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+##### PyPi
 
-To upload the tested release:
-- python setup.py sdist bdist_wheel
-- twine upload dist/*
+Loosely following the instructions from [[1](https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56)]
 
-#### Distribution with Anaconda Cloud
+```
+$ pip install twine
+```
+
+To test the release without messing around with the public PyPi release:
+```
+$ python setup.py sdist bdist_wheel
+$ twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+```
+
+
+When happy, prepare a new release on github:
+```
+https://github.com/francisengelmann/pyviz3d/releases
+```
+
+When done, we can upload the release to the public PyPi repository:
+```
+$ python setup.py sdist bdist_wheel
+$ twine upload dist/*
+```
+
+##### Anaconda
 
 We rely on Anaconda Cloud to host the pyviz3d package
 [[2]]( https://docs.anaconda.com/anaconda-cloud/user-guide/tasks/work-with-packages/)
-- conda install anaconda-client conda-build conda-verify
-- conda config --set anaconda_upload no
-
-Two files are required: build.sh and meta.yaml
-
-- conda build .
-
-It's great to add a new release on github: https://github.com/francisengelmann/pyviz3d/releases
+```
+$ conda install anaconda-client conda-build conda-verify
+$ conda config --set anaconda_upload no
+$ conda skeleton pypi pyviz3d
+$ conda build pyviz3d
+```
