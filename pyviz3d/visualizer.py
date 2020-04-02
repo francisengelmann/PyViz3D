@@ -1,7 +1,7 @@
 # The visualizer class is used to show 3d point clouds or bounding boxes in the browser.
 
-from src.points import Points
-from src.cuboid import Cuboid
+from .points import Points
+from .cuboid import Cuboid
 import os
 import sys
 import shutil
@@ -45,7 +45,7 @@ class Visualizer:
             shutil.rmtree(directory_destination)
 
         # Copy website directory
-        directory_source = os.path.realpath(os.path.join(os.path.dirname(__file__), '../data'))
+        directory_source = os.path.realpath(os.path.join(os.path.dirname(__file__), 'src'))
         shutil.copytree(directory_source, directory_destination)
 
         # Assemble binary data files
