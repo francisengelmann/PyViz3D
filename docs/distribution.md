@@ -25,18 +25,18 @@ username: your username
 To test the release without messing around with the public PyPi release.
 First, this creates `dist` and `pyviz3d.egg-info` folders which can then be uploaded to the pypi test repository given the correct credentials.
 ```
-$ python setup.py sdist bdist_wheel
-$ twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+$ python setup.py sdist
+$ twine upload --repository testpypi dist/*  # this is an alternative
 $ pip install -i https://test.pypi.org/simple/ pyviz3d
 ```
 
 
-When happy, prepare a new release on github:
+When everything works, prepare a new release on github:
 ```
 https://github.com/francisengelmann/pyviz3d/releases
 ```
 
-When done, we can upload the release to the public PyPi repository:
+After that the puvlix release can be added to the public PyPi repository:
 ```
 $ python setup.py sdist bdist_wheel
 $ twine upload dist/*
@@ -44,7 +44,7 @@ $ twine upload dist/*
 
 ##### Anaconda
 
-We rely on Anaconda Cloud to host the pyviz3d package
+The pyviz3d package is hosted on Anaconda Cloud
 [[2]]( https://docs.anaconda.com/anaconda-cloud/user-guide/tasks/work-with-packages/)
 ```
 $ conda install anaconda-client conda-build conda-verify
