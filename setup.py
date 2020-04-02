@@ -6,10 +6,11 @@ this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-version = '0.2.1'
+version = '0.2.7'
 
 setup(name='pyviz3d',
       version=version,
+      include_package_data=True,
       description='PyViz3D is a python package to visualize 3D scenes.',
       long_description=long_description,
       long_description_content_type='text/markdown',
@@ -19,7 +20,6 @@ setup(name='pyviz3d',
       author_email='francis.engelmann@gmail.com',
       license='MIT',
       packages=['pyviz3d'],
-      install_requires=[
-          'numpy',
-      ],
+      package_data={'pyviz3d': ['src/index.html', 'src/js/*.js']},
+      setup_requires=['numpy'],
       zip_safe=False)
