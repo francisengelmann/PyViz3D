@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Distribution - PyViz3D</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Distribution";
+    var mkdocs_page_input_path = "distribution.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> PyViz3D</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Distribution</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#distributing">Distributing</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#pypi">PyPi</a></li>
+        
+            <li><a class="toctree-l3" href="#anaconda">Anaconda</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">PyViz3D</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Distribution</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h3 id="distributing">Distributing</h3>
+<p>The maintainers of the package keep the recent version of the <code>pyviz3d</code> package available on <a href="https://packaging.python.org/tutorials/packaging-projects/">PyPy</a> and Anaconda.
+The anaconda package is created from the pypi package.</p>
+<h5 id="pypi">PyPi</h5>
+<p>Loosely following the instructions from [<a href="https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56">1</a>]</p>
+<pre><code>$ pip install twine
+</code></pre>
+
+<p>In your home folder, set up <code>~/.pypirc</code>:</p>
+<pre><code>[distutils]
+index-servers=
+    pypi
+    testpypi
+[testpypi]
+repository: https://test.pypi.org/legacy/
+username: your username
+</code></pre>
+
+<p>To test the release without messing around with the public PyPi release.
+First, this creates <code>dist</code> and <code>pyviz3d.egg-info</code> folders which can then be uploaded to the pypi test repository given the correct credentials.</p>
+<pre><code>$ python setup.py sdist
+$ twine upload --repository testpypi dist/*  # this is an alternative
+$ pip install -i https://test.pypi.org/simple/ pyviz3d
+</code></pre>
+
+<p>When everything works, prepare a new release on github:</p>
+<pre><code>https://github.com/francisengelmann/pyviz3d/releases
+</code></pre>
+
+<p>After that the puvlix release can be added to the public PyPi repository:</p>
+<pre><code>$ python setup.py sdist bdist_wheel
+$ twine upload dist/*
+</code></pre>
+
+<h5 id="anaconda">Anaconda</h5>
+<p>The pyviz3d package is hosted on Anaconda Cloud
+<a href="https://docs.anaconda.com/anaconda-cloud/user-guide/tasks/work-with-packages/">[2]</a></p>
+<pre><code>$ conda install anaconda-client conda-build conda-verify
+$ conda config --set anaconda_upload no
+$ conda skeleton pypi pyviz3d
+$ conda build pyviz3d
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>
