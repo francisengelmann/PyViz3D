@@ -6,11 +6,11 @@ this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-version = '0.1.6'
+version = '0.2.0'
 
 setup(name='pyviz3d',
       version=version,
-      description='PyViz3D is a Python package to visualize 3D point clouds.',
+      description='PyViz3D is a python package to visualize 3D scenes.',
       long_description=long_description,
       long_description_content_type='text/markdown',
       url='https://github.com/francisengelmann/pyviz3d',
@@ -21,6 +21,5 @@ setup(name='pyviz3d',
       packages=['pyviz3d'],
       install_requires=[
           'numpy',
-          'vtk',
       ],
       zip_safe=False)
