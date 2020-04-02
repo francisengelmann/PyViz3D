@@ -58,15 +58,13 @@
     <a class="current" href="./">Distribution</a>
     <ul class="subnav">
             
-    <li class="toctree-l2"><a href="#distributing">Distributing</a></li>
+    <li class="toctree-l2"><a href="#pypi">PyPi</a></li>
     
-        <ul>
-        
-            <li><a class="toctree-l3" href="#pypi">PyPi</a></li>
-        
-            <li><a class="toctree-l3" href="#anaconda">Anaconda</a></li>
-        
-        </ul>
+
+    <li class="toctree-l2"><a href="#anaconda">Anaconda</a></li>
+    
+
+    <li class="toctree-l2"><a href="#mkdocs">MkDocs</a></li>
     
 
     </ul>
@@ -104,10 +102,8 @@
           <div role="main">
             <div class="section">
               
-                <h3 id="distributing">Distributing</h3>
-<p>The maintainers of the package keep the recent version of the <code>pyviz3d</code> package available on <a href="https://packaging.python.org/tutorials/packaging-projects/">PyPy</a> and Anaconda.
-The anaconda package is created from the pypi package.</p>
-<h5 id="pypi">PyPi</h5>
+                <p>We keep the latest stable release of the <code>pyviz3d</code> package available on <a href="https://packaging.python.org/tutorials/packaging-projects/">PyPy</a>.</p>
+<h2 id="pypi">PyPi</h2>
 <p>Loosely following the instructions from [<a href="https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56">1</a>]</p>
 <pre><code>$ pip install twine
 </code></pre>
@@ -133,19 +129,26 @@ $ pip install -i https://test.pypi.org/simple/ pyviz3d
 <pre><code>https://github.com/francisengelmann/pyviz3d/releases
 </code></pre>
 
-<p>After that the puvlix release can be added to the public PyPi repository:</p>
-<pre><code>$ python setup.py sdist bdist_wheel
+<p>After that, the public release can be added to the public PyPi repository:</p>
+<pre><code>$ python setup.py sdist
 $ twine upload dist/*
 </code></pre>
 
-<h5 id="anaconda">Anaconda</h5>
-<p>The pyviz3d package is hosted on Anaconda Cloud
+<h2 id="anaconda">Anaconda</h2>
+<p>The Anaconda package is created from the pypi package
+and is hosted on Anaconda Cloud
 <a href="https://docs.anaconda.com/anaconda-cloud/user-guide/tasks/work-with-packages/">[2]</a></p>
 <pre><code>$ conda install anaconda-client conda-build conda-verify
 $ conda config --set anaconda_upload no
 $ conda skeleton pypi pyviz3d
 $ conda build pyviz3d
 </code></pre>
+
+<h2 id="mkdocs">MkDocs</h2>
+<ul>
+<li>To update documentation modify: <code>docs/*.md</code>.</li>
+<li>To deploy the documentation: <code>mkdocs gh-deploy</code></li>
+</ul>
               
             </div>
           </div>
