@@ -33,10 +33,11 @@ class Visualizer:
         """
         self.elements[name] = Cuboid(position, size, orientation)
 
-    def show(self, path):
+    def show(self, path, port=6008):
         """Creates the visualization and displays the link to it.
 
         :param path: The path to save the visualization files.
+        :param port: The port to show the visualization.
         """
 
         # Delete destination directory if it exists already
@@ -61,14 +62,13 @@ class Visualizer:
             json.dump(nodes_dict, outfile)
 
         # Display link
-        http_server_port = 6008
-        http_server_string = 'python -m SimpleHTTPServer '+str(http_server_port)
+        http_server_string = 'python -m SimpleHTTPServer ' + str(port)
         if sys.version[0] == '3':
-            http_server_string = 'python -m http.server '+str(http_server_port)
+            http_server_string = 'python -m http.server ' + str(port)
         print('')
         print('************************************************************************')
         print('1) Start local server:')
         print('    cd '+directory_destination+'; ' + http_server_string)
         print('2) Open in browser:')
-        print('    http://localhost:6008')
+        print('    http://localhost:' + str(port))
         print('************************************************************************')
