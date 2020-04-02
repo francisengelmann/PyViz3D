@@ -1,10 +1,9 @@
 import numpy as np
-import src.visualizer as vis
+import pyviz3d as viz
 
 
 def main():
-
-    v = vis.Visualizer()
+    v = viz.visualizer.Visualizer()
     for j in range(5):
         i = j + 1
         name = 'Points_'+str(i)

@@ -10,10 +10,24 @@ Loosely following the instructions from [[1](https://medium.com/@joel.barmettler
 $ pip install twine
 ```
 
-To test the release without messing around with the public PyPi release:
+In your home folder, set up `~/.pypirc`:
+
+```
+[distutils]
+index-servers=
+    pypi
+    testpypi
+[testpypi]
+repository: https://test.pypi.org/legacy/
+username: your username
+```
+
+To test the release without messing around with the public PyPi release.
+First, this creates `dist` and `pyviz3d.egg-info` folders which can then be uploaded to the pypi test repository given the correct credentials.
 ```
 $ python setup.py sdist bdist_wheel
 $ twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+$ pip install -i https://test.pypi.org/simple/ pyviz3d
 ```
 
 
