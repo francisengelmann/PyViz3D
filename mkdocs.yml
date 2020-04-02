@@ -1,0 +1,5 @@
+site_name: PyViz3D
+nav:
+  - Home: 'index.md'
+  - Distribution: 'distribution.md'
+theme: readthedocs
