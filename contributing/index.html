@@ -6,9 +6,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  
+  <meta name="author" content="Francis Engelmann">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Contributing to PyViz3D - PyViz3D</title>
+  <title>Contributing - PyViz3D</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Contributing to PyViz3D";
+    var mkdocs_page_name = "Contributing";
     var mkdocs_page_input_path = "contributing.md";
     var mkdocs_page_url = "/pyviz3d/contributing/";
   </script>
@@ -53,6 +53,20 @@
     <a class="" href="..">Home</a>
 	    </li>
           
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Contributing</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#setting-up-local-developement-environment">Setting up local developement environment</a></li>
+    
+
+    <li class="toctree-l2"><a href="#documentation">Documentation</a></li>
+    
+
+    </ul>
+	    </li>
+          
             <li class="toctree-l1">
 		
     <a class="" href="../distribution/">Distribution</a>
@@ -80,7 +94,7 @@
     
       
     
-    <li>Contributing to PyViz3D</li>
+    <li>Contributing</li>
     <li class="wy-breadcrumbs-aside">
       
         <a href="https://github.com/francisengelmann/pyviz3d/edit/master/docs/contributing.md"
@@ -93,18 +107,34 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="contributing-to-pyviz3d">Contributing to PyViz3D</h1>
-<h2 id="setting-up-local-developement-environment">Setting up local developement environment</h2>
+                <h2 id="setting-up-local-developement-environment">Setting up local developement environment</h2>
 <ul>
 <li>Pull the latest stable release from the master branch.</li>
 <li>Ideally create a new python environment.</li>
 <li>Do not install and uninstall existing packages of pyviz3d in your local environment. This guarantees that you are running your code and not the one from the installed package.</li>
 <li>Run your code (i.e. examples) from the root of the code base so guarantee all pathes are correct.</li>
 </ul>
+<h2 id="documentation">Documentation</h2>
+<p>The documentation pages are mainted using <a href="https://www.mkdocs.org/">mkdocs</a>.</p>
+<ul>
+<li>To update the documentation modify the markdown files in <code>docs/*.md</code>.</li>
+<li>When adding new pages, modify the file <code>mkdocs.yml</code> accordingly.</li>
+<li>The locally test the documentation, go to <code>'./'</code> and run <code>mkdocs serve</code>. </li>
+<li>To deploy the documentation: <code>mkdocs gh-deploy</code>.</li>
+</ul>
               
             </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../distribution/" class="btn btn-neutral float-right" title="Distribution">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -130,6 +160,10 @@
           <a href="https://github.com/francisengelmann/pyviz3d/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../distribution/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
