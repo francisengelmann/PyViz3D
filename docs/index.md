@@ -2,10 +2,11 @@
 
 ## Getting Started
 
-This is a minimal example to get you started.
+This is a simple example to get you started.
 
 ### Installation
-To intall PyViz3D perform `pip install -i https://test.pypi.org/simple/ pyviz3d`
+Intall PyViz3D via pip: `pip install -i https://test.pypi.org/simple/ pyviz3d`
+This is currently on the test-repository of pypi until a stable version is available.
 
 ### Minimal example
 In this simple example we will display multiple point clouds.
