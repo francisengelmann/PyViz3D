@@ -33,7 +33,7 @@ class Visualizer:
         """
         self.elements[name] = Cuboid(position, size, orientation)
 
-    def show(self, path, port=6008):
+    def save(self, path, port=6008):
         """Creates the visualization and displays the link to it.
 
         :param path: The path to save the visualization files.

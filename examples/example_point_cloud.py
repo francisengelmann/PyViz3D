@@ -17,9 +17,12 @@ def main():
 
     for scene_name in ['scene0140_01', 'scene0451_01']:
         scene = np.load('examples/' + scene_name + '.npy')
-        v.add_points(scene_name, scene[:, 0:3], scene[:, 3:6], 0.03)
-        
-    v.show('test')
+        point_positions = scene[:, 0:3]
+        point_colors = scene[:, 3:6]
+        point_size = 0.03
+        v.add_points(scene_name, point_positions, point_colors, point_size)
+
+    v.save('test')
 
 
 if __name__ == '__main__':
