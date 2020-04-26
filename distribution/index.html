@@ -124,7 +124,8 @@ username: your username
 </code></pre>
 
 <p>To test the release without messing around with the public PyPi release.
-First, this creates <code>dist</code> and <code>pyviz3d.egg-info</code> folders which can then be uploaded to the pypi test repository given the correct credentials.</p>
+First, this creates <code>dist</code> and <code>pyviz3d.egg-info</code> folders which can then be uploaded to the pypi test repository given the correct credentials.
+Make sure to update the version in the <code>setup.py</code>, it has to be newer then the last uploaded one.</p>
 <pre><code>$ python setup.py sdist
 $ twine upload --repository testpypi dist/*  # this is an alternative
 $ pip install -i https://test.pypi.org/simple/ pyviz3d
