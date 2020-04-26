@@ -11,5 +11,5 @@ The documentation pages are mainted using [mkdocs](https://www.mkdocs.org/).
 
 * To update the documentation modify the markdown files in `docs/*.md`.
 * When adding new pages, modify the file `mkdocs.yml` accordingly.
-* The locally test the documentation, go to `'./'` and run `mkdocs serve`. 
+* The locally test the documentation, go to `./` and run `mkdocs serve`. 
 * To deploy the documentation: `mkdocs gh-deploy`.
