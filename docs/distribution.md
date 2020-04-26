@@ -1,8 +1,6 @@
-### Distributing
-The maintainers of the package keep the recent version of the ```pyviz3d``` package available on [PyPy](https://packaging.python.org/tutorials/packaging-projects/) and Anaconda.
-The anaconda package is created from the pypi package.
+We keep the latest stable release of the ```pyviz3d``` package available on [PyPy](https://packaging.python.org/tutorials/packaging-projects/).
 
-##### PyPi
+## PyPi
 
 Loosely following the instructions from [[1](https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56)]
 
@@ -30,21 +28,20 @@ $ twine upload --repository testpypi dist/*  # this is an alternative
 $ pip install -i https://test.pypi.org/simple/ pyviz3d
 ```
 
-
 When everything works, prepare a new release on github:
 ```
 https://github.com/francisengelmann/pyviz3d/releases
 ```
 
-After that the puvlix release can be added to the public PyPi repository:
+After that, the public release can be added to the public PyPi repository:
 ```
-$ python setup.py sdist bdist_wheel
+$ python setup.py sdist
 $ twine upload dist/*
 ```
 
-##### Anaconda
-
-The pyviz3d package is hosted on Anaconda Cloud
+## Anaconda
+The Anaconda package is created from the pypi package
+and is hosted on Anaconda Cloud
 [[2]]( https://docs.anaconda.com/anaconda-cloud/user-guide/tasks/work-with-packages/)
 ```
 $ conda install anaconda-client conda-build conda-verify

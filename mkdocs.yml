@@ -1,5 +1,9 @@
 site_name: PyViz3D
+site_url: https://francisengelmann.github.io/pyviz3d/
+repo_url: https://github.com/francisengelmann/pyviz3d
+site_author: Francis Engelmann
+theme: readthedocs
 nav:
   - Home: 'index.md'
+  - Contributing: 'contributing.md'
   - Distribution: 'distribution.md'
-theme: readthedocs
