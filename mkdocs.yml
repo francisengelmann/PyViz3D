@@ -3,6 +3,7 @@ site_url: https://francisengelmann.github.io/pyviz3d/
 repo_url: https://github.com/francisengelmann/pyviz3d
 site_author: Francis Engelmann
 theme: readthedocs
+google_analytics: ['UA-1168479-12', 'https://francisengelmann.github.io/pyviz3d/']
 nav:
   - Home: 'index.md'
   - Contributing: 'contributing.md'
