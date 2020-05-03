@@ -8,7 +8,7 @@
   
   <meta name="author" content="Francis Engelmann">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Distribution - PyViz3D</title>
+  <title>Changelog - PyViz3D</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,9 +17,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Distribution";
-    var mkdocs_page_input_path = "distribution.md";
-    var mkdocs_page_url = "/pyviz3d/distribution/";
+    var mkdocs_page_name = "Changelog";
+    var mkdocs_page_input_path = "changelog.md";
+    var mkdocs_page_url = "/pyviz3d/changelog/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
@@ -68,23 +68,20 @@
     <a class="" href="../contributing/">Contributing</a>
 	    </li>
           
-            <li class="toctree-l1">
-		
-    <a class="" href="../changelog/">Changelog</a>
-	    </li>
-          
             <li class="toctree-l1 current">
 		
-    <a class="current" href="./">Distribution</a>
+    <a class="current" href="./">Changelog</a>
     <ul class="subnav">
             
-    <li class="toctree-l2"><a href="#pypi">PyPi</a></li>
-    
-
-    <li class="toctree-l2"><a href="#anaconda">Anaconda</a></li>
+    <li class="toctree-l2"><a href="#version-02">Version 0.2</a></li>
     
 
     </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../distribution/">Distribution</a>
 	    </li>
           
         </ul>
@@ -109,10 +106,10 @@
     
       
     
-    <li>Distribution</li>
+    <li>Changelog</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/francisengelmann/pyviz3d/edit/master/docs/distribution.md"
+        <a href="https://github.com/francisengelmann/pyviz3d/edit/master/docs/changelog.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -122,51 +119,10 @@
           <div role="main">
             <div class="section">
               
-                <p>We keep the latest stable release of the <code>pyviz3d</code> package available on <a href="https://packaging.python.org/tutorials/packaging-projects/">PyPy</a>.</p>
-<h2 id="pypi">PyPi</h2>
-<p>Loosely following the instructions from [<a href="https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56">1</a>]</p>
-<pre><code>$ pip install twine
-</code></pre>
-
-<p>In your home folder, set up <code>~/.pypirc</code>:</p>
-<pre><code>[distutils]
-index-servers=
-    pypi
-    testpypi
-[testpypi]
-repository: https://test.pypi.org/legacy/
-username: your username
-</code></pre>
-
-<p>To test the release without messing around with the public PyPi release.
-First, this creates <code>dist</code> and <code>pyviz3d.egg-info</code> folders which can then be uploaded to the pypi test repository given the correct credentials.</p>
+                <h2 id="version-02">Version 0.2</h2>
 <ul>
-<li>Make sure to update the version in the <code>setup.py</code>, it has to be newer then the last uploaded one.</li>
-<li>Delete the previous dist files <code>rm -rf ./dist/*.tar.gz</code></li>
+<li>0.2.9: Add object parameter <code>visible</code> indicating wether the object is visible on default or not.</li>
 </ul>
-<pre><code>$ python setup.py sdist
-$ twine upload --repository testpypi dist/*  # this is an alternative
-$ pip install -i https://test.pypi.org/simple/ pyviz3d
-</code></pre>
-
-<p>When everything works, prepare a new release on github:</p>
-<pre><code>https://github.com/francisengelmann/pyviz3d/releases
-</code></pre>
-
-<p>After that, the public release can be added to the public PyPi repository:</p>
-<pre><code>$ python setup.py sdist
-$ twine upload dist/*
-</code></pre>
-
-<h2 id="anaconda">Anaconda</h2>
-<p>The Anaconda package is created from the pypi package
-and is hosted on Anaconda Cloud
-<a href="https://docs.anaconda.com/anaconda-cloud/user-guide/tasks/work-with-packages/">[2]</a></p>
-<pre><code>$ conda install anaconda-client conda-build conda-verify
-$ conda config --set anaconda_upload no
-$ conda skeleton pypi pyviz3d
-$ conda build pyviz3d
-</code></pre>
               
             </div>
           </div>
@@ -174,8 +130,10 @@ $ conda build pyviz3d
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="../distribution/" class="btn btn-neutral float-right" title="Distribution">Next <span class="icon icon-circle-arrow-right"></span></a>
       
-        <a href="../changelog/" class="btn btn-neutral" title="Changelog"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+        <a href="../contributing/" class="btn btn-neutral" title="Contributing"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -203,8 +161,10 @@ $ conda build pyviz3d
           <a href="https://github.com/francisengelmann/pyviz3d/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../changelog/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../contributing/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
+      
+        <span style="margin-left: 15px"><a href="../distribution/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
