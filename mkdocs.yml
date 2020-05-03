@@ -7,4 +7,5 @@ google_analytics: ['UA-1168479-12', 'https://francisengelmann.github.io/pyviz3d/
 nav:
   - Home: 'index.md'
   - Contributing: 'contributing.md'
+  - Changelog: 'changelog.md'
   - Distribution: 'distribution.md'
