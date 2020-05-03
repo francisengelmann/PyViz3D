@@ -15,13 +15,23 @@ function onDoubleClick(event) {
 	console.log(intersections);
 }
 
-function get_lines(){
-	var lines_material = new THREE.LineBasicMaterial({color: 0x00ff00, linewidth: 5});
-	var lines_geometry = new THREE.Geometry();
-	lines_geometry.vertices.push(new THREE.Vector3( -2, 0, 0) );
-	lines_geometry.vertices.push(new THREE.Vector3( 0, 2, 0) );
-	lines_geometry.vertices.push(new THREE.Vector3( 2, 0, 0) );
-	return new THREE.Line(lines_geometry, lines_material);
+function get_lines(properties){
+    var geometry = new THREE.BufferGeometry();
+    let binary_filename = properties['binary_filename'];
+    var positions = [];
+    let num_lines = properties['num_lines'];
+
+    fetch(binary_filename)
+    .then(response => response.arrayBuffer())
+    .then(buffer => {
+        positions = new Float32Array(buffer, 0, 3 * num_lines);
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    })
+
+    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, 3 ));
+	var material = new THREE.LineBasicMaterial({color: 0xff7700});
+	return new THREE.LineSegments( geometry, material );
+
 }
 
 function get_cube(){
@@ -37,15 +47,15 @@ function get_points(properties){
 	// Add points
 	// https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_points.html
 	let positions = [];
-	let particles = properties['num_points'];
+	let num_points = properties['num_points'];
 	let geometry = new THREE.BufferGeometry();
 	let binary_filename = properties['binary_filename'];
 
 	fetch(binary_filename)
 	    .then(response => response.arrayBuffer())
 		.then(buffer => {
-			positions = new Float32Array(buffer, 0, 3 * particles);
-		    let colors_uint8 = new Uint8Array(buffer, (3 * particles) * 4, 3 * particles);
+			positions = new Float32Array(buffer, 0, 3 * num_points);
+		    let colors_uint8 = new Uint8Array(buffer, (3 * num_points) * 4, 3 * num_points);
 		    let colors_float32 = Float32Array.from(colors_uint8);
 		    for(let i=0; i<colors_float32.length; i++) {
 			    colors_float32[i] /= 255;
@@ -55,7 +65,10 @@ function get_points(properties){
 		})
         .then(render);
 
-	let material = new THREE.PointsMaterial({size: properties['point_size'], vertexColors: THREE.VertexColors});
+	let material = new THREE.PointsMaterial({
+        size: properties['point_size'],
+        vertexColors: THREE.VertexColors,
+        sizeAttenuation: true});
 	let points = new THREE.Points(geometry, material);
 	points.frustumCulled = false;
 	return points
@@ -72,8 +85,11 @@ function get_ground(){
 
 function init_gui(objects){
 	//let fol = gui.addFolder(`Objects`)
+
 	for (const [key, value] of Object.entries(objects)){
+		//console.log(key)
 		gui.add(value, 'visible').name(key).onChange(render);
+
 	}
 	//fol.open = true
 }
@@ -110,12 +126,16 @@ function init(){
 }
 
 function create_threejs_objects(properties){
-	for (const [key, value] of Object.entries(properties)) {
-		if (properties['type'] = 'points'){
-			threejs_objects[key] = get_points(value);
+	for (const [object_name, object_properties] of Object.entries(properties)) {
+		if (String(object_properties['type']).localeCompare('points') == 0){
+			threejs_objects[object_name] = get_points(object_properties);
     		render();
 		}
-		threejs_objects[key].visible = value['visible']
+		if (String(object_properties['type']).localeCompare('lines') == 0){
+			threejs_objects[object_name] = get_lines(object_properties);
+    		render();
+		}
+		threejs_objects[object_name].visible = object_properties['visible']
 	}
 	// Add axis helper
 	threejs_objects['Axis'] = new THREE.AxesHelper(1);
@@ -133,6 +153,7 @@ const renderer = new THREE.WebGLRenderer({antialias: true});
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000);
 camera.up.set(0, 0, 1);
 
+
 //Orbit Control
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.addEventListener("change", render);
@@ -147,8 +168,14 @@ let mouse = new THREE.Vector2();
 
 const gui = new GUI();
 
-let domElement = document.body.appendChild(renderer.domElement);
-domElement.addEventListener("dblclick", onDoubleClick);
+//let container = document.getElementById('render_container');
+//document.body.appendChild(container);
+//container.appendChild(renderer.domElement);
+
+document.getElementById('render_container').appendChild(renderer.domElement)
+
+//let domElement = document.body.appendChild(renderer.domElement);
+//domElement.addEventListener("dblclick", onDoubleClick);
 
 // dict(?) containing all objects of the scene
 let threejs_objects = {};
@@ -158,7 +185,7 @@ init();
 // Load nodes.json and perform one after the other the following commands:
 fetch('nodes.json')
     .then(response => {return response.json();})
-    .then(json_response => {console.log(json_response); return json_response})
+    //.then(json_response => {console.log(json_response); return json_response})
     .then(json_response => create_threejs_objects(json_response))
     .then(() => add_threejs_objects_to_scene(threejs_objects))
     .then(() => init_gui(threejs_objects))
