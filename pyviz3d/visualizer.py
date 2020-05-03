@@ -2,6 +2,7 @@
 
 from .points import Points
 from .cuboid import Cuboid
+from .lines import Lines
 import os
 import sys
 import shutil
@@ -23,6 +24,17 @@ class Visualizer:
         :param visible: Bool if points are visible.
         """
         self.elements[name] = Points(positions, colors, point_size, visible)
+
+    def add_lines(self, name, lines_start, lines_end, colors=None, visible=True):
+        """Add lines to the visualizer.
+
+        :param name: The name of the lines displayed in the visualizer.
+        :param lines_start: The start positions of the lines.
+        :param lines_end: The end positions of the lines.
+        :param colors: The line colors.
+        :param visible: Bool if lines are visible.
+        """
+        self.elements[name] = Lines(lines_start, lines_end, colors, visible)
 
     def add_bounding_box(self, name, position, size, orientation=None):
         """Add bounding box.
