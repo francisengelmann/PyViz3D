@@ -22,7 +22,9 @@ username: your username
 
 To test the release without messing around with the public PyPi release.
 First, this creates `dist` and `pyviz3d.egg-info` folders which can then be uploaded to the pypi test repository given the correct credentials.
-Make sure to update the version in the `setup.py`, it has to be newer then the last uploaded one.
+
+- Make sure to update the version in the `setup.py`, it has to be newer then the last uploaded one.
+- Delete the previous dist files `rm -rf ./dist/*.tar.gz`
 ```
 $ python setup.py sdist
 $ twine upload --repository testpypi dist/*  # this is an alternative
