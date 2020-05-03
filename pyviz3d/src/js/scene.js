@@ -26,7 +26,7 @@ function get_lines(properties){
     .then(buffer => {
         positions = new Float32Array(buffer, 0, 3 * num_lines);
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    })
+    }).then(render);
 
     geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, 3 ));
 	var material = new THREE.LineBasicMaterial({color: 0xff7700});
