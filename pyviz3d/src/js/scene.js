@@ -70,7 +70,6 @@ function get_points(properties){
         vertexColors: THREE.VertexColors,
         sizeAttenuation: true});
 	let points = new THREE.Points(geometry, material);
-	points.frustumCulled = false;
 	return points
 }
 
@@ -136,6 +135,7 @@ function create_threejs_objects(properties){
     		render();
 		}
 		threejs_objects[object_name].visible = object_properties['visible']
+		threejs_objects[object_name].frustumCulled = false;
 	}
 	// Add axis helper
 	threejs_objects['Axis'] = new THREE.AxesHelper(1);
