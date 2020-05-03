@@ -13,15 +13,16 @@ class Visualizer:
     def __init__(self):
         self.elements = {}  # dict of elements to display
 
-    def add_points(self, name, positions, colors=None, point_size=1):
+    def add_points(self, name, positions, colors=None, point_size=1, visible=True):
         """Add points to the visualizer.
 
         :param name: The name of the points displayed in the visualizer.
         :param positions: The point positions.
         :param colors: The point colors.
         :param point_size: The point size.
+        :param visible: Bool if points are visible.
         """
-        self.elements[name] = Points(positions, colors, point_size)
+        self.elements[name] = Points(positions, colors, point_size, visible)
 
     def add_bounding_box(self, name, position, size, orientation=None):
         """Add bounding box.

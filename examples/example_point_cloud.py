@@ -17,7 +17,7 @@ def main():
         point_size = 0.1 * i
 
         # Here we add point clouds to the visualizer
-        v.add_points(name, point_positions, point_colors, point_size)
+        v.add_points(name, point_positions, point_colors, point_size, visible=False)
 
     # Sample point clouds from the ScanNet dataset.
     for scene_name in ['scene0140_01', 'scene0451_01']:

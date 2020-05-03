@@ -115,6 +115,7 @@ function create_threejs_objects(properties){
 			threejs_objects[key] = get_points(value);
     		render();
 		}
+		threejs_objects[key].visible = value['visible']
 	}
 	// Add axis helper
 	threejs_objects['Axis'] = new THREE.AxesHelper(1);
