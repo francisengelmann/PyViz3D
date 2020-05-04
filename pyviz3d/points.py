@@ -3,9 +3,10 @@ import numpy as np
 
 
 class Points:
-    def __init__(self, positions, colors, point_size=5, visible=True):
+    def __init__(self, positions, colors, normals, point_size=25, visible=True):
         self.positions = positions.astype(np.float32)
         self.colors = colors.astype(np.uint8)
+        self.normals = normals.astype(np.float32)
         self.point_size = point_size
         self.visible = visible
 
@@ -23,8 +24,10 @@ class Points:
 
     def write_binary(self, path):
         bin_positions = self.positions.tobytes()
+        bin_normals = self.normals.tobytes()
         bin_colors = self.colors.tobytes()
         with open(path, "wb") as f:
             f.write(bin_positions)
+            f.write(bin_normals)
             f.write(bin_colors)
 

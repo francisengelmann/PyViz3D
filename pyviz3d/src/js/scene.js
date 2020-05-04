@@ -47,6 +47,7 @@ function get_points(properties){
 	// Add points
 	// https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_points.html
 	let positions = [];
+	let normals = [];
 	let num_points = properties['num_points'];
 	let geometry = new THREE.BufferGeometry();
 	let binary_filename = properties['binary_filename'];
@@ -55,21 +56,41 @@ function get_points(properties){
 	    .then(response => response.arrayBuffer())
 		.then(buffer => {
 			positions = new Float32Array(buffer, 0, 3 * num_points);
-		    let colors_uint8 = new Uint8Array(buffer, (3 * num_points) * 4, 3 * num_points);
+			normals = new Float32Array(buffer, (3 * num_points) * 4, 3 * num_points);
+		    let colors_uint8 = new Uint8Array(buffer, (3 * num_points) * 8, 3 * num_points);
 		    let colors_float32 = Float32Array.from(colors_uint8);
 		    for(let i=0; i<colors_float32.length; i++) {
-			    colors_float32[i] /= 255;
+			    colors_float32[i] /= 255.0;
 			}
 		    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+			geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
 			geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors_float32, 3));
 		})
         .then(render);
 
-	let material = new THREE.PointsMaterial({
-        size: properties['point_size'],
-        vertexColors: THREE.VertexColors,
-        sizeAttenuation: true});
-	let points = new THREE.Points(geometry, material);
+	 // var loader = new THREE.TextureLoader();
+	 // var texture = loader.load( 'disc.png' );
+	 // let material = new THREE.PointsMaterial({
+     //     size: properties['point_size'],
+	 //     map: texture,
+	 //     alphaTest: 0.5,
+     //     vertexColors: THREE.VertexColors,
+     //     sizeAttenuation: true});
+
+
+	 var uniforms = {
+        pointSize:    { value: properties['point_size'] },
+     };
+
+	 var material = new THREE.ShaderMaterial( {
+		uniforms:       uniforms,
+        vertexShader:   document.getElementById( 'vertexshader' ).textContent,
+        fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+        transparent:    true
+
+    } );
+
+	var points = new THREE.Points(geometry, material);
 	return points
 }
 

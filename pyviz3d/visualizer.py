@@ -7,6 +7,7 @@ import os
 import sys
 import shutil
 import json
+import numpy as np
 
 
 class Visualizer:
@@ -14,16 +15,21 @@ class Visualizer:
     def __init__(self):
         self.elements = {}  # dict of elements to display
 
-    def add_points(self, name, positions, colors=None, point_size=1, visible=True):
+    def add_points(self, name, positions, colors=None, normals=None, point_size=25, visible=True):
         """Add points to the visualizer.
 
         :param name: The name of the points displayed in the visualizer.
         :param positions: The point positions.
+        :param normals: The point normals.
         :param colors: The point colors.
         :param point_size: The point size.
         :param visible: Bool if points are visible.
         """
-        self.elements[name] = Points(positions, colors, point_size, visible)
+        if colors is None:
+            colors = np.zeros(positions.shape)
+        if normals is None:
+            normals = np.ones(positions.shape)
+        self.elements[name] = Points(positions, colors, normals, point_size, visible)
 
     def add_lines(self, name, lines_start, lines_end, colors=None, visible=True):
         """Add lines to the visualizer.

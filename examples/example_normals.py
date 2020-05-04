@@ -61,10 +61,11 @@ def main():
     point_labels = scene[:, -1].astype(int)
     point_normals = scene[:, 6:9]
     point_semantic_colors = create_color_palette()[point_labels]
-    point_size = 0.08
-    v.add_points('RGB Color', point_positions, point_colors, point_size, visible=False)
-    v.add_points('Semantics', point_positions, point_semantic_colors, point_size)
-    v.add_lines('Normals', point_positions, point_positions + point_normals/10, point_semantic_colors)
+    point_size = 35.0
+
+    v.add_points('RGB Color', point_positions, point_colors, point_normals, point_size=point_size, visible=False)
+    v.add_points('Semantics', point_positions, point_semantic_colors, point_normals, point_size=point_size)
+    v.add_lines('Normals', point_positions, point_positions + point_normals/10, point_semantic_colors, visible=True)
 
     # When we added everything we need to the visualizer, we save it.
     v.save('test')
