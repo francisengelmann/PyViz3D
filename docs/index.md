@@ -1,5 +1,15 @@
 ![Screenshot](https://raw.githubusercontent.com/francisengelmann/pyviz3d/master/docs/img/pyviz3d-logo.png)
 
+### Examples
+
+- Draw multiple colored point clouds.
+ [[Demo]](https://francisengelmann.github.io/pyviz3d_examples/example/index.html)
+ [[Code]](https://github.com/francisengelmann/pyviz3d/blob/master/examples/example_point_cloud.py)
+
+- Draw normals using lines.
+ [[Demo]](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)
+ [[Code]](https://github.com/francisengelmann/pyviz3d/blob/master/examples/example_normals.py)
+
 ### Installation
 Intall PyViz3D via pip: `pip install -i https://test.pypi.org/simple/ pyviz3d`
 This is currently on the test-repository of pypi until a stable version is available.
@@ -48,13 +58,3 @@ if __name__ == '__main__':
 
 
 ```
-
-### Examples
-
-- Draw multiple colored point clouds.
- [[Demo]](https://francisengelmann.github.io/pyviz3d_examples/example/index.html)
- [[Code]](https://github.com/francisengelmann/pyviz3d/blob/master/examples/example_point_cloud.py)
-
-- Draw normals using lines.
- [[Demo]](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)
- [[Code]](https://github.com/francisengelmann/pyviz3d/blob/master/examples/example_normals.py)
