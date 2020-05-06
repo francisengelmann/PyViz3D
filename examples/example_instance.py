@@ -50,39 +50,135 @@ def create_color_palette():
     return np.concatenate([palette, palette * 10, palette * 100])
 
 
+def label_name(label_id):
+        names = [
+            'none',
+            'wall',
+            'floor',
+            'cabinet',
+            'bed',
+            'chair',
+            'sofa',
+            'table',
+            'door',
+            'window',
+            'bookshelf',
+            'picture',
+            'counter',
+            'none',
+            'desk',
+            'none',
+            'curtain',
+            'none',
+            'none',
+            'none',
+            'none',
+            'none',
+            'none',
+            'none',
+            'refrigerator',
+            'none',
+            'none',
+            'none',
+            'shower curtain',
+            'none',
+            'none',
+            'none',
+            'none',
+            'toilet',
+            'sink',
+            'none',
+            'bathtub',
+            'none',
+            'none',
+            'otherfurn',
+            'none'
+        ]
+        return names[label_id]
+
+class Object:
+
+    def __init__(self, name, points, colors, normals):
+        self.name = name
+        self.points = points
+        self.colors = colors
+        self.normals = normals
+
+
+def get_objects(scene, prediction_file):
+
+    objects = []
+    with open(prediction_file) as fp:
+        line = fp.readline()
+        while line:
+            splits = line.strip().split(' ')
+            name = str(len(objects))+'_'+label_name(int(splits[1]))
+            mask_file = os.path.join(os.path.dirname(prediction_file), splits[0])
+            mask = np.loadtxt(mask_file).astype(int) == 1
+            points = scene[mask, 0:3]
+            colors = scene[mask, 3:6]*0.1 + create_color_palette()[int(splits[1])]*0.9
+            normals = scene[mask, 6:9]
+            obj = Object(name, points, colors, normals)
+            objects.append(obj)
+            line = fp.readline()
+
+    return objects
+
+
 def main():
 
     # First, we set up a visualizer
-    v = viz.Visualizer()
-
-    scene_name = "scene0030_00"
 
     data_path_normals = "/home/nekrasov/github/pc_aug/data/processed/scannet/scans_test"
-    data_path_instance = "/globalwork/data/3d_inst_sem_seg/scannet_francis/eval_full/gt_instance/"
+    # data_path_instance = "/globalwork/data/3d_inst_sem_seg/scannet_francis/full/gt_instance/"
 
-    scene_normals = np.load(os.path.join(data_path_normals, scene_name, scene_name + '_vh_clean_2.npy'))
-    scene_instance = np.loadtxt(os.path.join(data_path_instance, scene_name+'.txt'))
-    scene_instance = (np.remainder(scene_instance, 1000)).astype(int)
+    # Get all names of test scenes
+    test_scenes = []
+    test_scenes_file = '/home/engelmann/benchmark/instances_pr_30-12-2019/'
+    with open(test_scenes_file+'test_scenes.txt') as fp:
+        line = fp.readline()
+        while line:
+            test_scenes.append(line.strip().split('.')[0])
+            line = fp.readline()
+    test_scenes = ['scene0733_00', 'scene0744_00', 'scene0746_00', 'scene0748_00', 'scene0770_00']
+    # test_scenes = ['scene0733_00']
 
-    scene = np.concatenate((scene_normals, np.reshape(scene_instance, [-1, 1])), axis=1)
-    point_positions = scene[:, 0:3] - np.mean(scene[:, 0:3], axis=0)
-    point_colors = scene[:, 3:6]
-    point_instance_labels = scene[:, -1].astype(int)
-    point_semantic_labels = scene[:, -2].astype(int)
-    point_normals = scene[:, 6:9]
-    point_instance_colors_gt = create_color_palette()[point_instance_labels]
-    point_semantic_colors_gt = create_color_palette()[point_semantic_labels]
-    point_size = 35.0
+    for scene_name in test_scenes:
 
-    v.add_points('RGB Color', point_positions, point_colors, point_normals, point_size=point_size, visible=False)
-    v.add_points('GT Semantics', point_positions, point_semantic_colors_gt, point_normals, point_size=point_size)
-    v.add_points('GT Instances', point_positions, point_instance_colors_gt, point_normals, point_size=point_size)
-    # v.add_points('Pr Semantics', point_positions, point_semantic_colors_pr, point_normals, point_size=point_size)
-    # v.add_points('Pr Instances', point_positions, point_instance_colors_pr, point_normals, point_size=point_size)
-    # v.add_lines('Normals', point_positions, point_positions + point_normals/10, point_semantic_colors, visible=False)
+        v = viz.Visualizer()
 
-    # When we added everything we need to the visualizer, we save it.
-    v.save('test')
+        # Read scene
+        scene_normals = np.load(os.path.join(data_path_normals, scene_name, scene_name + '_vh_clean_2.npy'))
+        # scene_instance = np.loadtxt(os.path.join(data_path_instance, scene_name+'.txt'))
+        # scene_instance = (np.remainder(scene_instance, 1000)).astype(int)
+        # scene = np.concatenate((scene_normals, np.reshape(scene_instance, [-1, 1])), axis=1)
+        scene = scene_normals
+        scene[:, 0:3] = scene[:, 0:3] - np.mean(scene[:, 0:3], axis=0)
+
+        point_positions = scene[:, 0:3]
+        point_colors = scene[:, 3:6]
+        # point_instance_labels = scene[:, -1].astype(int)
+        point_semantic_labels = scene[:, -2].astype(int)
+        point_normals = scene[:, 6:9]
+        # point_instance_colors_gt = create_color_palette()[point_instance_labels]
+        point_semantic_colors_gt = create_color_palette()[point_semantic_labels]
+        point_size = 25.0
+
+        v.add_points('Input Scene;RGB', point_positions, point_colors, point_normals, point_size=15, visible=True, alpha=0.2)
+        # v.add_points('GT Semantics', point_positions, point_semantic_colors_gt, point_normals, point_size=point_size)
+        # v.add_points('GT Instances', point_positions, point_instance_colors_gt, point_normals, point_size=point_size)
+        # v.add_points('Pr Semantics', point_positions, point_semantic_colors_pr, point_normals, point_size=point_size)
+        # v.add_points('Pr Instances', point_positions, point_instance_colors_pr, point_normals, point_size=point_size)
+        # v.add_lines('Normals', point_positions, point_positions + point_normals/10, point_semantic_colors, visible=False)
+
+        # Read predictions
+        prediction_file = os.path.join(test_scenes_file, scene_name + '.txt')
+        objects = get_objects(scene, prediction_file)
+        for obj in objects:
+            v.add_points("Predicted Instances;"+obj.name, obj.points, obj.colors, obj.normals, point_size=15, visible=True)
+
+        # When we added everything we need to the visualizer, we save it.
+        v.save('outputs/'+scene_name+'/')
 
 
 if __name__ == '__main__':

@@ -79,7 +79,8 @@ function get_points(properties){
 
 
 	 var uniforms = {
-        pointSize:    { value: properties['point_size'] },
+        pointSize: { value: properties['point_size'] },
+		alpha: {value: properties['alpha']}
      };
 
 	 var material = new THREE.ShaderMaterial( {
@@ -104,14 +105,25 @@ function get_ground(){
 }
 
 function init_gui(objects){
-	//let fol = gui.addFolder(`Objects`)
 
-	for (const [key, value] of Object.entries(objects)){
+	let menuMap = new Map();
+
+	for (const [name, value] of Object.entries(objects)){
+		let splits = name.split(';')
+		if (splits.length > 1) {
+			let folder_name = splits[0];
+			if (!menuMap.has(folder_name)) {
+				menuMap.set(folder_name, gui.addFolder(folder_name));
+			}
+			let fol = menuMap.get(folder_name);
+			fol.add(value, 'visible').name(splits[1]).onChange(render);
+
+		} else {
+			gui.add(value, 'visible').name(name).onChange(render);
+		}
 		//console.log(key)
-		gui.add(value, 'visible').name(key).onChange(render);
-
 	}
-	//fol.open = true
+	//fol.open = false;
 }
 
 function render() {
