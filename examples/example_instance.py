@@ -55,16 +55,20 @@ def main():
     # First, we set up a visualizer
     v = viz.Visualizer()
 
-    scene_name = "scene0030_00"
+    # scene_name = "scene0715_00"
+    #
+    # data_path_normals = "/home/nekrasov/github/pc_aug/data/processed/scannet/scans_test"
+    # data_path_instance = "/globalwork/data/3d_inst_sem_seg/scannet_francis/eval_full/gt_instance/"
+    #
+    # scene_normals = np.load(os.path.join(data_path_normals, scene_name, scene_name + '_vh_clean_2.npy'))
+    # scene_instance = np.loadtxt(os.path.join(data_path_instance, scene_name+'.txt'))
+    # scene_instance = (np.remainder(scene_instance, 1000)).astype(int)
+    #
+    # scene = np.concatenate((scene_normals, np.reshape(scene_instance, [-1, 1])), axis=1)
 
-    data_path_normals = "/home/nekrasov/github/pc_aug/data/processed/scannet/scans_test"
-    data_path_instance = "/globalwork/data/3d_inst_sem_seg/scannet_francis/eval_full/gt_instance/"
-
-    scene_normals = np.load(os.path.join(data_path_normals, scene_name, scene_name + '_vh_clean_2.npy'))
-    scene_instance = np.loadtxt(os.path.join(data_path_instance, scene_name+'.txt'))
-    scene_instance = (np.remainder(scene_instance, 1000)).astype(int)
-
-    scene = np.concatenate((scene_normals, np.reshape(scene_instance, [-1, 1])), axis=1)
+    # Example with normal
+    scene_name = 'scene0777_00_vh_clean_2'
+    scene = np.load('examples/' + scene_name + '.npy')
     point_positions = scene[:, 0:3] - np.mean(scene[:, 0:3], axis=0)
     point_colors = scene[:, 3:6]
     point_instance_labels = scene[:, -1].astype(int)
@@ -74,9 +78,9 @@ def main():
     point_semantic_colors_gt = create_color_palette()[point_semantic_labels]
     point_size = 35.0
 
-    v.add_points('RGB Color', point_positions, point_colors, point_normals, point_size=point_size, visible=False)
-    v.add_points('GT Semantics', point_positions, point_semantic_colors_gt, point_normals, point_size=point_size)
-    v.add_points('GT Instances', point_positions, point_instance_colors_gt, point_normals, point_size=point_size)
+    v.add_points('RGB Color', point_positions, point_colors, point_size=point_size, visible=True)
+    #v.add_points('GT Semantics', point_positions, point_semantic_colors_gt, point_size=point_size)
+    #v.add_points('GT Instances', point_positions, point_instance_colors_gt, point_size=point_size)
     # v.add_points('Pr Semantics', point_positions, point_semantic_colors_pr, point_normals, point_size=point_size)
     # v.add_points('Pr Instances', point_positions, point_instance_colors_pr, point_normals, point_size=point_size)
     # v.add_lines('Normals', point_positions, point_positions + point_normals/10, point_semantic_colors, visible=False)
