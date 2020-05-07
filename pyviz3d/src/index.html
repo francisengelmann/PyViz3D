@@ -11,6 +11,7 @@
 		attribute vec3 color;
 		varying vec4 vColor;
 		uniform float pointSize;
+		uniform float alpha;
 
 		const mat4 light_color_4 = mat4(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0) * 0.4;
 		const vec4 light_diffuse_power_4 = vec4(1.0, 1.0, 1.0, 1.0) * 0.5;
@@ -78,7 +79,8 @@
 					diffuse_color * light_color_4[2].xyz * light_diffuse_power_4[2] * cos_theta[2] +
 					specular_color * light_color_4[2].xyz * light_specular_power_4[2] * pow(cos_alpha[2], light_specular_shininess_4[2]) +
 					diffuse_color * light_color_4[3].xyz * light_diffuse_power_4[3] * cos_theta[3] +
-					specular_color * light_color_4[3].xyz * light_specular_power_4[3] * pow(cos_alpha[3], light_specular_shininess_4[3]), 1);
+					specular_color * light_color_4[3].xyz * light_specular_power_4[3] * pow(cos_alpha[3], light_specular_shininess_4[3]),
+					alpha);
 
 		}
 
@@ -94,7 +96,6 @@
 		</script>
 	</head>
 	<body>
-	PyViz3D loading ...
 	<div id="render_container"></div>
 	</body>
 </html>

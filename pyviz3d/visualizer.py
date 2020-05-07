@@ -15,7 +15,7 @@ class Visualizer:
     def __init__(self):
         self.elements = {}  # dict of elements to display
 
-    def add_points(self, name, positions, colors=None, normals=None, point_size=25, visible=True):
+    def add_points(self, name, positions, colors=None, normals=None, point_size=25, visible=True, alpha=1.0):
         """Add points to the visualizer.
 
         :param name: The name of the points displayed in the visualizer.
@@ -24,12 +24,13 @@ class Visualizer:
         :param colors: The point colors.
         :param point_size: The point size.
         :param visible: Bool if points are visible.
+        :param alpha: Alpha value of colors.
         """
         if colors is None:
             colors = np.zeros(positions.shape)
         if normals is None:
             normals = np.ones(positions.shape)
-        self.elements[name] = Points(positions, colors, normals, point_size, visible)
+        self.elements[name] = Points(positions, colors, normals, point_size, visible, alpha)
 
     def add_lines(self, name, lines_start, lines_end, colors=None, visible=True):
         """Add lines to the visualizer.
