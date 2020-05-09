@@ -98,27 +98,30 @@ def label_name(label_id):
 
 class Object:
 
-    def __init__(self, name, points, colors, normals):
+    def __init__(self, name, points, semantic_colors, instance_colors, normals):
         self.name = name
         self.points = points
-        self.colors = colors
+        self.semantic_colors = semantic_colors
+        self.instance_colors = instance_colors
         self.normals = normals
 
 
 def get_objects(scene, prediction_file):
-
     objects = []
     with open(prediction_file) as fp:
         line = fp.readline()
         while line:
             splits = line.strip().split(' ')
-            name = str(len(objects))+'_'+label_name(int(splits[1]))
+            semantic_id = int(splits[1])
+            instance_id = len(objects)
+            name = str(instance_id)+'_'+label_name(semantic_id)
             mask_file = os.path.join(os.path.dirname(prediction_file), splits[0])
             mask = np.loadtxt(mask_file).astype(int) == 1
             points = scene[mask, 0:3]
-            colors = scene[mask, 3:6]*0.1 + create_color_palette()[int(splits[1])]*0.9
+            semantic_colors = scene[mask, 3:6] * 0 + create_color_palette()[semantic_id]
+            instance_colors = scene[mask, 3:6] * 0 + create_color_palette()[instance_id]
             normals = scene[mask, 6:9]
-            obj = Object(name, points, colors, normals)
+            obj = Object(name, points, semantic_colors, instance_colors, normals)
             objects.append(obj)
             line = fp.readline()
 
@@ -141,7 +144,7 @@ def main():
             test_scenes.append(line.strip().split('.')[0])
             line = fp.readline()
     test_scenes = ['scene0733_00', 'scene0744_00', 'scene0746_00', 'scene0748_00', 'scene0770_00']
-    # test_scenes = ['scene0733_00']
+    #test_scenes = ['scene0733_00']
 
     for scene_name in test_scenes:
 
@@ -162,9 +165,8 @@ def main():
         point_normals = scene[:, 6:9]
         # point_instance_colors_gt = create_color_palette()[point_instance_labels]
         point_semantic_colors_gt = create_color_palette()[point_semantic_labels]
-        point_size = 25.0
 
-        v.add_points('Input Scene;RGB', point_positions, point_colors, point_normals, point_size=15, visible=True, alpha=0.2)
+        v.add_points('Input 3D Scene', point_positions, point_colors, point_normals, point_size=15, visible=True)
         # v.add_points('GT Semantics', point_positions, point_semantic_colors_gt, point_normals, point_size=point_size)
         # v.add_points('GT Instances', point_positions, point_instance_colors_gt, point_normals, point_size=point_size)
         # v.add_points('Pr Semantics', point_positions, point_semantic_colors_pr, point_normals, point_size=point_size)
@@ -174,11 +176,17 @@ def main():
         # Read predictions
         prediction_file = os.path.join(test_scenes_file, scene_name + '.txt')
         objects = get_objects(scene, prediction_file)
-        for obj in objects:
-            v.add_points("Predicted Instances;"+obj.name, obj.points, obj.colors, obj.normals, point_size=15, visible=True)
+
+        object_points = np.concatenate([obj.points for obj in objects], axis=0)
+        object_normals = np.concatenate([obj.normals for obj in objects], axis=0)
+        object_semantic_points = np.concatenate([obj.semantic_colors for obj in objects], axis=0)
+        object_instance_points = np.concatenate([obj.instance_colors for obj in objects], axis=0)
+
+        v.add_points("Predicted Objects;Semantic Labels", object_points, object_semantic_points, object_normals, point_size=25, visible=True)
+        v.add_points("Predicted Objects;Instance Labels", object_points, object_instance_points, object_normals, point_size=25, visible=True)
 
         # When we added everything we need to the visualizer, we save it.
-        v.save('outputs/'+scene_name+'/')
+        v.save('3D_MPA_scannet_test_scenes/'+scene_name+'/')
 
 
 if __name__ == '__main__':
