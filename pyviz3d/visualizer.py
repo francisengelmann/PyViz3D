@@ -90,5 +90,5 @@ class Visualizer:
         print('1) Start local server:')
         print('    cd '+directory_destination+'; ' + http_server_string)
         print('2) Open in browser:')
-        print('    http://localhost:' + str(port))
+        print('    http://0.0.0.0:' + str(port))
         print('************************************************************************')

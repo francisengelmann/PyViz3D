@@ -130,8 +130,6 @@ def get_objects(scene, prediction_file):
 
 def main():
 
-    # First, we set up a visualizer
-
     data_path_normals = "/home/nekrasov/github/pc_aug/data/processed/scannet/scans_test"
     # data_path_instance = "/globalwork/data/3d_inst_sem_seg/scannet_francis/full/gt_instance/"
 

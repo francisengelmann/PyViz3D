@@ -43,6 +43,24 @@ function get_cube(){
 	return cube
 }
 
+function add_progress_bar(){
+    let gProgressElement = document.createElement("div");
+    const html_code = '<div class="progress">\n' +
+		'<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" id="progress_bar">Loading...</div>\n' +
+		'</div>';
+    gProgressElement.innerHTML = html_code;
+    gProgressElement.id = "progress_bar_id"
+    gProgressElement.style.left = "20%";
+    gProgressElement.style.right = "20%";
+    gProgressElement.style.position = "fixed";
+    gProgressElement.style.top = "50%";
+    document.body.appendChild(gProgressElement);
+}
+
+function hide_progress_bar(){
+	document.getElementById( 'progress_bar_id' ).innerHTML = "";
+}
+
 function get_points(properties){
 	// Add points
 	// https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_points.html
@@ -117,13 +135,12 @@ function init_gui(objects){
 			}
 			let fol = menuMap.get(folder_name);
 			fol.add(value, 'visible').name(splits[1]).onChange(render);
+			fol.open();
 
 		} else {
 			gui.add(value, 'visible').name(name).onChange(render);
 		}
-		//console.log(key)
 	}
-	//fol.open = false;
 }
 
 function render() {
@@ -132,7 +149,7 @@ function render() {
 
 function init(){
 	scene.background = new THREE.Color(0xffffff);
-	camera.position.set(5, 5, 5);
+	camera.position.set(3, 3, 3);
 	camera.lookAt(0, 0 , 0);
 	controls.update()
 	renderer.setSize(window.innerWidth, window.innerHeight);
@@ -157,7 +174,11 @@ function init(){
 	raycaster.params.Points.threshold = threshold;
 }
 
-function create_threejs_objects(properties){
+async function create_threejs_objects(properties){
+
+	let num_objects_curr = 0.0;
+	let num_objects = parseFloat(Object.entries(properties).length);
+
 	for (const [object_name, object_properties] of Object.entries(properties)) {
 		if (String(object_properties['type']).localeCompare('points') == 0){
 			threejs_objects[object_name] = get_points(object_properties);
@@ -167,8 +188,14 @@ function create_threejs_objects(properties){
 			threejs_objects[object_name] = get_lines(object_properties);
     		render();
 		}
-		threejs_objects[object_name].visible = object_properties['visible']
+		threejs_objects[object_name].visible = object_properties['visible'];
 		threejs_objects[object_name].frustumCulled = false;
+		num_objects_curr += 1.0;
+		let width_string = String(parseInt(num_objects_curr/num_objects*100.0))+'%';
+		console.log(width_string);
+		document.getElementById('progress_bar').style.width = width_string;
+		document.getElementById('progress_bar').innerText = width_string;
+		await new Promise(resolve => setTimeout(resolve, 500));
 	}
 	// Add axis helper
 	threejs_objects['Axis'] = new THREE.AxesHelper(1);
@@ -186,6 +213,16 @@ const renderer = new THREE.WebGLRenderer({antialias: true});
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000);
 camera.up.set(0, 0, 1);
 
+window.addEventListener('resize', onWindowResize, false);
+
+function onWindowResize(){
+    const innerWidth = window.innerWidth
+    const innerHeight = window.innerHeight;
+    renderer.setSize(innerWidth, innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    render();
+}
 
 //Orbit Control
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -217,9 +254,11 @@ init();
 
 // Load nodes.json and perform one after the other the following commands:
 fetch('nodes.json')
+	.then(response => {add_progress_bar(); return response;})
     .then(response => {return response.json();})
     //.then(json_response => {console.log(json_response); return json_response})
     .then(json_response => create_threejs_objects(json_response))
     .then(() => add_threejs_objects_to_scene(threejs_objects))
     .then(() => init_gui(threejs_objects))
-    .then(render);
+	.then(() => hide_progress_bar())
+	.then(render);
