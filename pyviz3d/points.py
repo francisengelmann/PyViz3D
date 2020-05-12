@@ -32,4 +32,3 @@ class Points:
             f.write(bin_positions)
             f.write(bin_normals)
             f.write(bin_colors)
-
