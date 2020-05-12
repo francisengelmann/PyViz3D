@@ -47,7 +47,7 @@ def create_color_palette():
        (82, 84, 163),  		# otherfurn
        (100, 85, 144)
     ])
-    return np.concatenate([palette, palette * 10, palette * 100])
+    return np.concatenate([palette, palette[1:, :] * 10, palette[1:, :] * 100])
 
 
 def label_name(label_id):
@@ -119,7 +119,7 @@ def get_objects(scene, prediction_file):
             mask = np.loadtxt(mask_file).astype(int) == 1
             points = scene[mask, 0:3]
             semantic_colors = scene[mask, 3:6] * 0 + create_color_palette()[semantic_id]
-            instance_colors = scene[mask, 3:6] * 0 + create_color_palette()[instance_id]
+            instance_colors = scene[mask, 3:6] * 0 + create_color_palette()[instance_id + 1]
             normals = scene[mask, 6:9]
             obj = Object(name, points, semantic_colors, instance_colors, normals)
             objects.append(obj)
