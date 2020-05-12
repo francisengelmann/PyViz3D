@@ -3,6 +3,7 @@
 from .points import Points
 from .cuboid import Cuboid
 from .lines import Lines
+from .camera import Camera
 import os
 import sys
 import shutil
@@ -12,8 +13,10 @@ import numpy as np
 
 class Visualizer:
 
-    def __init__(self):
-        self.elements = {}  # dict of elements to display
+    def __init__(self, position=[3.0, 3.0, 3.0], look_at = [0.0, 0.0, 0.0]):
+        self.camera = Camera(position=np.array(np.array(position)),
+                             look_at=np.array(np.array(look_at)))
+        self.elements = {'Camera_0': self.camera}  # dict of elements to display
 
     def add_points(self, name, positions, colors=None, normals=None, point_size=25, visible=True, alpha=1.0):
         """Add points to the visualizer.

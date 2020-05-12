@@ -57,8 +57,32 @@ function add_progress_bar(){
     document.body.appendChild(gProgressElement);
 }
 
+function add_watermark(){
+	let watermark = document.createElement("div");
+    const html_code = '<a href="https://francisengelmann.github.io/pyviz3d/" target="_blank"><b>PyViz3D</b></a>';
+    watermark.innerHTML = html_code;
+    watermark.id = "watermark"
+    watermark.style.right = "5px";
+    watermark.style.position = "fixed";
+    watermark.style.bottom = "5px";
+    watermark.style.color = "#999";
+    watermark.style.fontSize = "7ox";
+    document.body.appendChild(watermark);
+}
+
 function hide_progress_bar(){
 	document.getElementById( 'progress_bar_id' ).innerHTML = "";
+}
+
+function set_camera_properties(properties){
+	camera.position.set(properties['position'][0],
+						properties['position'][1],
+						properties['position'][2]);
+	controls.target = new THREE.Vector3(properties['look_at'][0],
+	 	                                properties['look_at'][1],
+	 						    		properties['look_at'][2]);
+	camera.updateProjectionMatrix();
+	controls.update()
 }
 
 function get_points(properties){
@@ -149,13 +173,11 @@ function render() {
 
 function init(){
 	scene.background = new THREE.Color(0xffffff);
-	camera.position.set(3, 3, 3);
-	camera.lookAt(0, 0 , 0);
 	controls.update()
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
 	let hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-	hemiLight.position.set( 0, 20, 0 );
+	hemiLight.position.set(0, 20, 0);
 	scene.add(hemiLight);
 
 	let dirLight = new THREE.DirectionalLight( 0xffffff );
@@ -177,9 +199,14 @@ function init(){
 async function create_threejs_objects(properties){
 
 	let num_objects_curr = 0.0;
-	let num_objects = parseFloat(Object.entries(properties).length);
+	let num_objects = parseFloat(Object.entries(properties).length) - 1;
 
 	for (const [object_name, object_properties] of Object.entries(properties)) {
+		if (String(object_properties['type']).localeCompare('camera') == 0){
+			set_camera_properties(object_properties);
+    		render();
+    		continue;
+		}
 		if (String(object_properties['type']).localeCompare('points') == 0){
 			threejs_objects[object_name] = get_points(object_properties);
     		render();
@@ -191,14 +218,13 @@ async function create_threejs_objects(properties){
 		threejs_objects[object_name].visible = object_properties['visible'];
 		threejs_objects[object_name].frustumCulled = false;
 		num_objects_curr += 1.0;
-		let width_string = String(parseInt(num_objects_curr/num_objects*100.0))+'%';
-		console.log(width_string);
+		let width_string = String(parseInt(num_objects_curr / num_objects * 100.0))+'%';
 		document.getElementById('progress_bar').style.width = width_string;
 		document.getElementById('progress_bar').innerText = width_string;
-		await new Promise(resolve => setTimeout(resolve, 500));
+		await new Promise(resolve => setTimeout(resolve, 10));
 	}
 	// Add axis helper
-	threejs_objects['Axis'] = new THREE.AxesHelper(1);
+	//threejs_objects['Axis'] = new THREE.AxesHelper(1);
 	render();
 }
 
@@ -207,13 +233,6 @@ function add_threejs_objects_to_scene(threejs_objects){
 		scene.add(value);
 	}
 }
-
-const scene = new THREE.Scene();
-const renderer = new THREE.WebGLRenderer({antialias: true});
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000);
-camera.up.set(0, 0, 1);
-
-window.addEventListener('resize', onWindowResize, false);
 
 function onWindowResize(){
     const innerWidth = window.innerWidth
@@ -224,11 +243,17 @@ function onWindowResize(){
     render();
 }
 
+const scene = new THREE.Scene();
+const renderer = new THREE.WebGLRenderer({antialias: true});
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000);
+camera.up.set(0, 0, 1);
+
+window.addEventListener('resize', onWindowResize, false);
+
+
 //Orbit Control
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.addEventListener("change", render);
-window.addEventListener("resize", render)
-
 controls.enableKeys = true;
 controls.enablePan = true; // enable dragging
 
@@ -236,7 +261,7 @@ let raycaster;
 let intersection = null;
 let mouse = new THREE.Vector2();
 
-const gui = new GUI();
+const gui = new GUI({autoPlace: true, width: 120});
 
 //let container = document.getElementById('render_container');
 //document.body.appendChild(container);
@@ -250,13 +275,14 @@ document.getElementById('render_container').appendChild(renderer.domElement)
 // dict(?) containing all objects of the scene
 let threejs_objects = {};
 
+//add_watermark();
 init();
 
 // Load nodes.json and perform one after the other the following commands:
 fetch('nodes.json')
 	.then(response => {add_progress_bar(); return response;})
     .then(response => {return response.json();})
-    //.then(json_response => {console.log(json_response); return json_response})
+    .then(json_response => {console.log(json_response); return json_response})
     .then(json_response => create_threejs_objects(json_response))
     .then(() => add_threejs_objects_to_scene(threejs_objects))
     .then(() => init_gui(threejs_objects))
