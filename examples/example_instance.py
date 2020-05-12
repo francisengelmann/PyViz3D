@@ -141,12 +141,22 @@ def main():
         while line:
             test_scenes.append(line.strip().split('.')[0])
             line = fp.readline()
-    test_scenes = ['scene0733_00', 'scene0744_00', 'scene0746_00', 'scene0748_00', 'scene0770_00']
-    #test_scenes = ['scene0733_00']
+    test_scenes = ['scene0801_00', 'scene0747_00', 'scene0793_00', 'scene0708_00']
+    test_scene_camera_positions = {'scene0801_00': [[-2, 0, 2], [1, 1, 0]],
+                                   'scene0793_00': [[2, -0.35, 1.5], [0, 0, 0]],
+                                   'scene0747_00': [[2, -2.2, 2], [0.5, -2, 0]],
+                                   'scene0708_00': [[-1.3, -1.5, 1.3], [0, 0, 0]]}
 
     for scene_name in test_scenes:
 
-        v = viz.Visualizer()
+        camera_positions = [5, 5, 5]
+        camera_lookAt = [0, 0, 0]
+        try:
+            camera_positions = test_scene_camera_positions[scene_name][0]
+            camera_lookAt = test_scene_camera_positions[scene_name][1]
+        except:
+            pass
+        v = viz.Visualizer(camera_positions, camera_lookAt)
 
         # Read scene
         scene_normals = np.load(os.path.join(data_path_normals, scene_name, scene_name + '_vh_clean_2.npy'))
@@ -180,8 +190,8 @@ def main():
         object_semantic_points = np.concatenate([obj.semantic_colors for obj in objects], axis=0)
         object_instance_points = np.concatenate([obj.instance_colors for obj in objects], axis=0)
 
-        v.add_points("Predicted Objects;Semantic Labels", object_points, object_semantic_points, object_normals, point_size=25, visible=True)
-        v.add_points("Predicted Objects;Instance Labels", object_points, object_instance_points, object_normals, point_size=25, visible=True)
+        v.add_points("Object Semantics", object_points, object_semantic_points, object_normals, point_size=25, visible=True)
+        v.add_points("Object Instances", object_points, object_instance_points, object_normals, point_size=25, visible=True)
 
         # When we added everything we need to the visualizer, we save it.
         v.save('3D_MPA_scannet_test_scenes/'+scene_name+'/')
