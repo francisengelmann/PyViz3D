@@ -29,11 +29,14 @@ class Visualizer:
         :param visible: Bool if points are visible.
         :param alpha: Alpha value of colors.
         """
+        shading_type = 1  # Phong shading
         if colors is None:
-            colors = np.zeros(positions.shape)
+            colors = np.ones(positions.shape) * 50  # gray
         if normals is None:
             normals = np.ones(positions.shape)
-        self.elements[name] = Points(positions, colors, normals, point_size, visible, alpha)
+            shading_type = 0  # Unifor shading when no normals are available
+
+        self.elements[name] = Points(positions, colors, normals, point_size, visible, alpha, shading_type)
 
     def add_lines(self, name, lines_start, lines_end, colors=None, visible=True):
         """Add lines to the visualizer.

@@ -2,6 +2,8 @@ import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threej
 import {GUI} from 'https://threejsfundamentals.org/3rdparty/dat.gui.module.js';
 import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r112/examples/jsm/controls/OrbitControls.js';
 
+let num_objects_curr = 0;
+let num_objects = 100;
 
 function onDoubleClick(event) {
 	//console.log(event);
@@ -46,7 +48,7 @@ function get_cube(){
 function add_progress_bar(){
     let gProgressElement = document.createElement("div");
     const html_code = '<div class="progress">\n' +
-		'<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" id="progress_bar">Loading...</div>\n' +
+		'<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" id="progress_bar"></div>\n' +
 		'</div>';
     gProgressElement.innerHTML = html_code;
     gProgressElement.id = "progress_bar_id"
@@ -55,6 +57,18 @@ function add_progress_bar(){
     gProgressElement.style.position = "fixed";
     gProgressElement.style.top = "50%";
     document.body.appendChild(gProgressElement);
+}
+
+function step_progress_bar(){
+	num_objects_curr += 1.0
+	let progress_int = parseInt(num_objects_curr / num_objects * 100.0)
+	let width_string = String(progress_int)+'%';
+	document.getElementById('progress_bar').style.width = width_string;
+	document.getElementById('progress_bar').innerText = width_string;
+
+	if (progress_int==100) {
+		document.getElementById( 'progress_bar_id' ).innerHTML = "";
+	}
 }
 
 function add_watermark(){
@@ -70,9 +84,6 @@ function add_watermark(){
     document.body.appendChild(watermark);
 }
 
-function hide_progress_bar(){
-	document.getElementById( 'progress_bar_id' ).innerHTML = "";
-}
 
 function set_camera_properties(properties){
 	camera.position.set(properties['position'][0],
@@ -83,6 +94,7 @@ function set_camera_properties(properties){
 	 						    		properties['look_at'][2]);
 	camera.updateProjectionMatrix();
 	controls.update()
+
 }
 
 function get_points(properties){
@@ -108,32 +120,33 @@ function get_points(properties){
 			geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
 			geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors_float32, 3));
 		})
+		.then(step_progress_bar)
         .then(render);
 
 	 // var loader = new THREE.TextureLoader();
 	 // var texture = loader.load( 'disc.png' );
-	 // let material = new THREE.PointsMaterial({
-     //     size: properties['point_size'],
-	 //     map: texture,
-	 //     alphaTest: 0.5,
-     //     vertexColors: THREE.VertexColors,
-     //     sizeAttenuation: true});
+
+	// let material = new THREE.PointsMaterial({
+    //      size: properties['point_size'],
+	//      map: texture,
+	//      alphaTest: 0.5,
+    //      vertexColors: THREE.VertexColors,
+    //      sizeAttenuation: true});
 
 
-	 var uniforms = {
+	 let uniforms = {
         pointSize: { value: properties['point_size'] },
-		alpha: {value: properties['alpha']}
+		alpha: {value: properties['alpha']},
+		shading_type: {value: properties['shading_type']},
      };
 
-	 var material = new THREE.ShaderMaterial( {
+	 let material = new THREE.ShaderMaterial( {
 		uniforms:       uniforms,
         vertexShader:   document.getElementById( 'vertexshader' ).textContent,
         fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
-        transparent:    true
+        transparent:    true});
 
-    } );
-
-	var points = new THREE.Points(geometry, material);
+	let points = new THREE.Points(geometry, material);
 	return points
 }
 
@@ -196,15 +209,16 @@ function init(){
 	raycaster.params.Points.threshold = threshold;
 }
 
-async function create_threejs_objects(properties){
+function create_threejs_objects(properties){
 
-	let num_objects_curr = 0.0;
-	let num_objects = parseFloat(Object.entries(properties).length) - 1;
+	num_objects_curr = 0.0;
+	num_objects = parseFloat(Object.entries(properties).length);
 
 	for (const [object_name, object_properties] of Object.entries(properties)) {
 		if (String(object_properties['type']).localeCompare('camera') == 0){
 			set_camera_properties(object_properties);
     		render();
+    		step_progress_bar();
     		continue;
 		}
 		if (String(object_properties['type']).localeCompare('points') == 0){
@@ -217,20 +231,18 @@ async function create_threejs_objects(properties){
 		}
 		threejs_objects[object_name].visible = object_properties['visible'];
 		threejs_objects[object_name].frustumCulled = false;
-		num_objects_curr += 1.0;
-		let width_string = String(parseInt(num_objects_curr / num_objects * 100.0))+'%';
-		document.getElementById('progress_bar').style.width = width_string;
-		document.getElementById('progress_bar').innerText = width_string;
-		await new Promise(resolve => setTimeout(resolve, 10));
+
+		//await new Promise(resolve => setTimeout(resolve, 10));
 	}
 	// Add axis helper
-	//threejs_objects['Axis'] = new THREE.AxesHelper(1);
+	threejs_objects['Axis'] = new THREE.AxesHelper(1);
 	render();
 }
 
 function add_threejs_objects_to_scene(threejs_objects){
 	for (const [key, value] of Object.entries(threejs_objects)) {
 		scene.add(value);
+		console.log('Adding '+key)
 	}
 }
 
@@ -286,5 +298,6 @@ fetch('nodes.json')
     .then(json_response => create_threejs_objects(json_response))
     .then(() => add_threejs_objects_to_scene(threejs_objects))
     .then(() => init_gui(threejs_objects))
-	.then(() => hide_progress_bar())
-	.then(render);
+	.then(() => console.log('done'))
+	.then(render)
+	.then(() => console.log('hiding progress bar'));
