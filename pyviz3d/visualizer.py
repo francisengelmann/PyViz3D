@@ -29,6 +29,9 @@ class Visualizer:
         :param visible: Bool if points are visible.
         :param alpha: Alpha value of colors.
         """
+
+        # todo: assert shape and type of inputs
+
         shading_type = 1  # Phong shading
         if colors is None:
             colors = np.ones(positions.shape) * 50  # gray
