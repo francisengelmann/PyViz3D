@@ -38,7 +38,7 @@
 			gl_PointSize = pointSize / length(vertex_position_camera);
 
 			if (shading_type == 0) {  // Uniform shading
-				vColor = vec4(color, 1.0);
+				vColor = vec4(color, alpha);
 			}
 
 			if (shading_type == 1) {  // Phong shading
