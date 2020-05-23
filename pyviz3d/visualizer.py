@@ -13,7 +13,7 @@ import numpy as np
 
 class Visualizer:
 
-    def __init__(self, position=[3.0, 3.0, 3.0], look_at = [0.0, 0.0, 0.0]):
+    def __init__(self, position=[3.0, 3.0, 3.0], look_at=[0.0, 0.0, 0.0]):
         self.camera = Camera(position=np.array(np.array(position)),
                              look_at=np.array(np.array(look_at)))
         self.elements = {'Camera_0': self.camera}  # dict of elements to display
@@ -31,8 +31,8 @@ class Visualizer:
         """
 
         assert positions.shape[1] == 3
-        assert positions.shape == colors.shape or colors is None
-        assert positions.shape == normals.shape or normals is None
+        assert colors is None or positions.shape == colors.shape
+        assert normals is None or positions.shape == normals.shape
 
         shading_type = 1  # Phong shading
         if colors is None:
@@ -61,7 +61,7 @@ class Visualizer:
 
         assert lines_start.shape[1] == 3
         assert lines_start.shape == lines_end.shape
-        assert lines_start.shape == colors.shape or colors is None
+        assert colors is None or lines_start.shape == colors.shape
 
         if colors is None:
             colors = np.ones(lines_start.shape, dtype=np.uint8) * 50  # gray
