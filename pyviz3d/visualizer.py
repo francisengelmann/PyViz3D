@@ -30,14 +30,22 @@ class Visualizer:
         :param alpha: Alpha value of colors.
         """
 
-        # todo: assert shape and type of inputs
+        assert positions.shape[1] == 3
+        assert positions.shape == colors.shape or colors is None
+        assert positions.shape == normals.shape or normals is None
 
         shading_type = 1  # Phong shading
         if colors is None:
-            colors = np.ones(positions.shape) * 50  # gray
+            colors = np.ones(positions.shape, dtype=np.uint8) * 50  # gray
         if normals is None:
-            normals = np.ones(positions.shape)
+            normals = np.ones(positions.shape, dtype=np.float32)
             shading_type = 0  # Unifor shading when no normals are available
+
+        positions = positions.astype(np.float32)
+        colors = colors.astype(np.uint8)
+        normals = normals.astype(np.float32)
+
+        alpha = min(max(alpha, 0.0), 1.0)  # cap alpha to [0..1]
 
         self.elements[name] = Points(positions, colors, normals, point_size, visible, alpha, shading_type)
 
@@ -50,7 +58,18 @@ class Visualizer:
         :param colors: The line colors.
         :param visible: Bool if lines are visible.
         """
-        self.elements[name] = Lines(lines_start, lines_end, colors, visible)
+
+        assert lines_start.shape[1] == 3
+        assert lines_start.shape == lines_end.shape
+        assert lines_start.shape == colors.shape or colors is None
+
+        if colors is None:
+            colors = np.ones(lines_start.shape, dtype=np.uint8) * 50  # gray
+
+        colors = colors.astype(np.uint8)
+        lines_start = lines_start.astype(np.float32)
+        lines_end = lines_end.astype(np.float32)
+        self.elements[name] = Lines(lines_start, lines_end, colors, colors, visible)
 
     def add_bounding_box(self, name, position, size, orientation=None):
         """Add bounding box.

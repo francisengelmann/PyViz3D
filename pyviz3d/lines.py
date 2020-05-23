@@ -3,15 +3,15 @@ import numpy as np
 
 
 class Lines:
-    def __init__(self, lines_start, lines_end, colors, visible=True):
+    def __init__(self, lines_start, lines_end, colors_start, colors_end, visible):
         # Interleave start and end positions for WebGL.
-        num_lines = lines_start.shape[0]
-        positions = np.empty((num_lines * 2, 3), dtype=lines_start.dtype)
-        positions[0::2] = lines_start
-        positions[1::2] = lines_end
-
-        self.positions = positions.astype(np.float32)
-        self.colors = colors.astype(np.uint8)
+        self.num_lines = lines_start.shape[0]
+        self.positions = np.empty((self.num_lines * 2, 3), dtype=lines_start.dtype)
+        self.positions[0::2] = lines_start
+        self.positions[1::2] = lines_end
+        self.colors = np.empty((self.num_lines * 2, 3), dtype=np.uint8)
+        self.colors[0::2] = colors_start
+        self.colors[1::2] = colors_end
         self.visible = visible
 
     def get_properties(self, binary_filename):
@@ -21,7 +21,7 @@ class Lines:
         json_dict = {}
         json_dict['type'] = 'lines'
         json_dict['visible'] = self.visible
-        json_dict['num_lines'] = self.positions.shape[0]
+        json_dict['num_lines'] = self.num_lines
         json_dict['binary_filename'] = binary_filename
         return json_dict
 

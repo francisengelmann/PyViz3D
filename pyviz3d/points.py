@@ -3,10 +3,10 @@ import numpy as np
 
 
 class Points:
-    def __init__(self, positions, colors, normals, point_size=25, visible=True, alpha=1.0, shading_type=1):
-        self.positions = positions.astype(np.float32)
-        self.colors = colors.astype(np.uint8)
-        self.normals = normals.astype(np.float32)
+    def __init__(self, positions, colors, normals, point_size, visible, alpha, shading_type=1):
+        self.positions = positions
+        self.colors = colors
+        self.normals = normals
         self.point_size = point_size
         self.visible = visible
         self.alpha = alpha

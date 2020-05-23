@@ -26,12 +26,18 @@ function get_lines(properties){
     fetch(binary_filename)
     .then(response => response.arrayBuffer())
     .then(buffer => {
-        positions = new Float32Array(buffer, 0, 3 * num_lines);
+        positions = new Float32Array(buffer, 0, 3 * num_lines * 2);
+        let colors_uint8 = new Uint8Array(buffer, (3 * num_lines * 2) * 4, 3 * num_lines * 2);
+        let colors_float32 = Float32Array.from(colors_uint8);
+        for(let i=0; i<colors_float32.length; i++) {
+         	colors_float32[i] /= 255.0;
+        }
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    }).then(render);
+        geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors_float32, 3));
 
-    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, 3 ));
-	var material = new THREE.LineBasicMaterial({color: 0xff7700});
+    }).then(step_progress_bar).then(render);
+
+	var material = new THREE.LineBasicMaterial({color: 0xFFFFFF, vertexColors: true});
 	return new THREE.LineSegments( geometry, material );
 
 }
