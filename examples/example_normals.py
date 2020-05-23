@@ -45,7 +45,7 @@ def create_color_palette():
        (94, 106, 211),
        (82, 84, 163),  		# otherfurn
        (100, 85, 144)
-    ])
+    ], dtype=np.uint8)
 
 
 def main():
