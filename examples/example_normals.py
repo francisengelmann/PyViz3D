@@ -65,7 +65,7 @@ def main():
 
     v.add_points('RGB Color', point_positions, point_colors, point_normals, point_size=point_size, visible=False)
     v.add_points('Semantics', point_positions, point_semantic_colors, point_normals, point_size=point_size)
-    v.add_lines('Normals', point_positions, point_positions + point_normals/10, point_semantic_colors, visible=True)
+    v.add_lines('Normals', point_positions, point_positions + point_normals/10, visible=True)
 
     # When we added everything we need to the visualizer, we save it.
     v.save('test')
