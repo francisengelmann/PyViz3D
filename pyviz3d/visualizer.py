@@ -12,13 +12,22 @@ import numpy as np
 
 
 class Visualizer:
-
     def __init__(self, position=[3.0, 3.0, 3.0], look_at=[0.0, 0.0, 0.0]):
-        self.camera = Camera(position=np.array(np.array(position)),
-                             look_at=np.array(np.array(look_at)))
-        self.elements = {'Camera_0': self.camera}  # dict of elements to display
+        self.camera = Camera(
+            position=np.array(np.array(position)), look_at=np.array(np.array(look_at))
+        )
+        self.elements = {"Camera_0": self.camera}  # dict of elements to display
 
-    def add_points(self, name, positions, colors=None, normals=None, point_size=25, visible=True, alpha=1.0):
+    def add_points(
+        self,
+        name,
+        positions,
+        colors=None,
+        normals=None,
+        point_size=25,
+        visible=True,
+        alpha=1.0,
+    ):
         """Add points to the visualizer.
 
         :param name: The name of the points displayed in the visualizer.
@@ -47,7 +56,9 @@ class Visualizer:
 
         alpha = min(max(alpha, 0.0), 1.0)  # cap alpha to [0..1]
 
-        self.elements[name] = Points(positions, colors, normals, point_size, visible, alpha, shading_type)
+        self.elements[name] = Points(
+            positions, colors, normals, point_size, visible, alpha, shading_type
+        )
 
     def add_lines(self, name, lines_start, lines_end, colors=None, visible=True):
         """Add lines to the visualizer.
@@ -81,7 +92,7 @@ class Visualizer:
         """
         self.elements[name] = Cuboid(position, size, orientation)
 
-    def save(self, path, port=6008):
+    def save(self, path, port=6008, verbose=True):
         """Creates the visualization and displays the link to it.
 
         :param path: The path to save the visualization files.
@@ -94,29 +105,38 @@ class Visualizer:
             shutil.rmtree(directory_destination)
 
         # Copy website directory
-        directory_source = os.path.realpath(os.path.join(os.path.dirname(__file__), 'src'))
+        directory_source = os.path.realpath(
+            os.path.join(os.path.dirname(__file__), "src")
+        )
         shutil.copytree(directory_source, directory_destination)
 
         # Assemble binary data files
         nodes_dict = {}
         for name, e in self.elements.items():
-            binary_file_path = os.path.join(directory_destination, name+'.bin')
-            nodes_dict[name] = e.get_properties(name+'.bin')
+            binary_file_path = os.path.join(directory_destination, name + ".bin")
+            nodes_dict[name] = e.get_properties(name + ".bin")
             e.write_binary(binary_file_path)
 
         # Write json file containing all scene elements
-        json_file = os.path.join(directory_destination, 'nodes.json')
-        with open(json_file, 'w') as outfile:
+        json_file = os.path.join(directory_destination, "nodes.json")
+        with open(json_file, "w") as outfile:
             json.dump(nodes_dict, outfile)
 
+        if not verbose:
+            return
+
         # Display link
-        http_server_string = 'python -m SimpleHTTPServer ' + str(port)
-        if sys.version[0] == '3':
-            http_server_string = 'python -m http.server ' + str(port)
-        print('')
-        print('************************************************************************')
-        print('1) Start local server:')
-        print('    cd '+directory_destination+'; ' + http_server_string)
-        print('2) Open in browser:')
-        print('    http://0.0.0.0:' + str(port))
-        print('************************************************************************')
+        http_server_string = "python -m SimpleHTTPServer " + str(port)
+        if sys.version[0] == "3":
+            http_server_string = "python -m http.server " + str(port)
+        print("")
+        print(
+            "************************************************************************"
+        )
+        print("1) Start local server:")
+        print("    cd " + directory_destination + "; " + http_server_string)
+        print("2) Open in browser:")
+        print("    http://0.0.0.0:" + str(port))
+        print(
+            "************************************************************************"
+        )
