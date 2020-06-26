@@ -7,6 +7,6 @@ PyViz3D is a python package to visualize 3D scenes directly in your browser.
 
 - [Documentation](https://francisengelmann.github.io/PyViz3D/)
 - [Demo](https://francisengelmann.github.io/pyviz3d_examples/instance/index.html)
-- Install: ```pip install -i https://test.pypi.org/simple/ pyviz3d```
+- Install: ```pip install -i pyviz3d```
 
 [<p align="center"><img width="60%" src="docs/img/example.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)
