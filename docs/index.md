@@ -11,7 +11,7 @@
  [[Code]](https://github.com/francisengelmann/pyviz3d/blob/master/examples/example_normals.py)
 
 ### Installation
-Intall PyViz3D via pip: `pip install -i https://test.pypi.org/simple/ pyviz3d`
+Intall the latest stable PyViz3D via pip: `pip install pyviz3d`
 This is currently on the test-repository of pypi until a stable version is available.
 
 ### Getting Started
