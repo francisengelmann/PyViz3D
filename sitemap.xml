@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url>
      <loc>https://francisengelmann.github.io/pyviz3d/</loc>
-     <lastmod>2020-06-26</lastmod>
+     <lastmod>2020-08-08</lastmod>
      <changefreq>daily</changefreq>
-    </url>
-    <url>
+    </url><url>
      <loc>https://francisengelmann.github.io/pyviz3d/contributing/</loc>
-     <lastmod>2020-06-26</lastmod>
+     <lastmod>2020-08-08</lastmod>
      <changefreq>daily</changefreq>
-    </url>
-    <url>
+    </url><url>
      <loc>https://francisengelmann.github.io/pyviz3d/changelog/</loc>
-     <lastmod>2020-06-26</lastmod>
+     <lastmod>2020-08-08</lastmod>
      <changefreq>daily</changefreq>
-    </url>
-    <url>
+    </url><url>
      <loc>https://francisengelmann.github.io/pyviz3d/distribution/</loc>
-     <lastmod>2020-06-26</lastmod>
+     <lastmod>2020-08-08</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>
