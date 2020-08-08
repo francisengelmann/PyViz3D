@@ -130,7 +130,7 @@ def get_objects(scene, prediction_file):
 
 def main():
 
-    data_path_normals = "/home/nekrasov/github/pc_aug/data/processed/scannet/scans_test"
+    data_path_normals = "/home/nekrasov/github/pc_aug/data/processed/scannet/test/"
     # data_path_instance = "/globalwork/data/3d_inst_sem_seg/scannet_francis/full/gt_instance/"
 
     # Get all names of test scenes
@@ -141,11 +141,11 @@ def main():
         while line:
             test_scenes.append(line.strip().split('.')[0])
             line = fp.readline()
-    test_scenes = ['scene0801_00', 'scene0747_00', 'scene0793_00', 'scene0708_00']
-    test_scene_camera_positions = {'scene0801_00': [[-2, 0, 2], [1, 1, 0]],
-                                   'scene0793_00': [[2, -0.35, 1.5], [0, 0, 0]],
-                                   'scene0747_00': [[2, -2.2, 2], [0.5, -2, 0]],
-                                   'scene0708_00': [[-1.3, -1.5, 1.3], [0, 0, 0]]}
+    test_scenes = ['0801_00', '0747_00', '0793_00', '0708_00']
+    test_scene_camera_positions = {'0801_00': [[-2, 0, 2], [1, 1, 0]],
+                                   '0793_00': [[2, -0.35, 1.5], [0, 0, 0]],
+                                   '0747_00': [[2, -2.2, 2], [0.5, -2, 0]],
+                                   '0708_00': [[-1.3, -1.5, 1.3], [0, 0, 0]]}
 
     for scene_name in test_scenes:
 
@@ -159,7 +159,7 @@ def main():
         v = viz.Visualizer(camera_positions, camera_lookAt)
 
         # Read scene
-        scene_normals = np.load(os.path.join(data_path_normals, scene_name, scene_name + '_vh_clean_2.npy'))
+        scene_normals = np.load(os.path.join(data_path_normals, scene_name+".npy"))  #, scene_name + '_vh_clean_2.npy'))
         # scene_instance = np.loadtxt(os.path.join(data_path_instance, scene_name+'.txt'))
         # scene_instance = (np.remainder(scene_instance, 1000)).astype(int)
         # scene = np.concatenate((scene_normals, np.reshape(scene_instance, [-1, 1])), axis=1)
@@ -174,8 +174,8 @@ def main():
         # point_instance_colors_gt = create_color_palette()[point_instance_labels]
         point_semantic_colors_gt = create_color_palette()[point_semantic_labels]
 
-        v.add_points('Input 3D Scene', point_positions, point_colors, point_normals, point_size=15, visible=True)
-        # v.add_points('GT Semantics', point_positions, point_semantic_colors_gt, point_normals, point_size=point_size)
+        v.add_points('Input 3D Scene', point_positions, point_colors, point_normals, point_size=10, visible=True)
+        # v.add_points('GT x`x`Semantics', point_positions, point_semantic_colors_gt, point_normals, point_size=point_size)
         # v.add_points('GT Instances', point_positions, point_instance_colors_gt, point_normals, point_size=point_size)
         # v.add_points('Pr Semantics', point_positions, point_semantic_colors_pr, point_normals, point_size=point_size)
         # v.add_points('Pr Instances', point_positions, point_instance_colors_pr, point_normals, point_size=point_size)
@@ -190,8 +190,8 @@ def main():
         object_semantic_points = np.concatenate([obj.semantic_colors for obj in objects], axis=0)
         object_instance_points = np.concatenate([obj.instance_colors for obj in objects], axis=0)
 
-        v.add_points("Object Semantics", object_points, object_semantic_points, object_normals, point_size=25, visible=True)
-        v.add_points("Object Instances", object_points, object_instance_points, object_normals, point_size=25, visible=True)
+        v.add_points("Object Semantics", object_points, object_semantic_points, object_normals, point_size=10, visible=True)
+        v.add_points("Object Instances", object_points, object_instance_points, object_normals, point_size=10, visible=True)
 
         # When we added everything we need to the visualizer, we save it.
         v.save('3D_MPA_scannet_test_scenes/'+scene_name+'/')
