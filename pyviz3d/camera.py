@@ -21,7 +21,7 @@ class Camera:
         return json_dict
 
     def write_binary(self, path):
-        """Convert the camera position to bytes and write to specified path."""
+        """Write camera to binary file."""
         bin_position = self.position.tobytes()
         with open(path, "wb") as f:
             f.write(bin_position)

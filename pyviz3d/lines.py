@@ -1,8 +1,10 @@
-# Lines class i.e. normals.
+"""Lines class e.g. to visualize normals."""
 import numpy as np
 
 
 class Lines:
+    """Set of line segments defined by startint points and ending points."""
+
     def __init__(self, lines_start, lines_end, colors_start, colors_end, visible):
         # Interleave start and end positions for WebGL.
         self.num_lines = lines_start.shape[0]
@@ -15,17 +17,19 @@ class Lines:
         self.visible = visible
 
     def get_properties(self, binary_filename):
+        """ Get line properties, they are written into json and interpreted by javascript.
+        :return: A dict conteining object properties.
         """
-        :return: A dict conteining object properties. They are written into json and interpreted by javascript.
-        """
-        json_dict = {}
-        json_dict['type'] = 'lines'
-        json_dict['visible'] = self.visible
-        json_dict['num_lines'] = self.num_lines
-        json_dict['binary_filename'] = binary_filename
+        json_dict = {
+            'type': 'lines',
+            'visible': self.visible,
+            'num_lines': self.num_lines,
+            'binary_filename': binary_filename}
         return json_dict
 
     def write_binary(self, path):
+        """Write lines to binary file."""
+
         bin_positions = self.positions.tobytes()
         bin_colors = self.colors.tobytes()
         with open(path, "wb") as f:

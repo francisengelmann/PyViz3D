@@ -1,8 +1,9 @@
-# Points class i.e. point cloud.
-import numpy as np
+"""Points class i.e. point cloud."""
 
 
 class Points:
+    """Set of points defined by positions, colors, normals and more."""
+
     def __init__(self, positions, colors, normals, point_size, visible, alpha, shading_type=1):
         self.positions = positions
         self.colors = colors
@@ -16,17 +17,18 @@ class Points:
         """
         :return: A dict conteining object properties. They are written into json and interpreted by javascript.
         """
-        json_dict = {}
-        json_dict['type'] = 'points'
-        json_dict['visible'] = self.visible
-        json_dict['alpha'] = self.alpha
-        json_dict['shading_type'] = self.shading_type
-        json_dict['point_size'] = self.point_size
-        json_dict['num_points'] = self.positions.shape[0]
-        json_dict['binary_filename'] = binary_filename
+        json_dict = {
+            'type': 'points',
+            'visible': self.visible,
+            'alpha': self.alpha,
+            'shading_type': self.shading_type,
+            'point_size': self.point_size,
+            'num_points': self.positions.shape[0],
+            'binary_filename': binary_filename}
         return json_dict
 
     def write_binary(self, path):
+        """Write points to binary file."""
         bin_positions = self.positions.tobytes()
         bin_normals = self.normals.tobytes()
         bin_colors = self.colors.tobytes()

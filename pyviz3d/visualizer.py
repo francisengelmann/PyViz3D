@@ -1,4 +1,4 @@
-# The visualizer class is used to show 3d point clouds or bounding boxes in the browser.
+"""The visualizer class is used to show 3d point clouds or bounding boxes in the browser."""
 
 from .points import Points
 from .cuboid import Cuboid
@@ -97,6 +97,7 @@ class Visualizer:
 
         :param path: The path to save the visualization files.
         :param port: The port to show the visualization.
+        :param verbose: Whether to print the web-server message or not.
         """
 
         # Delete destination directory if it exists already

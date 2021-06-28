@@ -90,7 +90,6 @@ function add_watermark(){
     document.body.appendChild(watermark);
 }
 
-
 function set_camera_properties(properties){
 	camera.position.set(properties['position'][0],
 						properties['position'][1],
