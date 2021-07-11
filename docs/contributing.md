@@ -4,7 +4,8 @@
 - Pull the latest stable release from the master branch.
 - Ideally create a new python environment.
 - Do not install and uninstall existing packages of pyviz3d in your local environment. This guarantees that you are running your code and not the one from the installed package.
-- Run your code (i.e. examples) from the root of the code base so guarantee all pathes are correct.
+- The examples in `examples` are a good starting point for developing new features.
+- When running code (e.g. `examples/example_instance.py`) set your working directory to the root directory of the code base such that the path to the pyviz module is correct.
 
 ## Documentation
 The documentation pages are mainted using [mkdocs](https://www.mkdocs.org/).
