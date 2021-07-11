@@ -30,7 +30,7 @@ class Visualizer:
     ):
         """Add points to the visualizer.
 
-        :param name: The name of the points displayed in the visualizer.
+        :param name: The name of the points displayed in the visualizer. Use ';' in the name to create sub-layers.
         :param positions: The point positions.
         :param normals: The point normals.
         :param colors: The point colors.
