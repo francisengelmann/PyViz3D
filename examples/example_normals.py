@@ -55,7 +55,7 @@ def main():
 
     # Example with normals
     scene_name = 'scene0000_00_vh_clean_2'
-    scene = np.load('examples/' + scene_name + '.npy')
+    scene = np.load('examples/data/' + scene_name + '.npy')
     point_positions = scene[:, 0:3] - np.mean(scene[:, 0:3], axis=0)
     point_colors = scene[:, 3:6]
     point_labels = scene[:, -1].astype(int)
@@ -68,7 +68,7 @@ def main():
     v.add_lines('Normals', point_positions, point_positions + point_normals/10, visible=True)
 
     # When we added everything we need to the visualizer, we save it.
-    v.save('test')
+    v.save('normals')
 
 
 if __name__ == '__main__':
