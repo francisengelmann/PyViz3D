@@ -2,8 +2,8 @@
 
 ### Examples
 
-- Draw multiple colored point clouds.
- [[Demo]](https://francisengelmann.github.io/pyviz3d_examples/example/index.html)
+- Draw meshes.
+ [[Demo]](https://francisengelmann.github.io/pyviz3d_examples/meshes/index.html)
  [[Code]](https://github.com/francisengelmann/pyviz3d/blob/master/examples/example_point_cloud.py)
 
 - Draw normals using lines.
