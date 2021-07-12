@@ -1,6 +1,7 @@
 import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r112/build/three.module.js';
 import {GUI} from 'https://threejsfundamentals.org/3rdparty/dat.gui.module.js';
 import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r112/examples/jsm/controls/OrbitControls.js';
+import {OBJLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r127/examples/jsm/loaders/OBJLoader.js';
 
 let num_objects_curr = 0;
 let num_objects = 100;
@@ -155,6 +156,52 @@ function get_points(properties){
 	return points
 }
 
+function get_obj(properties){
+	var container = new THREE.Object3D();
+	function loadModel(object) {
+		object.traverse(
+		function(child) {
+			if (child.isMesh) {
+				console
+				let r = properties['color'][0]
+				let g = properties['color'][1]
+				let b = properties['color'][2]
+				let colorString = "rgb("+r+","+g+", "+b+")"
+				child.material.color.set(new THREE.Color(colorString));
+				console.log('setting colors ' + r + " " + g + " " + b)
+			}
+		});
+		object.translateX(properties['translation'][0])
+		object.translateY(properties['translation'][1])
+		object.translateZ(properties['translation'][2])
+
+		object.rotateX(properties['rotation'][0])
+		object.rotateY(properties['rotation'][1])
+		object.rotateZ(properties['rotation'][2])
+
+		// object.scale.x(properties['scale'][0])
+		// object.scale.y(properties['scale'][1])
+		// object.scale.z(properties['scale'][2])
+		object.scale.set(properties['scale'][0], properties['scale'][1], properties['scale'][2])
+		// properties['scale'][0], properties['scale'][1], properties['scale'][2]
+
+		container.add(object)
+		//container.scale.set(new THREE.Vector3(1,1,1))
+		step_progress_bar();
+		render();
+	}
+
+	const loader = new OBJLoader();
+	loader.load(properties['filename'], loadModel,
+				function (xhr){ // called when loading is in progresses
+					console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+				},
+				function (error){ // called when loading has errors
+					console.log( 'An error happened' );
+				});
+	return container
+}
+
 function get_ground(){
 	let mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(2000, 2000),
 							  new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: true}));
@@ -196,10 +243,10 @@ function init(){
 
 	let hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
 	hemiLight.position.set(0, 20, 0);
-	scene.add(hemiLight);
+	//scene.add(hemiLight);
 
 	let dirLight = new THREE.DirectionalLight( 0xffffff );
-	dirLight.position.set( -10, 10, - 10 );
+	dirLight.position.set(-10, 10, - 10);
 	dirLight.castShadow = true;
 	dirLight.shadow.camera.top = 2;
 	dirLight.shadow.camera.bottom = - 2;
@@ -207,11 +254,31 @@ function init(){
 	dirLight.shadow.camera.right = 2;
 	dirLight.shadow.camera.near = 0.1;
 	dirLight.shadow.camera.far = 40;
-	scene.add(dirLight);
+	//scene.add(dirLight);
+
+	let intensity = 0.5;
+	let color = 0xffffff;
+	const spotLight1 = new THREE.SpotLight(color, intensity);
+	spotLight1.position.set(100, 1000, 0);
+	scene.add(spotLight1);
+	const spotLight2 = new THREE.SpotLight(color, intensity/3.0);
+	spotLight2.position.set(100, -1000, 0);
+	scene.add(spotLight2);
+	const spotLight3 = new THREE.SpotLight(color, intensity);
+	spotLight3.position.set(0, 100, 1000);
+	scene.add(spotLight3);
+	const spotLight4 = new THREE.SpotLight(color, intensity/3.0);
+	spotLight4.position.set(0, 100, -1000);
+	scene.add(spotLight4);
+	const spotLight5 = new THREE.SpotLight(color, intensity);
+	spotLight5.position.set(1000, 0, 100);
+	scene.add(spotLight5);
+	const spotLight6 = new THREE.SpotLight(color, intensity/3.0);
+	spotLight6.position.set(-1000, 0, 100);
+	scene.add(spotLight6);
 
 	raycaster = new THREE.Raycaster();
-	let threshold = 1.0;
-	raycaster.params.Points.threshold = threshold;
+	raycaster.params.Points.threshold = 1.0;
 }
 
 function create_threejs_objects(properties){
@@ -234,10 +301,11 @@ function create_threejs_objects(properties){
 			threejs_objects[object_name] = get_lines(object_properties);
     		render();
 		}
+		if (String(object_properties['type']).localeCompare('obj') == 0){
+			threejs_objects[object_name] = get_obj(object_properties);
+		}
 		threejs_objects[object_name].visible = object_properties['visible'];
 		threejs_objects[object_name].frustumCulled = false;
-
-		//await new Promise(resolve => setTimeout(resolve, 10));
 	}
 	// Add axis helper
 	threejs_objects['Axis'] = new THREE.AxesHelper(1);
@@ -267,7 +335,6 @@ camera.up.set(0, 0, 1);
 
 window.addEventListener('resize', onWindowResize, false);
 
-
 //Orbit Control
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.addEventListener("change", render);
@@ -280,16 +347,10 @@ let mouse = new THREE.Vector2();
 
 const gui = new GUI({autoPlace: true, width: 120});
 
-//let container = document.getElementById('render_container');
-//document.body.appendChild(container);
-//container.appendChild(renderer.domElement);
-
 document.getElementById('render_container').appendChild(renderer.domElement)
 
-//let domElement = document.body.appendChild(renderer.domElement);
-//domElement.addEventListener("dblclick", onDoubleClick);
 
-// dict(?) containing all objects of the scene
+// dict containing all objects of the scene
 let threejs_objects = {};
 
 //add_watermark();

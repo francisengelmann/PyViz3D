@@ -3,6 +3,7 @@
 from .points import Points
 from .cuboid import Cuboid
 from .lines import Lines
+from .mesh import Mesh
 from .camera import Camera
 import os
 import sys
@@ -91,6 +92,20 @@ class Visualizer:
         :param orientation: The orientation (float32, 3x1)
         """
         self.elements[name] = Cuboid(position, size, orientation)
+
+    def add_mesh(self, name, path, translation=[0, 0, 0], rotation=[0, 0, 0], scale=[1, 1, 1], color=[255, 255, 255], visible=True):
+        """Adds a polygon mesh to the scene, as specified in the path, it has to be an .obj file.
+
+        :param name: The name of the mesh displayed in the layers.
+        :param path: The path to the .obj polygon mesh file.
+        :param translation: The 3D tranlsation of the object.
+        :param rotation: The 3D rotation (Euler angles in rad) of the object.
+        :param scale: The 3D scaling of the original object.
+        :param color: The uniform color of the object.
+        :param visible: Whether the object is visible or not.
+        """
+        mesh = Mesh(path, translation=translation, rotation=rotation, scale=scale, color=color, visible=visible)
+        self.elements[name] = mesh
 
     def save(self, path, port=6008, verbose=True):
         """Creates the visualization and displays the link to it.
