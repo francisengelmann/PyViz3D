@@ -29,7 +29,7 @@ def main():
     # Random point clouds.
     for j in range(5):
         i = j + 1
-        name = 'Points_'+str(i)
+        name = 'Points;'+str(i)
         num_points = 3
         point_positions = np.random.random(size=[num_points, 3])
         point_colors = (np.random.random(size=[num_points, 3]) * 255).astype(np.uint8)
