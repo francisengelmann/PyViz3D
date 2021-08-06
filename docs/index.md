@@ -14,7 +14,7 @@
 Intall the latest stable PyViz3D via pip: `pip install pyviz3d`
 
 ### Getting Started
-In this simple example we will display multiple point clouds. [Show example](https://francisengelmann.github.io/pyviz3d_examples/example/index.html).
+In this simple example we will display multiple point clouds.
 
 ```python
 import numpy as np
