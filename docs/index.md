@@ -6,6 +6,10 @@
  [[Demo]](https://francisengelmann.github.io/pyviz3d_examples/meshes/index.html)
  [[Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_meshes.py)
 
+- Draw multiple (oriented) bounding box.
+ [[Demo]](https://francisengelmann.github.io/pyviz3d_examples/bounding_boxes/index.html)
+ [[Code]](https://github.com/francisengelmann/pyviz3d/blob/master/examples/example_bounding_boxes.py)
+
 - Draw normals using lines.
  [[Demo]](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)
  [[Code]](https://github.com/francisengelmann/pyviz3d/blob/master/examples/example_normals.py)
