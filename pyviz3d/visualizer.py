@@ -83,15 +83,23 @@ class Visualizer:
         lines_end = lines_end.astype(np.float32)
         self.elements[name] = Lines(lines_start, lines_end, colors, colors, visible)
 
-    def add_bounding_box(self, name, position, size, orientation=None):
+    def add_bounding_box(self, name, position, size, orientation=None, color=None, alpha=1.0, edge_width=0.01, visible=True):
         """Add bounding box.
 
         :param name: The bounding box name. (string)
         :param position: The center position. (float32, 3x1)
         :param size: The size. (float32, 3x1)
         :param orientation: The orientation (float32, 3x1)
+        :param color: The color. (int32, 3x1)
+        :param alpha: The transparency. (float32)
+        :param edge_width: The width of the edges. (float32)
+        :param visible: Bool, whether visible or not.
         """
-        self.elements[name] = Cuboid(position, size, orientation)
+        if orientation is None:
+            orientation = np.array([0.0, 0.0, 0.0])
+        if color is None:
+            color = np.array([255, 0, 0])
+        self.elements[name] = Cuboid(position, size, orientation, color, alpha, edge_width, visible)
 
     def add_mesh(self, name, path, translation=[0, 0, 0], rotation=[0, 0, 0], scale=[1, 1, 1], color=[255, 255, 255], visible=True):
         """Adds a polygon mesh to the scene, as specified in the path, it has to be an .obj file.

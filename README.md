@@ -13,5 +13,9 @@ PyViz3D is a python package to visualize 3D scenes directly in your browser.
 Polygon meshes example.
 [<p align="center"><img width="60%" src="docs/img/example_meshes.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/meshes/index.html)
 
+Bouning boxes example.
+[<p align="center"><img width="60%" src="docs/img/example_bounding_boxes.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/bounding_boxes/index.html)
+
+
 Point clouds and segments example.
 [<p align="center"><img width="60%" src="docs/img/example.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)

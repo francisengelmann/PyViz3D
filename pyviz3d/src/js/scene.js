@@ -129,17 +129,6 @@ function get_points(properties){
 		.then(step_progress_bar)
         .then(render);
 
-	 // var loader = new THREE.TextureLoader();
-	 // var texture = loader.load( 'disc.png' );
-
-	// let material = new THREE.PointsMaterial({
-    //      size: properties['point_size'],
-	//      map: texture,
-	//      alphaTest: 0.5,
-    //      vertexColors: THREE.VertexColors,
-    //      sizeAttenuation: true});
-
-
 	 let uniforms = {
         pointSize: { value: properties['point_size'] },
 		alpha: {value: properties['alpha']},
@@ -179,14 +168,9 @@ function get_obj(properties){
 		object.rotateY(properties['rotation'][1])
 		object.rotateZ(properties['rotation'][2])
 
-		// object.scale.x(properties['scale'][0])
-		// object.scale.y(properties['scale'][1])
-		// object.scale.z(properties['scale'][2])
 		object.scale.set(properties['scale'][0], properties['scale'][1], properties['scale'][2])
-		// properties['scale'][0], properties['scale'][1], properties['scale'][2]
 
 		container.add(object)
-		//container.scale.set(new THREE.Vector3(1,1,1))
 		step_progress_bar();
 		render();
 	}
@@ -200,6 +184,127 @@ function get_obj(properties){
 					console.log( 'An error happened' );
 				});
 	return container
+}
+
+function get_cuboid(properties){
+	const radius_top = properties['edge_width']
+	const radius_bottom = properties['edge_width']
+	const radial_segments = 30
+	const height = 1
+	let geometry = new THREE.CylinderGeometry(radius_top, radius_bottom, height, radial_segments);
+	for (let i=0; i<geometry.faces.length; i++){
+		const r = properties['color'][0]
+		const g = properties['color'][1]
+		const b = properties['color'][2]
+		for (let j=0; j<3; j++){
+			geometry.faces[i].vertexColors[j] = new THREE.Color("rgb("+r+", "+g+", "+b+")");
+		}
+	}
+
+	let uniforms = {
+		alpha: {value: properties['alpha']},
+		shading_type: {value: 1},
+	};
+	let material = new THREE.ShaderMaterial( {
+		 uniforms:       uniforms,
+    	 vertexShader:   document.getElementById( 'vertexshader' ).textContent,
+	     fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+		 transparent:    true,
+	 });
+
+	const cylinder_x = new THREE.Mesh(geometry, material);
+	cylinder_x.scale.set(1.0, properties['size'][0], 1.0)
+	cylinder_x.rotateZ(3.1415/2.0)
+	const cylinder_00 = cylinder_x.clone()
+	cylinder_00.position.set(0, -properties['size'][1]/2.0, -properties['size'][2]/2.0)
+	const cylinder_01 = cylinder_x.clone()
+	cylinder_01.position.set(0, properties['size'][1]/2.0, -properties['size'][2]/2.0)
+	const cylinder_20 = cylinder_x.clone()
+	cylinder_20.position.set(0, -properties['size'][1]/2.0, properties['size'][2]/2.0)
+	const cylinder_21 = cylinder_x.clone()
+	cylinder_21.position.set(0, properties['size'][1]/2.0, properties['size'][2]/2.0)
+
+	const cylinder_y = new THREE.Mesh(geometry, material);
+	cylinder_y.scale.set(1.0, properties['size'][1], 1.0)
+	const cylinder_02 = cylinder_y.clone()
+	cylinder_02.position.set(-properties['size'][0]/2.0, 0, -properties['size'][2]/2.0)
+	const cylinder_03 = cylinder_y.clone()
+	cylinder_03.position.set(properties['size'][0]/2.0, 0, -properties['size'][2]/2.0)
+	const cylinder_22 = cylinder_y.clone()
+	cylinder_22.position.set(-properties['size'][0]/2.0, 0, properties['size'][2]/2.0)
+	const cylinder_23 = cylinder_y.clone()
+	cylinder_23.position.set(properties['size'][0]/2.0, 0, properties['size'][2]/2.0)
+
+	const cylinder_z = new THREE.Mesh(geometry, material);
+	cylinder_z.scale.set(1.0, properties['size'][2], 1.0)
+	cylinder_z.rotateX(3.1415/2.0)
+	const cylinder_10 = cylinder_z.clone()
+	cylinder_10.position.set(-properties['size'][0]/2.0, -properties['size'][1]/2.0, 0.0)
+	const cylinder_11 = cylinder_z.clone()
+	cylinder_11.position.set(properties['size'][0]/2.0, -properties['size'][1]/2.0, 0.0)
+	const cylinder_12 = cylinder_z.clone()
+	cylinder_12.position.set(-properties['size'][0]/2.0, properties['size'][1]/2.0, 0.0)
+	const cylinder_13 = cylinder_z.clone()
+	cylinder_13.position.set(properties['size'][0]/2.0, properties['size'][1]/2.0, 0.0)
+
+	const corner_geometry = new THREE.SphereGeometry(properties['edge_width'], 30, 30);
+	for (let i=0; i<corner_geometry.faces.length; i++){
+		const r = properties['color'][0]
+		const g = properties['color'][1]
+		const b = properties['color'][2]
+		for (let j=0; j<3; j++){
+			corner_geometry.faces[i].vertexColors[j] = new THREE.Color("rgb("+r+", "+g+", "+b+")");
+		}
+	}
+	const sphere = new THREE.Mesh(corner_geometry, material)
+	const corner_00 = sphere.clone()
+	corner_00.position.set(-properties['size'][0]/2.0, -properties['size'][1]/2.0, -properties['size'][2]/2.0)
+	const corner_01 = sphere.clone()
+	corner_01.position.set(properties['size'][0]/2.0, -properties['size'][1]/2.0, -properties['size'][2]/2.0)
+	const corner_02 = sphere.clone()
+	corner_02.position.set(-properties['size'][0]/2.0, properties['size'][1]/2.0, -properties['size'][2]/2.0)
+	const corner_03 = sphere.clone()
+	corner_03.position.set(properties['size'][0]/2.0, properties['size'][1]/2.0, -properties['size'][2]/2.0)
+	const corner_10 = sphere.clone()
+	corner_10.position.set(-properties['size'][0]/2.0, -properties['size'][1]/2.0, properties['size'][2]/2.0)
+	const corner_11 = sphere.clone()
+	corner_11.position.set(properties['size'][0]/2.0, -properties['size'][1]/2.0, properties['size'][2]/2.0)
+	const corner_12 = sphere.clone()
+	corner_12.position.set(-properties['size'][0]/2.0, properties['size'][1]/2.0, properties['size'][2]/2.0)
+	const corner_13 = sphere.clone()
+	corner_13.position.set(properties['size'][0]/2.0, properties['size'][1]/2.0, properties['size'][2]/2.0)
+
+	const cuboid = new THREE.Group();
+	cuboid.position.set(properties['position'][0], properties['position'][1], properties['position'][2])
+	cuboid.add(cylinder_00)
+	cuboid.add(cylinder_01)
+	cuboid.add(cylinder_20)
+	cuboid.add(cylinder_21)
+	cuboid.add(cylinder_02)
+	cuboid.add(cylinder_03)
+	cuboid.add(cylinder_22)
+	cuboid.add(cylinder_23)
+	cuboid.add(cylinder_10)
+	cuboid.add(cylinder_11)
+	cuboid.add(cylinder_12)
+	cuboid.add(cylinder_13)
+
+	cuboid.add(corner_00)
+	cuboid.add(corner_01)
+	cuboid.add(corner_02)
+	cuboid.add(corner_03)
+	cuboid.add(corner_10)
+	cuboid.add(corner_11)
+	cuboid.add(corner_12)
+	cuboid.add(corner_13)
+
+	cuboid.rotateX(properties['orientation'][0])
+	cuboid.rotateY(properties['orientation'][1])
+	cuboid.rotateZ(properties['orientation'][2])
+	cuboid.position.set(properties['position'][0], properties['position'][1], properties['position'][2])
+
+	return cuboid
+
 }
 
 function get_ground(){
@@ -304,6 +409,11 @@ function create_threejs_objects(properties){
 		if (String(object_properties['type']).localeCompare('obj') == 0){
 			threejs_objects[object_name] = get_obj(object_properties);
 		}
+		if (String(object_properties['type']).localeCompare('cuboid') == 0){
+			threejs_objects[object_name] = get_cuboid(object_properties);
+			step_progress_bar();
+			render();
+		}
 		threejs_objects[object_name].visible = object_properties['visible'];
 		threejs_objects[object_name].frustumCulled = false;
 	}
@@ -349,11 +459,9 @@ const gui = new GUI({autoPlace: true, width: 120});
 
 document.getElementById('render_container').appendChild(renderer.domElement)
 
-
 // dict containing all objects of the scene
 let threejs_objects = {};
 
-//add_watermark();
 init();
 
 // Load nodes.json and perform one after the other the following commands:
