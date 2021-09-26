@@ -14,3 +14,11 @@ The documentation pages are mainted using [mkdocs](https://www.mkdocs.org/).
 * When adding new pages, modify the file `mkdocs.yml` accordingly.
 * The locally test the documentation, go to `./` and run `mkdocs serve`. 
 * To deploy the documentation: `mkdocs gh-deploy`.
+
+Automatically generating the documentation from docstrings:
+
+* Install the mkdocstrings plugin for mkdocs: `pip install mkdocstrings`
+* Add the plugin to the `mkdocs.yaml':
+'''# mkdocs.yml
+plugins:
+  - mkdocstrings'''

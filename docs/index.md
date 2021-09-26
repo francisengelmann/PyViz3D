@@ -2,9 +2,9 @@
 
 ### Examples
 
-- Draw multiple colored point clouds.
- [[Demo]](https://francisengelmann.github.io/pyviz3d_examples/example/index.html)
- [[Code]](https://github.com/francisengelmann/pyviz3d/blob/master/examples/example_point_cloud.py)
+- Draw meshes.
+ [[Demo]](https://francisengelmann.github.io/pyviz3d_examples/meshes/index.html)
+ [[Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_meshes.py)
 
 - Draw normals using lines.
  [[Demo]](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)
@@ -14,7 +14,7 @@
 Intall the latest stable PyViz3D via pip: `pip install pyviz3d`
 
 ### Getting Started
-In this simple example we will display multiple point clouds. [Show example](https://francisengelmann.github.io/pyviz3d_examples/example/index.html).
+In this simple example we will display multiple point clouds.
 
 ```python
 import numpy as np
@@ -29,7 +29,7 @@ def main():
     # Random point clouds.
     for j in range(5):
         i = j + 1
-        name = 'Points_'+str(i)
+        name = 'Points;'+str(i)
         num_points = 3
         point_positions = np.random.random(size=[num_points, 3])
         point_colors = (np.random.random(size=[num_points, 3]) * 255).astype(np.uint8)
