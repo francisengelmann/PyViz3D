@@ -7,14 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <meta name="author" content="Francis Engelmann">
-  <link rel="canonical" href="https://francisengelmann.github.io/pyviz3d/contributing/">
   <link rel="shortcut icon" href="../img/favicon.ico">
   <title>Contributing - PyViz3D</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
-  <link rel="stylesheet" href="../css/theme.css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
   
   <script>
     // Current page data
@@ -25,7 +24,7 @@
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
   <script src="../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
   <script>
@@ -46,7 +45,6 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-    <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
         <a href=".." class="icon icon-home"> PyViz3D</a>
         <div role="search">
@@ -57,26 +55,41 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
-                    </li>
-                </ul>
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Contributing</a>
-    <ul class="current">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Contributing</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#setting-up-local-developement-environment">Setting up local developement environment</a></li>
+    
+
+    <li class="toctree-l2"><a href="#documentation">Documentation</a></li>
+    
+
     </ul>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../changelog/">Changelog</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../distribution/">Distribution</a>
-                    </li>
-                </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../changelog/">Changelog</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../distribution/">Distribution</a>
+	    </li>
+          
+        </ul>
       </div>
-    </div>
+      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -104,7 +117,6 @@
       
     </li>
   </ul>
-  
   <hr/>
 </div>
           <div role="main">
@@ -115,7 +127,8 @@
 <li>Pull the latest stable release from the master branch.</li>
 <li>Ideally create a new python environment.</li>
 <li>Do not install and uninstall existing packages of pyviz3d in your local environment. This guarantees that you are running your code and not the one from the installed package.</li>
-<li>Run your code (i.e. examples) from the root of the code base so guarantee all pathes are correct.</li>
+<li>The examples in <code>examples</code> are a good starting point for developing new features.</li>
+<li>When running code (e.g. <code>examples/example_instance.py</code>) set your working directory to the root directory of the code base such that the path to the pyviz module is correct.</li>
 </ul>
 <h2 id="documentation">Documentation</h2>
 <p>The documentation pages are mainted using <a href="https://www.mkdocs.org/">mkdocs</a>.</p>
@@ -124,6 +137,14 @@
 <li>When adding new pages, modify the file <code>mkdocs.yml</code> accordingly.</li>
 <li>The locally test the documentation, go to <code>./</code> and run <code>mkdocs serve</code>. </li>
 <li>To deploy the documentation: <code>mkdocs gh-deploy</code>.</li>
+</ul>
+<p>Automatically generating the documentation from docstrings:</p>
+<ul>
+<li>Install the mkdocstrings plugin for mkdocs: <code>pip install mkdocstrings</code></li>
+<li>Add the plugin to the `mkdocs.yaml':
+'''# mkdocs.yml
+plugins:</li>
+<li>mkdocstrings'''</li>
 </ul>
               
             </div>
@@ -147,7 +168,7 @@
     
   </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
       
         </div>
@@ -157,7 +178,7 @@
 
   </div>
 
-  <div class="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
           <a href="https://github.com/francisengelmann/pyviz3d/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
@@ -173,11 +194,6 @@
     <script>var base_url = '..';</script>
     <script src="../js/theme.js" defer></script>
       <script src="../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
-            SphinxRtdTheme.Navigation.enable(true);
-        };
-    </script>
 
 </body>
 </html>

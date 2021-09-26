@@ -7,14 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="None">
   <meta name="author" content="Francis Engelmann">
-  <link rel="canonical" href="https://francisengelmann.github.io/pyviz3d/">
   <link rel="shortcut icon" href="img/favicon.ico">
-  <title>PyViz3D</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+  <title>Home - PyViz3D</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
-  <link rel="stylesheet" href="css/theme.css" />
-  <link rel="stylesheet" href="css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <link rel="stylesheet" href="css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
   
   <script>
     // Current page data
@@ -25,7 +24,7 @@
   
   <script src="js/jquery-2.1.1.min.js" defer></script>
   <script src="js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
   
   <script>
@@ -46,7 +45,6 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-    <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
         <a href="." class="icon icon-home"> PyViz3D</a>
         <div role="search">
@@ -57,26 +55,44 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href=".">Home</a>
-    <ul class="current">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href=".">Home</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#examples">Examples</a></li>
+    
+
+    <li class="toctree-l2"><a href="#installation">Installation</a></li>
+    
+
+    <li class="toctree-l2"><a href="#getting-started">Getting Started</a></li>
+    
+
     </ul>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="contributing/">Contributing</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="changelog/">Changelog</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="distribution/">Distribution</a>
-                    </li>
-                </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="contributing/">Contributing</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="changelog/">Changelog</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="distribution/">Distribution</a>
+	    </li>
+          
+        </ul>
       </div>
-    </div>
+      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -104,7 +120,6 @@
       
     </li>
   </ul>
-  
   <hr/>
 </div>
           <div role="main">
@@ -114,9 +129,14 @@
 <h3 id="examples">Examples</h3>
 <ul>
 <li>
-<p>Draw multiple colored point clouds.
- <a href="https://francisengelmann.github.io/pyviz3d_examples/example/index.html">[Demo]</a>
- <a href="https://github.com/francisengelmann/pyviz3d/blob/master/examples/example_point_cloud.py">[Code]</a></p>
+<p>Draw meshes.
+ <a href="https://francisengelmann.github.io/pyviz3d_examples/meshes/index.html">[Demo]</a>
+ <a href="https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_meshes.py">[Code]</a></p>
+</li>
+<li>
+<p>Draw multiple (oriented) bounding box.
+ <a href="https://francisengelmann.github.io/pyviz3d_examples/bounding_boxes/index.html">[Demo]</a>
+ <a href="https://github.com/francisengelmann/pyviz3d/blob/master/examples/example_bounding_boxes.py">[Code]</a></p>
 </li>
 <li>
 <p>Draw normals using lines.
@@ -127,7 +147,7 @@
 <h3 id="installation">Installation</h3>
 <p>Intall the latest stable PyViz3D via pip: <code>pip install pyviz3d</code></p>
 <h3 id="getting-started">Getting Started</h3>
-<p>In this simple example we will display multiple point clouds. <a href="https://francisengelmann.github.io/pyviz3d_examples/example/index.html">Show example</a>.</p>
+<p>In this simple example we will display multiple point clouds.</p>
 <pre><code class="python">import numpy as np
 import pyviz3d.visualizer as viz
 
@@ -140,7 +160,7 @@ def main():
     # Random point clouds.
     for j in range(5):
         i = j + 1
-        name = 'Points_'+str(i)
+        name = 'Points;'+str(i)
         num_points = 3
         point_positions = np.random.random(size=[num_points, 3])
         point_colors = (np.random.random(size=[num_points, 3]) * 255).astype(np.uint8)
@@ -188,7 +208,7 @@ if __name__ == '__main__':
     
   </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
       
         </div>
@@ -198,7 +218,7 @@ if __name__ == '__main__':
 
   </div>
 
-  <div class="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
           <a href="https://github.com/francisengelmann/pyviz3d/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
@@ -212,16 +232,11 @@ if __name__ == '__main__':
     <script>var base_url = '.';</script>
     <script src="js/theme.js" defer></script>
       <script src="search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
-            SphinxRtdTheme.Navigation.enable(true);
-        };
-    </script>
 
 </body>
 </html>
 
 <!--
-MkDocs version : 1.1.2
-Build Date UTC : 2020-08-08 17:44:35.926242+00:00
+MkDocs version : 1.0.4
+Build Date UTC : 2021-09-26 11:59:10
 -->
