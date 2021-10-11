@@ -15,7 +15,7 @@ Polygon meshes example.
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/meshes/index.html)
 [<p align="center"><img width="60%" src="docs/img/example_meshes.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/meshes/index.html)
 
-Bouning boxes example.
+Bounding boxes example.
 [[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_bounding_boxes.py)
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/bounding_boxes/index.html)
 [<p align="center"><img width="60%" src="docs/img/example_bounding_boxes.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/bounding_boxes/index.html)
