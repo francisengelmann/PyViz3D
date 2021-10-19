@@ -20,6 +20,12 @@ Bounding boxes example.
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/bounding_boxes/index.html)
 [<p align="center"><img width="60%" src="docs/img/example_bounding_boxes.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/bounding_boxes/index.html)
 
+Polyline example.
+[[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_polylines.py)
+[[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/polylines/index.html)
+[<p align="center"><img width="60%" src="docs/img/example_polylines.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/polylines/index.html)
+
+
 Point clouds and segments example.
 [[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_normals.py)
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)
