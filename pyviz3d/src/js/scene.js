@@ -7,11 +7,9 @@ let num_objects_curr = 0;
 let num_objects = 100;
 
 function onDoubleClick(event) {
-	//console.log(event);
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 	raycaster.setFromCamera( mouse, camera );
-	//let objs = Object.values(threejs_objects);
 	let intersections = raycaster.intersectObjects( [ threejs_objects['scene0451_01'] ] );
 	intersection = ( intersections.length ) > 0 ? intersections[ 0 ] : null;
 	//console.log(objs);
@@ -151,7 +149,6 @@ function get_obj(properties){
 		object.traverse(
 		function(child) {
 			if (child.isMesh) {
-				console
 				let r = properties['color'][0]
 				let g = properties['color'][1]
 				let b = properties['color'][2]
@@ -307,6 +304,109 @@ function get_cuboid(properties){
 
 }
 
+function get_polyline(properties){
+	const radius_top = properties['edge_width']
+	const radius_bottom = properties['edge_width']
+	const radial_segments = 5
+	const height = 1
+	let geometry = new THREE.CylinderGeometry(radius_top, radius_bottom, height, radial_segments);
+	for (let i=0; i<geometry.faces.length; i++){
+		const r = properties['color'][0]
+		const g = properties['color'][1]
+		const b = properties['color'][2]
+		for (let j=0; j<3; j++){
+			geometry.faces[i].vertexColors[j] = new THREE.Color("rgb("+r+", "+g+", "+b+")");
+		}
+	}
+
+	let uniforms = {
+		alpha: {value: properties['alpha']},
+		shading_type: {value: 1},
+	};
+	let material = new THREE.ShaderMaterial( {
+		 uniforms:       uniforms,
+    	 vertexShader:   document.getElementById( 'vertexshader' ).textContent,
+	     fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+		 transparent:    true,
+	 });
+
+	const cylinder = new THREE.Mesh(geometry, material);
+
+	const corner_geometry = new THREE.SphereGeometry(properties['edge_width'], radial_segments, radial_segments);
+	for (let i=0; i<corner_geometry.faces.length; i++){
+		const r = properties['color'][0]
+		const g = properties['color'][1]
+		const b = properties['color'][2]
+		for (let j=0; j<3; j++){
+			corner_geometry.faces[i].vertexColors[j] = new THREE.Color("rgb("+r+", "+g+", "+b+")");
+		}
+	}
+	const sphere = new THREE.Mesh(corner_geometry, material)
+
+	const polyline = new THREE.Group();
+
+	// Add first corner to the polyline
+	const corner_0 = sphere.clone()
+	corner_0.position.set(properties['positions'][0][0], properties['positions'][0][1], properties['positions'][0][2])
+	polyline.add(corner_0)
+
+	//
+	for (var i=1; i < properties['positions'].length; i++){
+		// Put the sphere the make a nice round corner
+		const corner_i = sphere.clone()
+		corner_i.position.set(properties['positions'][i][0],
+			                  properties['positions'][i][1],
+			                  properties['positions'][i][2])
+		//polyline.add(corner_i)
+
+		// Put a segment connecting the two last points
+		const cylinder_i = cylinder.clone()
+		var dist_x = properties['positions'][i][0] - properties['positions'][i-1][0]
+		var dist_y = properties['positions'][i][1] - properties['positions'][i-1][1]
+		var dist_z = properties['positions'][i][2] - properties['positions'][i-1][2]
+		var cylinder_length = Math.sqrt(dist_x*dist_x + dist_y*dist_y + dist_z*dist_z)
+		cylinder_i.scale.set(1.0, cylinder_length, 1.0)
+		cylinder_i.lookAt(properties['positions'][i][0] - properties['positions'][i-1][0],
+	                      properties['positions'][i][1] - properties['positions'][i-1][1],
+	                      properties['positions'][i][2] - properties['positions'][i-1][2])
+		cylinder_i.rotateX(3.1415/2.0)
+		cylinder_i.position.set(properties['positions'][i-1][0],
+			                    properties['positions'][i-1][1],
+		                        properties['positions'][i-1][2])
+		cylinder_i.translateY(cylinder_length/2.0)
+
+		polyline.add(cylinder_i)
+
+		// var v1 = pointToOrientXTowards.position.clone().sub( objectToAdjust.position ).normalize(); // CHANGED
+		// var v2 = pointToLookAt.clone().sub( objectToAdjust.position ).normalize(); // CHANGED
+  		// var v3 = new THREE.Vector3().crossVectors( v1, v2 ).normalize(); // CHANGED
+  		// objectToAdjust.up.copy( v3 ); // CHANGED
+  		// objectToAdjust.lookAt(pointToLookAt);
+		// cylinder_i.up()
+		// cylinder_i.lookAt(properties['positions'][i][0],
+	    //                   properties['positions'][i][1],
+	    //                   properties['positions'][i][2])
+		// cylinder_i.rotateY(3.1415/2.0)
+
+
+		// rotateX(atan(v[i].y / v[i].z));
+   		// rotateY(atan(v[i].x / v[i].z));
+   		// rotateZ(atan(v[i].y / v[i].x));
+
+	}
+	// polyline.position.set(properties['position'][0], properties['position'][1], properties['position'][2])
+	//polyline.add(cylinder_00)
+
+	// cuboid.rotateX(properties['orientation'][0])
+	// cuboid.rotateY(properties['orientation'][1])
+	// cuboid.rotateZ(properties['orientation'][2])
+	// cuboid.position.set(properties['position'][0], properties['position'][1], properties['position'][2])
+
+	return polyline
+
+}
+
+
 function get_ground(){
 	let mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(2000, 2000),
 							  new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: true}));
@@ -414,6 +514,11 @@ function create_threejs_objects(properties){
 			step_progress_bar();
 			render();
 		}
+		if (String(object_properties['type']).localeCompare('polyline') == 0){
+			threejs_objects[object_name] = get_polyline(object_properties);
+			step_progress_bar();
+			render();
+		}
 		threejs_objects[object_name].visible = object_properties['visible'];
 		threejs_objects[object_name].frustumCulled = false;
 	}
@@ -425,7 +530,6 @@ function create_threejs_objects(properties){
 function add_threejs_objects_to_scene(threejs_objects){
 	for (const [key, value] of Object.entries(threejs_objects)) {
 		scene.add(value);
-		console.log('Adding '+key)
 	}
 }
 

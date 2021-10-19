@@ -1,10 +1,12 @@
 """The visualizer class is used to show 3d point clouds or bounding boxes in the browser."""
 
 from .points import Points
-from .cuboid import Cuboid
 from .lines import Lines
 from .mesh import Mesh
 from .camera import Camera
+from .cuboid import Cuboid
+from .polyline import Polyline
+
 import os
 import sys
 import shutil
@@ -114,6 +116,20 @@ class Visualizer:
         """
         mesh = Mesh(path, translation=translation, rotation=rotation, scale=scale, color=color, visible=visible)
         self.elements[name] = mesh
+
+    def add_polyline(self, name, positions, color=None, alpha=1.0, edge_width=0.01, visible=True):
+        """Add polyline.
+
+        :param name: The bounding box name. (string)
+        :param positions: The N 3D positions along the polyline. (float32, Nx3)
+        :param color: The color. (int32, 3x1)
+        :param alpha: The transparency. (float32)
+        :param edge_width: The width of the edges. (float32)
+        :param visible: Bool, whether visible or not.
+        """
+        if color is None:
+            color = np.array([255, 0, 0])
+        self.elements[name] = Polyline(positions, color, alpha, edge_width, visible)
 
     def save(self, path, port=6008, verbose=True):
         """Creates the visualization and displays the link to it.
