@@ -25,6 +25,10 @@ Polyline example.
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/polylines/index.html)
 [<p align="center"><img width="60%" src="docs/img/example_polylines.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/polylines/index.html)
 
+Arrow example.
+[[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_arrows.py)
+[[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/arrows/index.html)
+[<p align="center"><img width="60%" src="docs/img/example_arrows.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/arrows/index.html)
 
 Point clouds and segments example.
 [[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_normals.py)
