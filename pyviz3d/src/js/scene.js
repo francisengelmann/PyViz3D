@@ -350,14 +350,12 @@ function get_polyline(properties){
 	corner_0.position.set(properties['positions'][0][0], properties['positions'][0][1], properties['positions'][0][2])
 	polyline.add(corner_0)
 
-	//
 	for (var i=1; i < properties['positions'].length; i++){
 		// Put the sphere the make a nice round corner
 		const corner_i = sphere.clone()
 		corner_i.position.set(properties['positions'][i][0],
 			                  properties['positions'][i][1],
 			                  properties['positions'][i][2])
-		//polyline.add(corner_i)
 
 		// Put a segment connecting the two last points
 		const cylinder_i = cylinder.clone()
@@ -374,38 +372,75 @@ function get_polyline(properties){
 			                    properties['positions'][i-1][1],
 		                        properties['positions'][i-1][2])
 		cylinder_i.translateY(cylinder_length/2.0)
-
 		polyline.add(cylinder_i)
-
-		// var v1 = pointToOrientXTowards.position.clone().sub( objectToAdjust.position ).normalize(); // CHANGED
-		// var v2 = pointToLookAt.clone().sub( objectToAdjust.position ).normalize(); // CHANGED
-  		// var v3 = new THREE.Vector3().crossVectors( v1, v2 ).normalize(); // CHANGED
-  		// objectToAdjust.up.copy( v3 ); // CHANGED
-  		// objectToAdjust.lookAt(pointToLookAt);
-		// cylinder_i.up()
-		// cylinder_i.lookAt(properties['positions'][i][0],
-	    //                   properties['positions'][i][1],
-	    //                   properties['positions'][i][2])
-		// cylinder_i.rotateY(3.1415/2.0)
-
-
-		// rotateX(atan(v[i].y / v[i].z));
-   		// rotateY(atan(v[i].x / v[i].z));
-   		// rotateZ(atan(v[i].y / v[i].x));
-
 	}
-	// polyline.position.set(properties['position'][0], properties['position'][1], properties['position'][2])
-	//polyline.add(cylinder_00)
-
-	// cuboid.rotateX(properties['orientation'][0])
-	// cuboid.rotateY(properties['orientation'][1])
-	// cuboid.rotateZ(properties['orientation'][2])
-	// cuboid.position.set(properties['position'][0], properties['position'][1], properties['position'][2])
 
 	return polyline
-
 }
 
+function get_arrow(properties){
+
+	// Arrow head
+	const radius_top = 0.0
+	const radius_bottom = properties['head_width']
+	const radial_segments = 15
+	const height = radius_bottom * 2.0
+
+	var dist_x = properties['end'][0] - properties['start'][0]
+	var dist_y = properties['end'][1] - properties['start'][1]
+	var dist_z = properties['end'][2] - properties['start'][2]
+	var margnitude = Math.sqrt(dist_x*dist_x + dist_y*dist_y + dist_z*dist_z)
+
+	let geometry = new THREE.CylinderGeometry(radius_top, radius_bottom, height, radial_segments);
+	for (let i=0; i<geometry.faces.length; i++){
+		const r = properties['color'][0]
+		const g = properties['color'][1]
+		const b = properties['color'][2]
+		for (let j=0; j<3; j++){
+			geometry.faces[i].vertexColors[j] = new THREE.Color("rgb("+r+", "+g+", "+b+")");
+		}
+	}
+
+	const stroke_width = properties['stroke_width']
+	let geometry_stroke = new THREE.CylinderGeometry(stroke_width, stroke_width, margnitude - height, radial_segments);
+	for (let i=0; i<geometry_stroke.faces.length; i++){
+		const r = properties['color'][0]
+		const g = properties['color'][1]
+		const b = properties['color'][2]
+		for (let j=0; j<3; j++){
+			geometry_stroke.faces[i].vertexColors[j] = new THREE.Color("rgb("+r+", "+g+", "+b+")");
+		}
+	}
+
+	let uniforms = {
+		alpha: {value: properties['alpha']},
+		shading_type: {value: 1},
+	};
+
+	let material = new THREE.ShaderMaterial( {
+		 uniforms:       uniforms,
+    	 vertexShader:   document.getElementById( 'vertexshader' ).textContent,
+	     fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+		 transparent:    true,
+	 });
+
+	const arrow_head = new THREE.Mesh(geometry, material);
+	arrow_head.translateY(margnitude - height / 2.0)
+	const arrow_stroke = new THREE.Mesh(geometry_stroke, material);
+	arrow_stroke.translateY(margnitude / 2.0 - height / 2.0)
+
+	const arrow = new THREE.Group();
+	arrow.add(arrow_head);
+	arrow.add(arrow_stroke);
+
+	arrow.lookAt(properties['end'][0] - properties['start'][0],
+		              properties['end'][1] - properties['start'][1],
+		              properties['end'][2] - properties['start'][2])
+	arrow.rotateX(3.1415/2.0)
+	arrow.position.set(properties['start'][0], properties['start'][1], properties['start'][2] )
+	return arrow;
+
+}
 
 function get_ground(){
 	let mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(2000, 2000),
@@ -413,7 +448,7 @@ function get_ground(){
 	mesh.rotation.x = -Math.PI / 2;
 	mesh.position.set(0, -5, 0);
 	mesh.receiveShadow = true;
-	return mesh
+	return mesh;
 }
 
 function init_gui(objects){
@@ -519,6 +554,12 @@ function create_threejs_objects(properties){
 			step_progress_bar();
 			render();
 		}
+		if (String(object_properties['type']).localeCompare('arrow') == 0){
+			threejs_objects[object_name] = get_arrow(object_properties);
+			step_progress_bar();
+			render();
+		}
+		console.log(object_name)
 		threejs_objects[object_name].visible = object_properties['visible'];
 		threejs_objects[object_name].frustumCulled = false;
 	}

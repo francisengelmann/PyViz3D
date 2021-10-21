@@ -6,6 +6,7 @@ from .mesh import Mesh
 from .camera import Camera
 from .cuboid import Cuboid
 from .polyline import Polyline
+from .arrow import Arrow
 
 import os
 import sys
@@ -130,6 +131,19 @@ class Visualizer:
         if color is None:
             color = np.array([255, 0, 0])
         self.elements[name] = Polyline(positions, color, alpha, edge_width, visible)
+
+    def add_arrow(self, name, start, end, color=None, alpha=1.0, stroke_width=0.01, head_width=0.03, visible=True):
+        """Add polyline.
+        :param name: The bounding box name. (string)
+        :param positions: The N 3D positions along the polyline. (float32, Nx3)
+        :param color: The color. (int32, 3x1)
+        :param alpha: The transparency. (float32)
+        :param edge_width: The width of the edges. (float32)
+        :param visible: Bool, whether visible or not.
+        """
+        if color is None:
+            color = np.array([255, 0, 0])
+        self.elements[name] = Arrow(start, end, color, alpha, stroke_width, head_width, visible)
 
     def save(self, path, port=6008, verbose=True):
         """Creates the visualization and displays the link to it.
