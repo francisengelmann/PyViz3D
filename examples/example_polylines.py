@@ -17,7 +17,7 @@ def main():
             points = np.concatenate((points, np.zeros([points.shape[0], 1])), axis=1)
             color = np.array(colors[data['layer '+str(j)]['layer name']])
             v.add_polyline('Polyline' + str(i), positions=points, edge_width=0.04, color=color)
-    v.save('example_polyline')
+    v.save('example_polylines')
 
 
 if __name__ == '__main__':

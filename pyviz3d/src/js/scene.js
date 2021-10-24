@@ -439,7 +439,6 @@ function get_arrow(properties){
 	arrow.rotateX(3.1415/2.0)
 	arrow.position.set(properties['start'][0], properties['start'][1], properties['start'][2] )
 	return arrow;
-
 }
 
 function get_ground(){
