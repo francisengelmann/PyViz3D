@@ -1,4 +1,7 @@
 ## Version 0.2
+ - 0.2.25: Bug fixes.
+ - 0.2.24: Add arrows.
+ - 0.2.23: Add segments.
  - 0.2.22: Add (oriented) bounding boxes.
  - 0.2.21: Add .obj meshes and other overall improvements.
  - 0.2.19: Add verbose flag to save function.

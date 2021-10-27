@@ -22,6 +22,14 @@ class Visualizer:
         )
         self.elements = {"Camera_0": self.camera}  # dict of elements to display
 
+    def __parse_name(self, name):
+        """Makes sure the name does not contain invalid character combinations.
+
+        :param name:
+        :return:
+        """
+        return name.replace(':', ';')
+
     def add_points(
         self,
         name,
@@ -60,7 +68,7 @@ class Visualizer:
 
         alpha = min(max(alpha, 0.0), 1.0)  # cap alpha to [0..1]
 
-        self.elements[name] = Points(
+        self.elements[self.__parse_name(name)] = Points(
             positions, colors, normals, point_size, visible, alpha, shading_type
         )
 
@@ -84,7 +92,7 @@ class Visualizer:
         colors = colors.astype(np.uint8)
         lines_start = lines_start.astype(np.float32)
         lines_end = lines_end.astype(np.float32)
-        self.elements[name] = Lines(lines_start, lines_end, colors, colors, visible)
+        self.elements[self.__parse_name(name)] = Lines(lines_start, lines_end, colors, colors, visible)
 
     def add_bounding_box(self, name, position, size, orientation=None, color=None, alpha=1.0, edge_width=0.01, visible=True):
         """Add bounding box.
@@ -102,7 +110,7 @@ class Visualizer:
             orientation = np.array([0.0, 0.0, 0.0])
         if color is None:
             color = np.array([255, 0, 0])
-        self.elements[name] = Cuboid(position, size, orientation, color, alpha, edge_width, visible)
+        self.elements[self.__parse_name(name)] = Cuboid(position, size, orientation, color, alpha, edge_width, visible)
 
     def add_mesh(self, name, path, translation=[0, 0, 0], rotation=[0, 0, 0], scale=[1, 1, 1], color=[255, 255, 255], visible=True):
         """Adds a polygon mesh to the scene, as specified in the path, it has to be an .obj file.
@@ -116,7 +124,7 @@ class Visualizer:
         :param visible: Whether the object is visible or not.
         """
         mesh = Mesh(path, translation=translation, rotation=rotation, scale=scale, color=color, visible=visible)
-        self.elements[name] = mesh
+        self.elements[self.__parse_name(name)] = mesh
 
     def add_polyline(self, name, positions, color=None, alpha=1.0, edge_width=0.01, visible=True):
         """Add polyline.
@@ -130,7 +138,7 @@ class Visualizer:
         """
         if color is None:
             color = np.array([255, 0, 0])
-        self.elements[name] = Polyline(positions, color, alpha, edge_width, visible)
+        self.elements[self.__parse_name(name)] = Polyline(positions, color, alpha, edge_width, visible)
 
     def add_arrow(self, name, start, end, color=None, alpha=1.0, stroke_width=0.01, head_width=0.03, visible=True):
         """Add polyline.
@@ -143,7 +151,7 @@ class Visualizer:
         """
         if color is None:
             color = np.array([255, 0, 0])
-        self.elements[name] = Arrow(start, end, color, alpha, stroke_width, head_width, visible)
+        self.elements[self.__parse_name(name)] = Arrow(start, end, color, alpha, stroke_width, head_width, visible)
 
     def save(self, path, port=6008, verbose=True):
         """Creates the visualization and displays the link to it.
