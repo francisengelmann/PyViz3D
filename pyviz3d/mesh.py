@@ -6,7 +6,12 @@ class Mesh:
     """Polygon mesh defined by .obj file and some solid color."""
 
     def __init__(self, filename, translation=None, rotation=None, scale=None, color=None, visible=True):
-        self.filename = filename
+        self.filename_source = filename
+        obj_file = os.path.split(filename)[-1]
+        obj_file_name = obj_file.split('.')[0]
+        obj_file_extension = obj_file.split('.')[1]
+        obj_file_size = os.path.getsize(filename)
+        self.filename_destination = obj_file_name + '_' + str(obj_file_size) + '.' + obj_file_extension
         self.translation = translation
         self.rotation = rotation
         self.scale = scale
@@ -19,7 +24,7 @@ class Mesh:
         """
         json_dict = {
             'type': 'obj',
-            'filename': os.path.split(self.filename)[-1],
+            'filename': self.filename_destination,
             'translation': self.translation,
             'rotation': self.rotation,
             'scale': self.scale,
@@ -29,8 +34,7 @@ class Mesh:
         return json_dict
 
     def write_binary(self, path):
-        obj_file = os.path.split(self.filename)[-1]
         destination_dir = os.path.dirname(path)
-        destination_path = os.path.join(destination_dir, obj_file)
-        if not os.path.exists(destination_path):
-            copyfile(self.filename, destination_path)
+        destination_path = os.path.join(destination_dir, self.filename_destination)
+        if not os.path.exists(self.filename_destination):
+            copyfile(self.filename_source, destination_path)
