@@ -90,15 +90,19 @@ function add_watermark(){
 }
 
 function set_camera_properties(properties){
+	camera.up.set(properties['up'][0],
+		          properties['up'][1],
+				  properties['up'][2]);
 	camera.position.set(properties['position'][0],
 						properties['position'][1],
 						properties['position'][2]);
+	update_controls();
+	controls.update();
 	controls.target = new THREE.Vector3(properties['look_at'][0],
 	 	                                properties['look_at'][1],
 	 						    		properties['look_at'][2]);
 	camera.updateProjectionMatrix();
-	controls.update()
-
+	controls.update();
 }
 
 function get_points(properties){
@@ -477,7 +481,6 @@ function render() {
 
 function init(){
 	scene.background = new THREE.Color(0xffffff);
-	controls.update()
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
 	let hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
@@ -528,7 +531,7 @@ function create_threejs_objects(properties){
 	for (const [object_name, object_properties] of Object.entries(properties)) {
 		if (String(object_properties['type']).localeCompare('camera') == 0){
 			set_camera_properties(object_properties);
-    		render();
+			render();
     		step_progress_bar();
     		continue;
 		}
@@ -582,18 +585,19 @@ function onWindowResize(){
     render();
 }
 
+function update_controls(){
+	controls = new OrbitControls(camera, renderer.domElement);
+	controls.addEventListener("change", render);
+	controls.enableKeys = true;
+	controls.enablePan = true; // enable dragging
+}
+
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({antialias: true});
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000);
-camera.up.set(0, 0, 1);
+var controls = '';
 
 window.addEventListener('resize', onWindowResize, false);
-
-//Orbit Control
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.addEventListener("change", render);
-controls.enableKeys = true;
-controls.enablePan = true; // enable dragging
 
 let raycaster;
 let intersection = null;

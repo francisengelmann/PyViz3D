@@ -5,9 +5,10 @@ import numpy as np
 class Camera:
     """Camera class looking at the scene"""
 
-    def __init__(self, position, look_at):
+    def __init__(self, position, look_at, up):
         self.position = position.astype(np.float32)
         self.look_at = look_at.astype(np.float32)
+        self.up = up.astype(np.float32)
 
     def get_properties(self, binary_filename):
         """Get the camera properties, they are written into json and interpreted by javascript.
@@ -17,7 +18,8 @@ class Camera:
         json_dict = {
             'type': 'camera',
             'position': self.position.tolist(),
-            'look_at': self.look_at.tolist()}
+            'look_at': self.look_at.tolist(),
+            'up': self.up.tolist()}
         return json_dict
 
     def write_binary(self, path):

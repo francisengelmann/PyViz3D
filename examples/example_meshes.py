@@ -20,5 +20,12 @@ def main():
     v.save('example_meshes')
 
 
+def main2():
+    v = viz.Visualizer()
+    v.add_mesh('Motorbike', path='examples/data/a/model.obj', color=[100, 170, 255])
+    v.add_mesh('Chair', path='examples/data/b/model.obj', color=[50, 225, 50])
+    v.save('example_meshes2')
+
+
 if __name__ == '__main__':
-    main()
+    main2()

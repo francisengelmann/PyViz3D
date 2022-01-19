@@ -16,9 +16,18 @@ import numpy as np
 
 
 class Visualizer:
-    def __init__(self, position=[3.0, 3.0, 3.0], look_at=[0.0, 0.0, 0.0]):
+    def __init__(self, position=None, look_at=None, up=None):
+        if position is None:
+            position = [3.0, 3.0, 3.0]
+        if look_at is None:
+            look_at = [0.0, 0.0, 0.0]
+        if up is None:
+            up = [0.0, 0.0, 1.0]
+
         self.camera = Camera(
-            position=np.array(np.array(position)), look_at=np.array(np.array(look_at))
+            position=np.array(np.array(position)),
+            look_at=np.array(np.array(look_at)),
+            up=np.array(np.array(up))
         )
         self.elements = {"Camera_0": self.camera}  # dict of elements to display
 
