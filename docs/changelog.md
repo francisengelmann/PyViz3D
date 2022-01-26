@@ -1,4 +1,6 @@
 ## Version 0.2
+ - 0.2.27: Replaced euler angles with quaternions for objects.
+ - 0.2.26: Specify camera up vector and bug fix.
  - 0.2.25: Bug fixes.
  - 0.2.24: Add arrows.
  - 0.2.23: Add segments.

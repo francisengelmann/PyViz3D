@@ -20,7 +20,7 @@ class Mesh:
 
     def get_properties(self, filename):
         """
-        :return: A dict conteining object properties. They are written into json and interpreted by javascript.
+        :return: A dict containing object properties. They are written into json and interpreted by javascript.
         """
         json_dict = {
             'type': 'obj',

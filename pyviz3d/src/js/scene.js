@@ -165,9 +165,12 @@ function get_obj(properties){
 		object.translateY(properties['translation'][1])
 		object.translateZ(properties['translation'][2])
 
-		object.rotateX(properties['rotation'][0])
-		object.rotateY(properties['rotation'][1])
-		object.rotateZ(properties['rotation'][2])
+		const q = new THREE.Quaternion(
+			properties['rotation'][1],
+			properties['rotation'][2],
+			properties['rotation'][3],
+			properties['rotation'][0])
+		object.setRotationFromQuaternion(q)
 
 		object.scale.set(properties['scale'][0], properties['scale'][1], properties['scale'][2])
 

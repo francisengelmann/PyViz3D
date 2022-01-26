@@ -121,17 +121,19 @@ class Visualizer:
             color = np.array([255, 0, 0])
         self.elements[self.__parse_name(name)] = Cuboid(position, size, orientation, color, alpha, edge_width, visible)
 
-    def add_mesh(self, name, path, translation=[0, 0, 0], rotation=[0, 0, 0], scale=[1, 1, 1], color=[255, 255, 255], visible=True):
+    def add_mesh(self, name, path, translation=[0, 0, 0], rotation=[0, 0, 0, 1], scale=[1, 1, 1], color=[255, 255, 255], visible=True):
         """Adds a polygon mesh to the scene, as specified in the path, it has to be an .obj file.
 
         :param name: The name of the mesh displayed in the layers.
         :param path: The path to the .obj polygon mesh file.
-        :param translation: The 3D tranlsation of the object.
-        :param rotation: The 3D rotation (Euler angles in rad) of the object.
+        :param translation: The 3D translation of the object.
+        :param rotation: The 3D rotation (quaternion w, x, y, z) of the object.
         :param scale: The 3D scaling of the original object.
         :param color: The uniform color of the object.
         :param visible: Whether the object is visible or not.
         """
+        rotation = np.array(rotation)
+        rotation = (rotation / np.linalg.norm(rotation)).tolist()
         mesh = Mesh(path, translation=translation, rotation=rotation, scale=scale, color=color, visible=visible)
         self.elements[self.__parse_name(name)] = mesh
 
