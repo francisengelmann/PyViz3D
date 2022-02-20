@@ -302,9 +302,12 @@ function get_cuboid(properties){
 	cuboid.add(corner_12)
 	cuboid.add(corner_13)
 
-	cuboid.rotateX(properties['orientation'][0])
-	cuboid.rotateY(properties['orientation'][1])
-	cuboid.rotateZ(properties['orientation'][2])
+	const q = new THREE.Quaternion(
+			properties['orientation'][1],
+			properties['orientation'][2],
+			properties['orientation'][3],
+			properties['orientation'][0])
+	cuboid.setRotationFromQuaternion(q)
 	cuboid.position.set(properties['position'][0], properties['position'][1], properties['position'][2])
 
 	return cuboid

@@ -13,7 +13,7 @@ class Cuboid:
 
     def get_properties(self, binary_filename):
         """ Get line properties, they are written into json and interpreted by javascript.
-        :return: A dict conteining object properties.
+        :return: A dict containing object properties.
         """
         json_dict = {
             'type': 'cuboid',
