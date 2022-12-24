@@ -6,7 +6,7 @@
 		<title>PyViz3D</title>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
  		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
- 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+ 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js"></script>
 		<script type="module" src="js/scene.js"></script>
 		<script type="x-shader/x-vertex" id="vertexshader">
 
@@ -65,17 +65,17 @@
 				cos_theta[0] = clamp(dot(n, l), 0.0, 1.0);
 				cos_alpha[0] = clamp(dot(e, r), 0.0, 1.0);
 
-				l= normalize(light_dir_camera_4[1].xyz);
+				l = normalize(light_dir_camera_4[1].xyz);
 				r = reflect(-l, n);
 				cos_theta[1] = clamp(dot(n, l), 0.0, 1.0);
 				cos_alpha[1] = clamp(dot(e, r), 0.0, 1.0);
 
-				l= normalize(light_dir_camera_4[2].xyz);
+				l = normalize(light_dir_camera_4[2].xyz);
 				r = reflect(-l, n);
 				cos_theta[2] = clamp(dot(n, l), 0.0, 1.0);
 				cos_alpha[2] = clamp(dot(e, r), 0.0, 1.0);
 
-				l= normalize(light_dir_camera_4[3].xyz);
+				l = normalize(light_dir_camera_4[3].xyz);
 				r = reflect(-l, n);
 				cos_theta[3] = clamp(dot(n, l), 0.0, 1.0);
 				cos_alpha[3] = clamp(dot(e, r), 0.0, 1.0);
@@ -99,9 +99,7 @@
 		varying vec4 vColor;
 		void main() {
 			gl_FragColor = vColor;
-
 		}
-
 		</script>
 	</head>
 	<body>
