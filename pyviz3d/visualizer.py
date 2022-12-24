@@ -179,9 +179,7 @@ class Visualizer:
             shutil.rmtree(directory_destination)
 
         # Copy website directory
-        directory_source = os.path.realpath(
-            os.path.join(os.path.dirname(__file__), "src")
-        )
+        directory_source = os.path.realpath(os.path.join(os.path.dirname(__file__), "src"))
         shutil.copytree(directory_source, directory_destination)
 
         # Assemble binary data files
