@@ -1,7 +1,9 @@
-import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r112/build/three.module.js';
-import {GUI} from 'https://threejsfundamentals.org/3rdparty/dat.gui.module.js';
-import {OrbitControls} from 'https://threejsfundamentals.org/threejs/resources/threejs/r112/examples/jsm/controls/OrbitControls.js';
-import {OBJLoader} from 'https://threejsfundamentals.org/threejs/resources/threejs/r127/examples/jsm/loaders/OBJLoader.js';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { FontLoader } from    'three/addons/loaders/FontLoader.js';
+import { OBJLoader } from     'three/addons/loaders/OBJLoader.js';
+import { TextGeometry } from  'three/addons/geometries/TextGeometry.js';
+import { GUI } from           'three/addons/libs/lil-gui.module.min.js';
 
 let num_objects_curr = 0;
 let num_objects = 100;
