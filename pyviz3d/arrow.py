@@ -12,7 +12,7 @@ class Arrow:
         self.visible = visible
 
     def get_properties(self, binary_filename):
-        """ Get line properties, they are written into json and interpreted by javascript.
+        """ Get arrow properties, they are written into json and interpreted by javascript.
         :return: A dict conteining object properties.
         """
         json_dict = {

@@ -1,12 +1,19 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { FontLoader } from    'three/addons/loaders/FontLoader.js';
 import { OBJLoader } from     'three/addons/loaders/OBJLoader.js';
-import { TextGeometry } from  'three/addons/geometries/TextGeometry.js';
 import { GUI } from           'three/addons/libs/lil-gui.module.min.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
 let num_objects_curr = 0;
 let num_objects = 100;
+
+
+const layers = {
+	'Toggle Name': function () {
+		console.log('toggle')
+		camera.layers.toggle(0);
+	}
+}
 
 function onDoubleClick(event) {
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -30,17 +37,14 @@ function get_lines(properties){
         positions = new Float32Array(buffer, 0, 3 * num_lines * 2);
         let colors_uint8 = new Uint8Array(buffer, (3 * num_lines * 2) * 4, 3 * num_lines * 2);
         let colors_float32 = Float32Array.from(colors_uint8);
-        for(let i=0; i<colors_float32.length; i++) {
+        for (let i=0; i<colors_float32.length; i++) {
          	colors_float32[i] /= 255.0;
         }
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
         geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors_float32, 3));
-
     }).then(step_progress_bar).then(render);
-
 	var material = new THREE.LineBasicMaterial({color: 0xFFFFFF, vertexColors: true});
 	return new THREE.LineSegments( geometry, material );
-
 }
 
 function get_cube(){
@@ -149,6 +153,24 @@ function get_points(properties){
 	return points
 }
 
+function get_labels(properties){
+	const labels = new THREE.Group();
+	// console.log(properties)
+	for (let i=0; i<properties['labels'].length; i++){
+		const labelDiv = document.createElement('div');
+		labelDiv.className = 'label';
+		labelDiv.style.color = "rgb("+properties['colors'][i][0]+", "+properties['colors'][i][1]+", "+properties['colors'][i][2]+")"; 
+		labelDiv.textContent = properties['labels'][i];
+	
+		const label_2d = new CSS2DObject(labelDiv);
+		label_2d.position.set(properties['positions'][i][0], properties['positions'][i][1], properties['positions'][i][2]);
+		label_2d.layers.set(0);
+		labels.add(label_2d);
+	}
+	return labels
+
+}
+
 function get_obj(properties){
 	var container = new THREE.Object3D();
 	function loadModel(object) {
@@ -160,7 +182,7 @@ function get_obj(properties){
 				let b = properties['color'][2]
 				let colorString = "rgb("+r+","+g+", "+b+")"
 				child.material.color.set(new THREE.Color(colorString));
-				console.log('setting colors ' + r + " " + g + " " + b)
+				// console.log('setting colors ' + r + " " + g + " " + b)
 			}
 		});
 		object.translateX(properties['translation'][0])
@@ -463,11 +485,9 @@ function get_ground(){
 }
 
 function init_gui(objects){
-
 	let menuMap = new Map();
-
 	for (const [name, value] of Object.entries(objects)){
-		let splits = name.split(';')
+		let splits = name.split(';');
 		if (splits.length > 1) {
 			let folder_name = splits[0];
 			if (!menuMap.has(folder_name)) {
@@ -476,8 +496,8 @@ function init_gui(objects){
 			let fol = menuMap.get(folder_name);
 			fol.add(value, 'visible').name(splits[1]).onChange(render);
 			fol.open();
-
 		} else {
+			console.log(value);
 			gui.add(value, 'visible').name(name).onChange(render);
 		}
 	}
@@ -485,11 +505,13 @@ function init_gui(objects){
 
 function render() {
     renderer.render(scene, camera);
+	labelRenderer.render(scene, camera);
 }
 
 function init(){
 	scene.background = new THREE.Color(0xffffff);
 	renderer.setSize(window.innerWidth, window.innerHeight);
+	labelRenderer.setSize(window.innerWidth, window.innerHeight);
 
 	let hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
 	hemiLight.position.set(0, 20, 0);
@@ -547,6 +569,11 @@ function create_threejs_objects(properties){
 			threejs_objects[object_name] = get_points(object_properties);
     		render();
 		}
+		if (String(object_properties['type']).localeCompare('labels') == 0){
+			threejs_objects[object_name] = get_labels(object_properties);
+			step_progress_bar();
+			render();
+		}
 		if (String(object_properties['type']).localeCompare('lines') == 0){
 			threejs_objects[object_name] = get_lines(object_properties);
     		render();
@@ -569,12 +596,21 @@ function create_threejs_objects(properties){
 			step_progress_bar();
 			render();
 		}
-		console.log(object_name)
 		threejs_objects[object_name].visible = object_properties['visible'];
 		threejs_objects[object_name].frustumCulled = false;
 	}
 	// Add axis helper
 	threejs_objects['Axis'] = new THREE.AxesHelper(1);
+
+	// Add text
+	// const earthDiv = document.createElement('div');
+	// earthDiv.className = 'label';
+	// earthDiv.textContent = 'Earth';
+	// const earthLabel = new CSS2DObject( earthDiv );
+	// earthLabel.position.set(0, 3, 0);
+	// earthLabel.layers.set(0);
+	// threejs_objects['Axis'].add( earthLabel );
+
 	render();
 }
 
@@ -588,22 +624,32 @@ function onWindowResize(){
     const innerWidth = window.innerWidth
     const innerHeight = window.innerHeight;
     renderer.setSize(innerWidth, innerHeight);
+    labelRenderer.setSize(innerWidth, innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     render();
 }
 
 function update_controls(){
-	controls = new OrbitControls(camera, renderer.domElement);
+	controls = new OrbitControls(camera, labelRenderer.domElement);
 	controls.addEventListener("change", render);
 	controls.enableKeys = true;
 	controls.enablePan = true; // enable dragging
 }
 
 const scene = new THREE.Scene();
+
 const renderer = new THREE.WebGLRenderer({antialias: true});
+document.getElementById('render_container').appendChild(renderer.domElement)
+
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000);
 var controls = '';
+
+let labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize( window.innerWidth, window.innerHeight );
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0px';
+document.getElementById('render_container').appendChild(labelRenderer.domElement)
 
 window.addEventListener('resize', onWindowResize, false);
 
@@ -613,7 +659,6 @@ let mouse = new THREE.Vector2();
 
 const gui = new GUI({autoPlace: true, width: 120});
 
-document.getElementById('render_container').appendChild(renderer.domElement)
 
 // dict containing all objects of the scene
 let threejs_objects = {};
@@ -624,10 +669,9 @@ init();
 fetch('nodes.json')
 	.then(response => {add_progress_bar(); return response;})
     .then(response => {return response.json();})
-    .then(json_response => {console.log(json_response); return json_response})
+    // .then(json_response => {console.log(json_response); return json_response})
     .then(json_response => create_threejs_objects(json_response))
     .then(() => add_threejs_objects_to_scene(threejs_objects))
     .then(() => init_gui(threejs_objects))
-	.then(() => console.log('done'))
-	.then(render)
-	.then(() => console.log('hiding progress bar'));
+	.then(() => console.log('Done'))
+	.then(render);

@@ -1,6 +1,7 @@
 """The visualizer class is used to show 3d point clouds or bounding boxes in the browser."""
 
 from .points import Points
+from .labels import Labels
 from .lines import Lines
 from .mesh import Mesh
 from .camera import Camera
@@ -80,6 +81,18 @@ class Visualizer:
         self.elements[self.__parse_name(name)] = Points(
             positions, colors, normals, point_size, visible, alpha, shading_type
         )
+
+    def add_labels(self, name, labels, positions, colors, visible=True):
+        """Add labels to the visualizer.
+        
+        :param name: The name of the labels.
+        :param labels: The text value of the labels.
+        :param positions: The 3D positions of the labels.
+        :param colors: The text color of the individual labels.
+        :param visible: Bool if lines are visible.
+        """
+
+        self.elements[self.__parse_name(name)] = Labels(labels, positions, colors, visible)
 
     def add_lines(self, name, lines_start, lines_end, colors=None, visible=True):
         """Add lines to the visualizer.
