@@ -6,7 +6,7 @@ this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-version = '0.2.29'
+version = '0.2.30'
 
 setup(name='pyviz3d',
       version=version,
@@ -20,6 +20,6 @@ setup(name='pyviz3d',
       author_email='francis.engelmann@gmail.com',
       license='MIT',
       packages=['pyviz3d'],
-      package_data={'pyviz3d': ['src/index.html', 'src/js/*.js']},
+      package_data={'pyviz3d': ['src/index.html', 'src/css/*.css', 'src/js/*.js', 'src/favicon.ico']},
       setup_requires=['numpy'],
       zip_safe=False)

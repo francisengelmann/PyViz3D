@@ -11,7 +11,7 @@ def main():
                  ['text_x', 'texty_y', 'text_z'],
                  [np.array([1.0, 0.0, 0.0]), np.array([0.0, 1.0, 0.0]), np.array([0.0, 0.0, 1.0])],
                  [np.array([255.0, 0.0, 0.0]), np.array([0.0, 255.0, 0.0]), np.array([0.0, 0.0, 255.0])],
-                 visible=True)
+                 visible=False)
 
     # When we added everything we need to the visualizer, we save it.
     v.save('example_text')

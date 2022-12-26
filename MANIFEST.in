@@ -1,1 +1,1 @@
-recursive-include pyviz3d           *.py *.html *.js
+recursive-include pyviz3d           *.py *.html *.js *.css *.ico

@@ -155,6 +155,7 @@ function get_points(properties){
 
 function get_labels(properties){
 	const labels = new THREE.Group();
+	labels.name = "labels"
 	// console.log(properties)
 	for (let i=0; i<properties['labels'].length; i++){
 		const labelDiv = document.createElement('div');
@@ -164,11 +165,10 @@ function get_labels(properties){
 	
 		const label_2d = new CSS2DObject(labelDiv);
 		label_2d.position.set(properties['positions'][i][0], properties['positions'][i][1], properties['positions'][i][2]);
-		label_2d.layers.set(0);
+		// label_2d.layers.set(0);
 		labels.add(label_2d);
 	}
 	return labels
-
 }
 
 function get_obj(properties){
@@ -498,7 +498,9 @@ function init_gui(objects){
 			fol.open();
 		} else {
 			console.log(value);
-			gui.add(value, 'visible').name(name).onChange(render);
+			if (value.name.localeCompare('labels') != 0) {
+				gui.add(value, 'visible').name(name).onChange(render);
+			}
 		}
 	}
 }
@@ -599,17 +601,9 @@ function create_threejs_objects(properties){
 		threejs_objects[object_name].visible = object_properties['visible'];
 		threejs_objects[object_name].frustumCulled = false;
 	}
+	
 	// Add axis helper
 	threejs_objects['Axis'] = new THREE.AxesHelper(1);
-
-	// Add text
-	// const earthDiv = document.createElement('div');
-	// earthDiv.className = 'label';
-	// earthDiv.textContent = 'Earth';
-	// const earthLabel = new CSS2DObject( earthDiv );
-	// earthLabel.position.set(0, 3, 0);
-	// earthLabel.layers.set(0);
-	// threejs_objects['Axis'].add( earthLabel );
 
 	render();
 }
@@ -658,7 +652,6 @@ let intersection = null;
 let mouse = new THREE.Vector2();
 
 const gui = new GUI({autoPlace: true, width: 120});
-
 
 // dict containing all objects of the scene
 let threejs_objects = {};
