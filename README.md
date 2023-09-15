@@ -34,3 +34,16 @@ Point clouds and segments example.
 [[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_normals.py)
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)
 [<p align="center"><img width="60%" src="docs/img/example.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)
+
+# Blender
+
+1. Install Blender (from https://www.blender.org/)
+2. Set up alias in you ~/.bashrc or ~/.zshrc etc.
+`alias blender="/Applications/Blender.app/Contents/MacOS/Blender"`
+then `source ~/.zshrc`
+3. `blender myscene.blend --background --python blender.py`
+currently there is no myscene.blend to remove that: blender --background --python blender.py
+4. This will render an `output.png`
+5. The scene can also be opened in blender `bunny.blend`
+6. Need to install ffmpeg and convert (on mac via brew)  
+brew install ffmpeg

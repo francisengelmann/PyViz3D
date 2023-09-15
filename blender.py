@@ -23,7 +23,6 @@ def clear_scene():
   bpy.ops.object.delete()
 
 
-
 def render(path, file_format='PNG', color_mode='RGBA'):
   """
   :path: the file path of the rendered image
@@ -36,20 +35,19 @@ def render(path, file_format='PNG', color_mode='RGBA'):
   # D.worlds["World"].node_tree.nodes["Background"].inputs[0].default_value = (1, 1, 1, 1)
   # bpy.context.scene.world.use_nodes = False
   # bpy.context.scene.world.color = (1, 1, 1)
-
   # C.scene.render.alpha_mode = 'SKY'
-
   bpy.ops.render.render(use_viewport=True, write_still=True)
 
 
 def save_blender_scene(path):
-  bpy.ops.wm.save_as_mainfile(filepath=path)
+  bpy.ops.wm.save_as_mainfile(filepath=f'/Users/francis/Programming/PyViz3D/{path}')
 
 
 def compute_object_center(object):
   local_bbox_center = 0.125 * sum((mathutils.Vector(b) for b in object.bound_box),
                                    mathutils.Vector())
   return object.matrix_world @ local_bbox_center
+
 
 def look_at(camera,
             eye=mathutils.Vector((13.0, 13.0, 13.0)),
@@ -86,8 +84,8 @@ def create_video(input_dir, pattern, output_filepath):
 
 def init_scene():
   # render stuff
-  C.scene.render.resolution_x = 16*40
-  C.scene.render.resolution_y = 9*40
+  C.scene.render.resolution_x = 16 * 40
+  C.scene.render.resolution_y = 9 * 40
   D.scenes["Scene"].render.film_transparent = True
   C.scene.render.image_settings.color_mode = 'RGBA'
   C.scene.view_settings.look = 'Medium High Contrast'
@@ -96,15 +94,14 @@ def init_scene():
 
   # lights
   C.scene.objects['Light'].data.shadow_soft_size = 1.0
-  bpy.ops.object.light_add(type='SUN', radius=1, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+  bpy.ops.object.light_add(type='POINT', radius=1, align='WORLD', location=(1, 1, 0), scale=(1, 1, 1))
+  C.scene.objects['Point'].data.energy = 100.0
 
 
-
-def main():
+def main(scene_name, layer_name):
   clear_scene()
   init_scene()
   # bpy.ops.import_mesh.ply(filepath='examples/data/scene0106_02_vh_clean_2.ply')
-  scene_name = "cnb103"
   prefix = f'example_scenes/{scene_name}'
   bpy.ops.import_mesh.ply(filepath=f'{prefix}/{scene_name}.ply')
   obj = bpy.data.objects[scene_name]
@@ -117,7 +114,7 @@ def main():
   path_json = f'{prefix}/nodes.json'
   with open(path_json) as f:
     j = json.load(f)
-  name = 'Color'  # Color
+  name = layer_name  # Color
   try:
     num_points = j[name]['num_points']
     binary_filename = j[name]['binary_filename']
@@ -171,13 +168,15 @@ def main():
       mat.node_tree.nodes["Principled BSDF"].inputs[7].default_value = 0  # specular
 
   create_mat(obj)
+  print(f'{prefix}/{name}.blend')
+  
   save_blender_scene(path=f'{prefix}/{name}.blend')
-
-  for i in range(0, 180):
-    a = i*2 / 180.0 * math.pi
-    radius = 3.0
+ 
+  for i in range(0, 45):
+    a = i * 2 / 180.0 * math.pi
+    radius = 8.0
     camera_position=mathutils.Vector(
-      (math.cos(a) * radius, math.sin(a) * radius, 1.3 ))
+      (math.cos(a) * radius, math.sin(a) * radius, 1.0 ))
     scene_center=compute_object_center(obj)
     scene_center.z = -0.3
     camera_position += scene_center
@@ -189,7 +188,8 @@ def main():
 
 
 if __name__ == "__main__":
-  main()
+  main(scene_name="20230912_183659_canons",
+       layer_name="InstancesAll")  # Color, InstanceAll
 
   # matg = bpy.data.materials.new("Green")
   # matg.diffuse_color = (0,1,0,0.8)
