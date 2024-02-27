@@ -42,8 +42,14 @@ Point clouds and segments example.
 `alias blender="/Applications/Blender.app/Contents/MacOS/Blender"`
 then `source ~/.zshrc`
 3. `blender myscene.blend --background --python blender.py`
-currently there is no myscene.blend to remove that: blender --background --python blender.py
-4. This will render an `output.png`
-5. The scene can also be opened in blender `bunny.blend`
-6. Need to install ffmpeg and convert (on mac via brew)  
+currently there is no myscene.blend to remove that: `blender --background --python blender.py`
+4. This creates a .blend file. Open it in blender.  
+Select camera: View/Cameras/Active Camera    
+Lock camera to view:  
+Press N to show sidebar.  
+Under View, lock camera to view.  
+Control the camera with the small coordinate frame on the top right.
+5. This will render an `output.png`
+6. The scene can also be opened in blender `bunny.blend`
+7. Need to install ffmpeg and convert (on mac via brew)  
 brew install ffmpeg

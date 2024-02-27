@@ -89,9 +89,11 @@ def init_scene():
   D.scenes["Scene"].render.film_transparent = True
   C.scene.render.image_settings.color_mode = 'RGBA'
   C.scene.view_settings.look = 'Medium High Contrast'
-  # C.scene.cycles.device = 'GPU'
-  # C.scene.render.engine = 'CYCLES'
-
+  C.scene.render.engine = 'CYCLES'
+  C.scene.cycles.device = 'GPU'
+  C.scene.cycles.preview_samples = 100
+  C.scene.cycles.samples = 150
+  C.scene.frame_end = 60
   # lights
   C.scene.objects['Light'].data.shadow_soft_size = 1.0
   bpy.ops.object.light_add(type='POINT', radius=1, align='WORLD', location=(1, 1, 0), scale=(1, 1, 1))
@@ -115,20 +117,23 @@ def main(scene_name, layer_name):
   with open(path_json) as f:
     j = json.load(f)
   name = layer_name  # Color
+  num_points = j[name]['num_points']
+  binary_filename = j[name]['binary_filename']
+  path_pointcloud = f'{prefix}/{binary_filename}'
   try:
-    num_points = j[name]['num_points']
-    binary_filename = j[name]['binary_filename']
-    path_pointcloud = f'{prefix}/{binary_filename}'
     with open(path_pointcloud, 'rb') as f:
       data = f.read()
-    colors = data[24 * num_points:]
-
-    for i, d in enumerate(obj.data.vertex_colors['Col'].data):
-      vertex_index = obj.data.loops[i].vertex_index
-      for j in [0, 1, 2]:
-        d.color[j] = float(colors[vertex_index * 3 + j]) / 255.0
   except:
-    print(f'{name} not found')
+    print(f'Could not read: {path_pointcloud}')
+  colors = data[24 * num_points:]
+  print(len(colors))
+  # try: 
+  for i, d in enumerate(obj.data.vertex_colors['Col'].data):
+    vertex_index = obj.data.loops[i].vertex_index
+    for j in [0, 1, 2]:
+      d.color[j] = float(colors[vertex_index * 3 + j]) / 255.0
+  # except:
+    # print(f'{name} not found: {path_pointcloud}')
 
 
     # look into each loop's vertex ? (need to filter out double entries)
@@ -171,10 +176,10 @@ def main(scene_name, layer_name):
   print(f'{prefix}/{name}.blend')
   
   save_blender_scene(path=f'{prefix}/{name}.blend')
- 
-  for i in range(0, 45):
+  exit()
+  for i in range(0, 2):
     a = i * 2 / 180.0 * math.pi
-    radius = 8.0
+    radius = 2.0
     camera_position=mathutils.Vector(
       (math.cos(a) * radius, math.sin(a) * radius, 1.0 ))
     scene_center=compute_object_center(obj)
@@ -188,7 +193,7 @@ def main(scene_name, layer_name):
 
 
 if __name__ == "__main__":
-  main(scene_name="20230912_183659_canons",
+  main(scene_name="cnb_103",
        layer_name="InstancesAll")  # Color, InstanceAll
 
   # matg = bpy.data.materials.new("Green")
