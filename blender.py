@@ -88,7 +88,7 @@ def init_scene():
   C.scene.render.resolution_y = 9 * 40
   D.scenes["Scene"].render.film_transparent = True
   C.scene.render.image_settings.color_mode = 'RGBA'
-  C.scene.view_settings.look = 'Medium High Contrast'
+  C.scene.view_settings.look = 'AgX - Medium High Contrast'
   C.scene.render.engine = 'CYCLES'
   C.scene.cycles.device = 'GPU'
   C.scene.cycles.preview_samples = 100

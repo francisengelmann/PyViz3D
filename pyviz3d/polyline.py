@@ -26,3 +26,6 @@ class Polyline:
     def write_binary(self, path):
         """Write lines to binary file."""
         return
+
+    def write_blender(self, path):
+        return

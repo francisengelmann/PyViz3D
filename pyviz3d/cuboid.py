@@ -30,3 +30,7 @@ class Cuboid:
     def write_binary(self, path):
         """Write lines to binary file."""
         return
+
+    def write_blender(self, path):
+        print(type(self).__name__+'.write_blender() not yet implemented.' )
+        return

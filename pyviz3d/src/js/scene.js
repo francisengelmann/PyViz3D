@@ -168,6 +168,25 @@ function get_labels(properties){
 	return labels
 }
 
+function get_circles_2d(properties){
+	const labels = new THREE.Group();
+	labels.name = "labels"
+	for (let i=0; i<properties['labels'].length; i++){
+		const border_color = "rgb("+properties['border_colors'][i][0]+", "+properties['border_colors'][i][1]+", "+properties['border_colors'][i][2]+")";
+		const fill_color = "rgb("+properties['fill_colors'][i][0]+", "+properties['fill_colors'][i][1]+", "+properties['fill_colors'][i][2]+")";
+		const labelDiv = document.createElement('div');
+		labelDiv.className = 'label';
+		labelDiv.textContent = properties['labels'][i];
+		labelDiv.style.border = '3px solid '+border_color;
+		labelDiv.style.backgroundColor = fill_color;
+		labelDiv.style.borderRadius = '30px';
+		const label_2d = new CSS2DObject(labelDiv);
+		label_2d.position.set(properties['positions'][i][0], properties['positions'][i][1], properties['positions'][i][2]);
+		labels.add(label_2d);
+	}
+	return labels
+}
+
 function get_obj(properties){
 	var container = new THREE.Object3D();
 	function loadModel(object) {
@@ -526,6 +545,11 @@ function create_threejs_objects(properties){
 		}
 		if (String(object_properties['type']).localeCompare('labels') == 0){
 			threejs_objects[object_name] = get_labels(object_properties);
+			step_progress_bar();
+			render();
+		}
+		if (String(object_properties['type']).localeCompare('circles_2d') == 0){
+			threejs_objects[object_name] = get_circles_2d(object_properties);
 			step_progress_bar();
 			render();
 		}

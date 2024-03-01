@@ -38,3 +38,7 @@ class Mesh:
         destination_path = os.path.join(destination_dir, self.filename_destination)
         if not os.path.exists(self.filename_destination):
             copyfile(self.filename_source, destination_path)
+
+    def write_blender(self, path):
+        print(type(self).__name__+'.write_blender() not yet implemented.' )
+        return

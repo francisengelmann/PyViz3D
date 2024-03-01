@@ -35,3 +35,7 @@ class Lines:
         with open(path, "wb") as f:
             f.write(bin_positions)
             f.write(bin_colors)
+
+    def write_blender(self, path):
+        print(type(self).__name__+'.write_blender() not yet implemented.' )
+        return

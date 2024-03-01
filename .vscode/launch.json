@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "Example Arrows",
             "type": "python",
@@ -75,7 +76,8 @@
             "env": {
                 "PYTHONPATH": "${cwd}"
             }
-        },        {
+        },
+        {
             "name": "Example Text",
             "type": "python",
             "request": "launch",
@@ -86,6 +88,31 @@
             "env": {
                 "PYTHONPATH": "${cwd}"
             }
+        },
+        {
+            "name": "Example Graph",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/examples/example_graph.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${cwd}"
+            }
+        },
+        {
+            "name": "Example Blender",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/examples/example_blender.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${cwd}"
+            }
         }
+
     ]
 }

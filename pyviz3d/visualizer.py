@@ -8,16 +8,18 @@ from .camera import Camera
 from .cuboid import Cuboid
 from .polyline import Polyline
 from .arrow import Arrow
+from .circles_2d import Circles2D
 
 import os
 import sys
 import shutil
 import json
 import numpy as np
+import subprocess
 
 
 class Visualizer:
-    def __init__(self, position=None, look_at=None, up=None):
+    def __init__(self, position=None, look_at=None, up=None, focal_length=28):
         if position is None:
             position = [3.0, 3.0, 3.0]
         if look_at is None:
@@ -28,7 +30,8 @@ class Visualizer:
         self.camera = Camera(
             position=np.array(np.array(position)),
             look_at=np.array(np.array(look_at)),
-            up=np.array(np.array(up))
+            up=np.array(np.array(up)),
+            focal_length=focal_length
         )
         self.elements = {"Camera_0": self.camera}  # dict of elements to display
 
@@ -47,6 +50,7 @@ class Visualizer:
         colors=None,
         normals=None,
         point_size=25,
+        resolution=5,
         visible=True,
         alpha=1.0,
     ):
@@ -57,6 +61,7 @@ class Visualizer:
         :param normals: The point normals.
         :param colors: The point colors.
         :param point_size: The point size.
+        :param resolution: The resolution of the blender sphere.
         :param visible: Bool if points are visible.
         :param alpha: Alpha value of colors.
         """
@@ -79,7 +84,7 @@ class Visualizer:
         alpha = min(max(alpha, 0.0), 1.0)  # cap alpha to [0..1]
 
         self.elements[self.__parse_name(name)] = Points(
-            positions, colors, normals, point_size, visible, alpha, shading_type
+            positions, colors, normals, point_size, resolution, visible, alpha, shading_type
         )
 
     def add_labels(self, name, labels, positions, colors, visible=True):
@@ -89,10 +94,21 @@ class Visualizer:
         :param labels: The text value of the labels.
         :param positions: The 3D positions of the labels.
         :param colors: The text color of the individual labels.
+        :param visible: Bool if label is visible.
+        """
+        self.elements[self.__parse_name(name)] = Labels(labels, positions, colors, visible)
+
+    def add_circles_2d(self, name, labels, positions, border_colors, fill_colors, visible=True):
+        """Add node to the visualizer.
+        
+        :param name: The name of the node.
+        :param labels: The text value of the node.
+        :param positions: The 3D positions of the node.
+        :param border_colors: The text color of the individual node.
+        :param fill_colors: The text color of the individual node.
         :param visible: Bool if lines are visible.
         """
-
-        self.elements[self.__parse_name(name)] = Labels(labels, positions, colors, visible)
+        self.elements[self.__parse_name(name)] = Circles2D(labels, positions, border_colors, fill_colors, visible)
 
     def add_lines(self, name, lines_start, lines_end, colors=None, visible=True):
         """Add lines to the visualizer.
@@ -134,6 +150,7 @@ class Visualizer:
             color = np.array([255, 0, 0])
         orientation /= np.linalg.norm(orientation)
         self.elements[self.__parse_name(name)] = Cuboid(position, size, orientation, color, alpha, edge_width, visible)
+
 
     def add_mesh(self, name, path, translation=[0, 0, 0], rotation=[0, 0, 0, 1], scale=[1, 1, 1], color=[255, 255, 255], visible=True):
         """Adds a polygon mesh to the scene, as specified in the path, it has to be an .obj file.
@@ -178,7 +195,7 @@ class Visualizer:
             color = np.array([255, 0, 0])
         self.elements[self.__parse_name(name)] = Arrow(start, end, color, alpha, stroke_width, head_width, visible)
 
-    def save(self, path, port=6008, verbose=True):
+    def save(self, path, port=6008, show_in_blender=False, blender_output_path=None, verbose=True):
         """Creates the visualization and displays the link to it.
 
         :param path: The path to save the visualization files.
@@ -201,6 +218,9 @@ class Visualizer:
             binary_file_path = os.path.join(directory_destination, name + ".bin")
             nodes_dict[name] = e.get_properties(name + ".bin")
             e.write_binary(binary_file_path)
+            if show_in_blender:
+                blender_file_oath = os.path.join(directory_destination, name + ".ply")
+                e.write_blender(blender_file_oath)
 
         # Write json file containing all scene elements
         json_file = os.path.join(directory_destination, "nodes.json")
@@ -225,3 +245,37 @@ class Visualizer:
         print(
             "************************************************************************"
         )
+        if show_in_blender:
+            self.show_in_blender(path, nodes_dict, blender_output_path, verbose)
+
+    def show_in_blender(self, path, nodes_dict, blender_output_path, verbose=True):
+
+        directory_destination = os.path.abspath(path)
+
+        blender_script_path = os.path.join(directory_destination, "blender_script.py")
+        with open(blender_script_path, "w") as outfile:
+            outfile.write(
+"import bpy\nimport os\n\
+import sys\n\
+sys.path.append(os.getcwd())\n\
+import blender_tools\n\
+blender_tools.main()")
+
+
+        if not verbose:
+            return
+
+        print("")
+        print("************************************************************************")
+        print("Blender instructions")
+        # print("cd " + directory_destination + "; blender --python blender_script.py")
+        blender_path = '/Applications/Blender.app/Contents/MacOS/Blender'
+        cmd = "cd " + directory_destination + "; "+blender_path+" --background --python blender_script.py"
+        if blender_output_path:
+            cmd = cmd + "-- " + blender_output_path
+        print(cmd)
+        print("************************************************************************")
+        os.system(cmd)
+        # cmd = ['cd', directory_destination+';', '/Applications/Blender.app/Contents/MacOS/Blender', '--python', 'blender_script.py', '--', blender_output_path]
+        # print(cmd)
+        # subprocess.call(cmd)
