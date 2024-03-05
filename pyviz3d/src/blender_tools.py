@@ -119,7 +119,7 @@ def create_mat(obj):
       mat.node_tree.nodes["Color Attribute"].outputs["Color"])
     mat.node_tree.nodes["Principled BSDF"].inputs[7].default_value = 0  # specular
 
-def cylinder_between(x1, y1, z1, x2, y2, z2, r, c):
+def cylinder_between(x1, y1, z1, x2, y2, z2, r, color, alpha):
     dx = x2 - x1
     dy = y2 - y1
     dz = z2 - z1    
@@ -131,19 +131,15 @@ def cylinder_between(x1, y1, z1, x2, y2, z2, r, c):
     ) 
     phi = math.atan2(dy, dx) 
     theta = math.acos(dz/dist) 
-    bpy.context.object.rotation_euler[1] = theta 
-    bpy.context.object.rotation_euler[2] = phi 
-    bpy.context.object.color = (c[0], c[1], c[2], 1.0)
+    C.object.rotation_euler[1] = theta 
+    C.object.rotation_euler[2] = phi
 
-    mat = bpy.data.materials.new("cylinder")
+    mat = bpy.data.materials.new(name="test")
+    mat.use_backface_culling = True
+    C.object.data.materials.append(mat)
     mat.use_nodes = True
-    # mat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (c[0], c[1], c[2], 1.0)
-    # mat.node_tree.nodes["Principled BSDF"].inputs[7].default_value = 0  # specular
-    # principled = mat.node_tree.nodes['Principled BSDF']
-    # principled.inputs['Base Color'].default_value = (c[0], c[1], c[2], 1.0)
-    # principled.inputs[7].default_value = 0  # specular
-    bpy.context.object.data.materials.append(mat)
-    return bpy.context.object
+    mat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (color[0]/255.0, color[1]/255.0, color[2]/255.0, alpha)
+    return C.object
 
 def main():
     clear_scene()
@@ -180,7 +176,9 @@ def main():
                 x2 = properties['positions'][i + 1][0]
                 y2 = properties['positions'][i + 1][1]
                 z2 = properties['positions'][i + 1][2]
-                obj = cylinder_between(x1, y1, z1, x2, y2, z2, properties['edge_width'] * 2, properties['color'])
+                obj = cylinder_between(x1, y1, z1, x2, y2, z2, properties['edge_width'] * 2, properties['color'], properties['alpha'])
+
+
     if len(argv) > 0:
         render(argv[0])
     # loops = len(obj.data.loops)

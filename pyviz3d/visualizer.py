@@ -261,7 +261,6 @@ sys.path.append(os.getcwd())\n\
 import blender_tools\n\
 blender_tools.main()")
 
-
         if not verbose:
             return
 
@@ -272,10 +271,11 @@ blender_tools.main()")
         blender_path = '/Applications/Blender.app/Contents/MacOS/Blender'
         cmd = "cd " + directory_destination + "; "+blender_path+" --background --python blender_script.py"
         if blender_output_path:
-            cmd = cmd + "-- " + blender_output_path
+            cmd = cmd + " -- " + blender_output_path
         print(cmd)
         print("************************************************************************")
         os.system(cmd)
+
         # cmd = ['cd', directory_destination+';', '/Applications/Blender.app/Contents/MacOS/Blender', '--python', 'blender_script.py', '--', blender_output_path]
         # print(cmd)
         # subprocess.call(cmd)

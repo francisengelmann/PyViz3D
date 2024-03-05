@@ -48,7 +48,8 @@ def main():
     name = 'labels.instances.align.annotated.v2_neg_office.ply'
 
     prefix = '/Users/francis/Materials/graphloc/office_chair_moves/'
-    rooms = ['office_chair_move1', 'office_chair_move2', 'office_chair_moves3'] 
+    # rooms = ['office_chair_move1', 'office_chair_move2', 'office_chair_moves3'] 
+    rooms = ['office_chair_move1']  #, 'office_chair_move2', 'office_chair_moves3'] 
 
     for name in rooms:
 
@@ -88,7 +89,7 @@ def main():
                     edges = []
                     edges.append(obj_centers[i])
                     edges.append(obj_centers[j])
-                    # v.add_polyline(f'polyline{i}{j}', np.array(edges), color=np.array([150.0, 0.0, 0.0]), edge_width=0.02)
+                    v.add_polyline(f'polyline{i}{j}', np.array(edges), color=np.array([150.0, 0.0, 0.0]), edge_width=0.02, alpha=0.5)
 
         mask = point_positions[:,2] < 0.8
         v.add_points('RGB Color', point_positions[mask], point_colors[mask] * 255, point_normals[mask], point_size=50, visible=True)
