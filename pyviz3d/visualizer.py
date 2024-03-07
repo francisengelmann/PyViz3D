@@ -195,7 +195,7 @@ class Visualizer:
             color = np.array([255, 0, 0])
         self.elements[self.__parse_name(name)] = Arrow(start, end, color, alpha, stroke_width, head_width, visible)
 
-    def save(self, path, port=6008, show_in_blender=False, blender_output_path=None, verbose=True):
+    def save(self, path, port=6008, show_in_blender=False, blender_output_path=None, blender_path=None, verbose=True):
         """Creates the visualization and displays the link to it.
 
         :param path: The path to save the visualization files.
@@ -246,9 +246,9 @@ class Visualizer:
             "************************************************************************"
         )
         if show_in_blender:
-            self.show_in_blender(path, nodes_dict, blender_output_path, verbose)
+            self.show_in_blender(path, nodes_dict, blender_output_path, blender_path, verbose)
 
-    def show_in_blender(self, path, nodes_dict, blender_output_path, verbose=True):
+    def show_in_blender(self, path, nodes_dict, blender_output_path, blender_path, verbose=True):
 
         directory_destination = os.path.abspath(path)
 
@@ -268,7 +268,6 @@ blender_tools.main()")
         print("************************************************************************")
         print("Blender instructions")
         # print("cd " + directory_destination + "; blender --python blender_script.py")
-        blender_path = '/Applications/Blender.app/Contents/MacOS/Blender'
         cmd = "cd " + directory_destination + "; "+blender_path+" --background --python blender_script.py"
         if blender_output_path:
             cmd = cmd + " -- " + blender_output_path

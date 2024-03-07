@@ -89,11 +89,11 @@ def main():
                     edges = []
                     edges.append(obj_centers[i])
                     edges.append(obj_centers[j])
-                    v.add_polyline(f'polyline{i}{j}', np.array(edges), color=np.array([150.0, 0.0, 0.0]), edge_width=0.02, alpha=0.5)
+                    v.add_polyline(f'polyline{i}{j}', np.array(edges), color=np.array([100.0, 100.0, 100.0]), edge_width=0.02, alpha=0.5)
 
         mask = point_positions[:,2] < 0.8
         v.add_points('RGB Color', point_positions[mask], point_colors[mask] * 255, point_normals[mask], point_size=50, visible=True)
-        # v.add_points('centers', obj_centers, obj_colors * 255, point_size=200, resolution=15, visible=True)    
+        v.add_points('centers', obj_centers, obj_colors * 255, point_size=200, resolution=15, visible=True)    
         # v.add_circles_2d('Labels',
         #              ['x', 'y', 'z']
         #              [np.array([1.0, 0.0, 0.0]), np.array([0.0, 1.0, 0.0]), np.array([0.0, 0.0, 1.0])],
@@ -101,7 +101,7 @@ def main():
         #              [np.array([255.0, 130.0, 130.0]), np.array([130.0, 255.0, 130.0]), np.array([130.0, 130.0, 255.0])],
         #              visible=False)
         # When we added everything we need to the visualizer, we save it.
-        v.save('example_text', show_in_blender=True, blender_output_path=os.path.join(prefix, name+".png"))
+        v.save('example_text', show_in_blender=True, blender_output_path=os.path.join(prefix, name+".png"), blender_path='/Applications/Blender.app/Contents/MacOS/Blender')
 
 
 if __name__ == '__main__':
