@@ -41,6 +41,7 @@ def render(path, file_format='PNG', color_mode='RGBA'):
   # bpy.context.scene.world.color = (1, 1, 1)
   # C.scene.render.alpha_mode = 'SKY'
   bpy.ops.render.render(use_viewport=True, write_still=True)
+  print('Saved rendered file to:', os.path.abspath(path))
 
 
 def save_blender_scene(path: str) -> None:
