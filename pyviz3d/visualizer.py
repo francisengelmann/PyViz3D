@@ -99,11 +99,10 @@ class Visualizer:
         )
 
         if show_in_blender:
-            self.show_in_blender(path, nodes_dict, blender_output_path, blender_executable_path, verbose)
+            self.show_in_blender(path, blender_output_path, blender_executable_path, verbose)
 
     def show_in_blender(self,
                         path: str,
-                        nodes_dict: dict,
                         blender_output_path: str,
                         blender_executable_path: str,
                         verbose: bool=True):

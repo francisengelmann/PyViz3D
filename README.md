@@ -1,7 +1,7 @@
 <p align="center"><img width="40%" src="docs/img/pyviz3d-logo.png" /></p>
 
 ----
-PyViz3D is a python package to visualize 3D scenes directly in your browser.
+PyViz3D is a python package to visualize 3D scenes directly in your browser, and create beautiful renderings with blender.
 
 #### Links
 
@@ -44,20 +44,32 @@ Point clouds and segments example.
 [<p align="center"><img width="60%" src="docs/img/example.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)
 
 # Blender
+To create beautiful illustrations with blender consider the following points:
+- Install Blender from https://www.blender.org/ (tested version 4.0).
+- Calling `v.save(..., show_in_blender=True)` creates a `.blend` file which you can open in blender.
+- Check `examples/examples_graph.py` for an example on how to create blender renderings.
+<!-- 2. Set up alias in you ~/.bashrc or ~/.zshrc etc. -->
+<!-- `alias blender="/Applications/Blender.app/Contents/MacOS/Blender"` -->
+<!-- then `source ~/.zshrc` -->
+<!-- 2. `blender myscene.blend --background --python blender.py` -->
+<!-- currently there is no myscene.blend to remove that: `blender --background --python blender.py` -->
+<!-- Select camera: View/Cameras/Active Camera     -->
+<!-- Lock camera to view:   -->
+<!-- Press N to show sidebar.   -->
+<!-- Under View, lock camera to view.   -->
+<!-- Control the camera with the small coordinate frame on the top right. -->
+<!-- 5. This will render an `output.png` -->
+<!-- 6. The scene can also be opened in blender `bunny.blend` -->
+<!-- 7. Need to install ffmpeg and convert (on mac via brew)   -->
+<!-- brew install ffmpeg -->
 
-1. Install Blender (from https://www.blender.org/)
-2. Set up alias in you ~/.bashrc or ~/.zshrc etc.
-`alias blender="/Applications/Blender.app/Contents/MacOS/Blender"`
-then `source ~/.zshrc`
-3. `blender myscene.blend --background --python blender.py`
-currently there is no myscene.blend to remove that: `blender --background --python blender.py`
-4. This creates a .blend file. Open it in blender.  
-Select camera: View/Cameras/Active Camera    
-Lock camera to view:  
-Press N to show sidebar.  
-Under View, lock camera to view.  
-Control the camera with the small coordinate frame on the top right.
-5. This will render an `output.png`
-6. The scene can also be opened in blender `bunny.blend`
-7. Need to install ffmpeg and convert (on mac via brew)  
-brew install ffmpeg
+# BibTeX
+Please consider citing PyViz3D in your publications if it helps your research.
+```
+@misc{engelmann2019pyviz3d,
+  title={PyViz3D},
+  author={Francis Engelmann},
+  year={2019},
+  howpublished={\url{https://github.com/francisengelmann/PyViz3D}},
+}
+```

@@ -4,7 +4,7 @@ import mathutils
 import numpy as np
 import subprocess
 import json
-
+import os
 
 C = bpy.context
 D = bpy.data
@@ -43,8 +43,8 @@ def render(path, file_format='PNG', color_mode='RGBA'):
   bpy.ops.render.render(use_viewport=True, write_still=True)
 
 
-def save_blender_scene(path):
-  bpy.ops.wm.save_as_mainfile(filepath=f'/Users/francis/Programming/PyViz3D/{path}')
+def save_blender_scene(path: str) -> None:
+  bpy.ops.wm.save_as_mainfile(filepath=path)
 
 
 def compute_object_center(object):
@@ -119,6 +119,7 @@ def create_mat(obj):
       mat.node_tree.nodes["Color Attribute"].outputs["Color"])
     mat.node_tree.nodes["Principled BSDF"].inputs[7].default_value = 0  # specular
 
+
 def cylinder_between(x1, y1, z1, x2, y2, z2, r, color, alpha):
     dx = x2 - x1
     dy = y2 - y1
@@ -140,6 +141,7 @@ def cylinder_between(x1, y1, z1, x2, y2, z2, r, color, alpha):
     mat.use_nodes = True
     mat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (color[0]/255.0, color[1]/255.0, color[2]/255.0, alpha)
     return C.object
+
 
 def main():
     clear_scene()
@@ -178,95 +180,11 @@ def main():
                 z2 = properties['positions'][i + 1][2]
                 obj = cylinder_between(x1, y1, z1, x2, y2, z2, properties['edge_width'] * 2, properties['color'], properties['alpha'])
 
-
+    output_blender_file = f'blender_scene.blend'
     if len(argv) > 0:
         render(argv[0])
-    # loops = len(obj.data.loops)
-    # verts = len(obj.data.vertices)
-    # print(loops, verts, len(obj.data.vertex_colors['Col'].data))
 
-    # Read vertex colors
+    output_blender_file = os.path.abspath(output_blender_file)
+    save_blender_scene(output_blender_file)
+    print('Saved blender file to:', output_blender_file)
 
-    # name = 'PointClouds;1'  # Color
-    # num_points = j[name]['num_points']
-    # print(num_points)
-    # binary_filename = j[name]['binary_filename']
-    # path_pointcloud = f'{binary_filename}'
-    # try:
-    #     with open(path_pointcloud, 'rb') as f:
-    #         data = f.read()
-    # except:
-    #     print(f'Could not read: {path_pointcloud}')
-    #     points = data[:12 * num_points]
-    #     normals = data[12 * num_points:24 * num_points]
-    #     colors = data[24 * num_points:]
-
-    # points = np.frombuffer(data[:12 * num_points], np.float32).reshape([-1, 3])
-    # colors = np.frombuffer(data[24 * num_points:], np.uint8).reshape([-1, 3])
-
-    # for i in range(num_points):
-    #     bpy.ops.mesh.primitive_uv_sphere_add(segments=5,
-    #                                         ring_count=5,
-    #                                         radius=0.1,
-    #                                         enter_editmode=False,
-    #                                         location=points[i])
-
-# try: 
-#   for i, d in enumerate(obj.data.vertex_colors['Col'].data):
-#     vertex_index = obj.data.loops[i].vertex_index
-#      for j in [0, 1, 2]:
-#       d.color[j] = float(colors[vertex_index * 3 + j]) / 255.0
-# except:
-# print(f'{name} not found: {path_pointcloud}')
-
-# look into each loop's vertex ? (need to filter out double entries)
-# visit = verts * [False]
-# colors = {}
-
-# for l in range(loops):
-# v = obj.data.loops[l].vertex_index
-# c = vcol.data[l].color
-# if not visit[v]:
-#         colors[v] = c
-#         visit[v] = True
-
-# sorted(colors)
-# print("Vertex-Colors of Layer:", vcol.name)
-# #print(colors)
-# for v, c in colors.items():
-#     print("Vertex {0} has Color {1}".format(v, (c[0], c[1], c[2])))
-
-# bpy.ops.material.new()
-# bpy.data.materials["Material.001"].use_backface_culling = True
-
-# bpy.ops.object.mode_set(mode='VERTEX_PAINT')
-
-#   create_mat(obj)
-  
-#   save_blender_scene(path=f'{name}.blend')
-#   exit()
-#   for i in range(0, 2):
-#     a = i * 2 / 180.0 * math.pi
-#     radius = 2.0
-#     camera_position=mathutils.Vector(
-#       (math.cos(a) * radius, math.sin(a) * radius, 1.0 ))
-#     scene_center=compute_object_center(obj)
-#     scene_center.z = -0.3
-#     camera_position += scene_center
-#     look_at(D.objects['Camera'],
-#             eye=camera_position,
-#             at=scene_center)
-#     render(path=f'{prefix}/frames/output_{str(i).zfill(5)}', file_format='PNG')
-#   create_video(f'{prefix}/frames', 'output_%05d.png', f"{prefix}/{scene_name}_{name}.mp4")
-
-
-# if __name__ == "__main__":
-#   main(scene_name="cnb_103",
-#        layer_name="InstancesAll")  # Color, InstanceAll
-
-# matg = bpy.data.materials.new("Green")
-# matg.diffuse_color = (0,1,0,0.8)
-# obj.active_material = matg
-# obj.vertex_colors.new(name=vertex_colors_name)
-# color_layer = mesh.vertex_colors[vertex_colors_name]
-# print(len(obj.data.vertices))
