@@ -1,0 +1,27 @@
+# pyproject.toml
+
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyviz3d"
+version = "0.3.0"
+description = "PyViz3D is a python package to visualize 3D scenes."
+readme = "README.md"
+authors = [{ name = "Francis Engelmann", email = "francis.engelmann@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["3d", "visualizer", "blender"]
+
+dependencies = [
+    "numpy",
+]
+requires-python = ">=3.8"
+
+[project.urls]
+Homepage = "https://github.com/francisengelmann/pyviz3d"
