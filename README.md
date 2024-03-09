@@ -19,6 +19,15 @@ Scene graph example, including blender rendering.
   <img width="45%" src="docs/img/example_graph_blender.png" />
 </p>
 
+Blender example, including blender rendering.
+[[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_blender.py)
+[[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/blender/index.html)
+<p align="center">
+  <img width="45%" src="docs/img/example_blender.png" />
+  <img width="45%" src="docs/img/example_blender_blender.png" />
+</p>
+
+
 Polygon meshes example.
 [[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_meshes.py)
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/meshes/index.html)
