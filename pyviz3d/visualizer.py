@@ -1,4 +1,4 @@
-"""The visualizer class is used to show 3d point clouds or bounding boxes in the browser."""
+"""The visualizer class is used to show 3d scenes."""
 
 from .points import Points
 from .labels import Labels
@@ -15,27 +15,25 @@ import sys
 import shutil
 import json
 import numpy as np
-import subprocess
 
 
 class Visualizer:
-    def __init__(self, position=None, look_at=None, up=None, focal_length=28):
-        if position is None:
-            position = [3.0, 3.0, 3.0]
-        if look_at is None:
-            look_at = [0.0, 0.0, 0.0]
-        if up is None:
-            up = [0.0, 0.0, 1.0]
+    def __init__(self,
+                 position: np.array = np.array([3.0, 3.0, 3.0]),
+                 look_at: np.array = np.array([0.0, 0.0, 0.0]),
+                 up: np.array = np.array([0.0, 0.0, 1.0]),
+                 focal_length: float = 28.0):
 
         self.camera = Camera(
-            position=np.array(np.array(position)),
-            look_at=np.array(np.array(look_at)),
-            up=np.array(np.array(up)),
+            position=np.array(position),
+            look_at=np.array(look_at),
+            up=np.array(up),
             focal_length=focal_length
         )
-        self.elements = {"Camera_0": self.camera}  # dict of elements to display
+        self.elements = {"Camera_0": self.camera}
 
-    def __parse_name(self, name):
+    def __parse_name(self,
+                     name: str) -> str:
         """Makes sure the name does not contain invalid character combinations.
 
         :param name:
@@ -45,14 +43,14 @@ class Visualizer:
 
     def add_points(
         self,
-        name,
-        positions,
-        colors=None,
-        normals=None,
-        point_size=25,
-        resolution=5,
-        visible=True,
-        alpha=1.0,
+        name: str,
+        positions: np.array,
+        colors: np.array=None,
+        normals: np.array=None,
+        point_size: int=25,
+        resolution: int=5,
+        visible: bool=True,
+        alpha: float=1.0,
     ):
         """Add points to the visualizer.
 
@@ -75,7 +73,7 @@ class Visualizer:
             colors = np.ones(positions.shape, dtype=np.uint8) * 50  # gray
         if normals is None:
             normals = np.ones(positions.shape, dtype=np.float32)
-            shading_type = 0  # Unifor shading when no normals are available
+            shading_type = 0  # Uniform shading when no normals are available
 
         positions = positions.astype(np.float32)
         colors = colors.astype(np.uint8)
@@ -132,25 +130,18 @@ class Visualizer:
         lines_end = lines_end.astype(np.float32)
         self.elements[self.__parse_name(name)] = Lines(lines_start, lines_end, colors, colors, visible)
 
-    def add_bounding_box(self, name, position, size, orientation=None, color=None, alpha=1.0, edge_width=0.01, visible=True):
-        """Add bounding box.
-
-        :param name: The bounding box name. (string)
-        :param position: The center position. (float32, 3x1)
-        :param size: The size. (float32, 3x1)
-        :param orientation: The 3D orientation (quaternion w, x, y, z) of the object.
-        :param color: The color. (int32, 3x1)
-        :param alpha: The transparency. (float32)
-        :param edge_width: The width of the edges. (float32)
-        :param visible: Bool, whether visible or not.
-        """
-        if orientation is None:
-            orientation = np.array([0.0, 0.0, 0.0, 1.0])
-        if color is None:
-            color = np.array([255, 0, 0])
-        orientation /= np.linalg.norm(orientation)
+    def add_bounding_box(self,
+                         name: str,
+                         position: np.array,
+                         size: np.array,
+                         orientation: np.array=np.array([1.0, 0.0, 0.0, 0.0]),
+                         color: np.array=np.array([255, 0, 0]),
+                         alpha: float=1.0,
+                         edge_width: float=0.01,
+                         visible: bool=True):
+        """Add oriented 3D bounding box."""
+        orientation /= np.linalg.norm(orientation)  # normalize the orientation
         self.elements[self.__parse_name(name)] = Cuboid(position, size, orientation, color, alpha, edge_width, visible)
-
 
     def add_mesh(self, name, path, translation=[0, 0, 0], rotation=[0, 0, 0, 1], scale=[1, 1, 1], color=[255, 255, 255], visible=True):
         """Adds a polygon mesh to the scene, as specified in the path, it has to be an .obj file.
@@ -182,17 +173,15 @@ class Visualizer:
             color = np.array([255, 0, 0])
         self.elements[self.__parse_name(name)] = Polyline(positions, color, alpha, edge_width, visible)
 
-    def add_arrow(self, name, start, end, color=None, alpha=1.0, stroke_width=0.01, head_width=0.03, visible=True):
-        """Add polyline.
-        :param name: The bounding box name. (string)
-        :param positions: The N 3D positions along the polyline. (float32, Nx3)
-        :param color: The color. (int32, 3x1)
-        :param alpha: The transparency. (float32)
-        :param edge_width: The width of the edges. (float32)
-        :param visible: Bool, whether visible or not.
-        """
-        if color is None:
-            color = np.array([255, 0, 0])
+    def add_arrow(self, name:str,
+                  start: np.array,
+                  end: np.array,
+                  color: np.array=np.array([255, 0, 0]),
+                  alpha: float=1.0,
+                  stroke_width: float=0.01,
+                  head_width: float=0.03,
+                  visible: bool=True):
+        """Add an arrow."""
         self.elements[self.__parse_name(name)] = Arrow(start, end, color, alpha, stroke_width, head_width, visible)
 
     def save(self, path, port=6008, show_in_blender=False, blender_output_path=None, blender_path=None, verbose=True):
@@ -241,7 +230,7 @@ class Visualizer:
         print("1) Start local server:")
         print("    cd " + directory_destination + "; " + http_server_string)
         print("2) Open in browser:")
-        print("    http://0.0.0.0:" + str(port))
+        print("    http://localhost:" + str(port))
         print(
             "************************************************************************"
         )
