@@ -14,8 +14,8 @@ Sscene graph example.
 [[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_graph.py)
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/graph/index.html)
 <p align="center">
-<img width="60%" src="docs/img/example_graph.png" />
-<img width="60%" src="docs/img/example_graph_blender.png" />
+<img width="45%" src="docs/img/example_graph.png" />
+<img width="45%" src="docs/img/example_graph_blender.png" />
 </p>
 
 
