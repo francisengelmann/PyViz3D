@@ -48,7 +48,7 @@ Point clouds and segments example.
 To create beautiful illustrations with blender consider the following points:
 - Install Blender from https://www.blender.org/ (tested version 4.0).
 - Calling `v.save(..., show_in_blender=True)` creates a `.blend` file which you can open in blender.
-- Check `examples/examples_graph.py` for an example on how to create blender renderings.
+- Check `examples/examples_graph.py` for a complete example.
 <!-- 2. Set up alias in you ~/.bashrc or ~/.zshrc etc. -->
 <!-- `alias blender="/Applications/Blender.app/Contents/MacOS/Blender"` -->
 <!-- then `source ~/.zshrc` -->
