@@ -41,7 +41,13 @@ class Visualizer:
         """
         return name.replace(':', ';')
 
-    def save(self, path, port=6008, show_in_blender=False, blender_output_path=None, blender_path=None, verbose=True):
+    def save(self,
+             path: str,
+             port: int=6008,
+             show_in_blender: bool=False,
+             blender_output_path=None,
+             blender_executable_path=None,
+             verbose=True):
         """Creates the visualization and displays the link to it.
 
         :param path: The path to save the visualization files.
@@ -91,13 +97,18 @@ class Visualizer:
         print(
             "************************************************************************"
         )
-        if show_in_blender:
-            self.show_in_blender(path, nodes_dict, blender_output_path, blender_path, verbose)
 
-    def show_in_blender(self, path, nodes_dict, blender_output_path, blender_path, verbose=True):
+        if show_in_blender:
+            self.show_in_blender(path, nodes_dict, blender_output_path, blender_executable_path, verbose)
+
+    def show_in_blender(self,
+                        path: str,
+                        nodes_dict: dict,
+                        blender_output_path: str,
+                        blender_executable_path: str,
+                        verbose: bool=True):
 
         directory_destination = os.path.abspath(path)
-
         blender_script_path = os.path.join(directory_destination, "blender_script.py")
         with open(blender_script_path, "w") as outfile:
             outfile.write(
@@ -107,24 +118,18 @@ sys.path.append(os.getcwd())\n\
 import blender_tools\n\
 blender_tools.main()")
 
-        if not verbose:
-            return
-
-        print("")
-        print("************************************************************************")
-        print("Blender instructions")
-        # print("cd " + directory_destination + "; blender --python blender_script.py")
-        cmd = "cd " + directory_destination + "; "+blender_path+" --background --python blender_script.py"
+        cmd = "cd " + directory_destination + "; " + blender_executable_path + " --background --python blender_script.py"
         if blender_output_path:
             cmd = cmd + " -- " + blender_output_path
-        print(cmd)
-        print("************************************************************************")
         os.system(cmd)
 
-        # cmd = ['cd', directory_destination+';', '/Applications/Blender.app/Contents/MacOS/Blender', '--python', 'blender_script.py', '--', blender_output_path]
-        # print(cmd)
-        # subprocess.call(cmd)
-
+        if verbose:
+            print("")
+            print("************************************************************************")
+            print("Blender instructions")
+            print(cmd)
+            print("************************************************************************")
+        
     def add_points(
         self,
         name: str,
