@@ -27,7 +27,6 @@ Blender example, including blender rendering.
   <img width="45%" src="docs/img/example_blender_blender.png" />
 </p>
 
-
 Polygon meshes example.
 [[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_meshes.py)
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/meshes/index.html)
