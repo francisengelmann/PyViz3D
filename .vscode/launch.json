@@ -7,7 +7,7 @@
 
         {
             "name": "Example Arrows",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/examples/example_arrows.py",
@@ -18,8 +18,20 @@
             }
         },
         {
+            "name": "Example Blender",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/examples/example_blender.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${cwd}"
+            }
+        },
+        {
             "name": "Example Bounding Boxes",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/examples/example_bounding_boxes.py",
@@ -30,8 +42,20 @@
             }
         },
         {
+            "name": "Example Graph",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/examples/example_graph.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${cwd}"
+            }
+        },
+        {
             "name": "Example Meshes",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/examples/example_meshes.py",
@@ -43,7 +67,7 @@
         },
         {
             "name": "Example Normals",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/examples/example_normals.py",
@@ -55,7 +79,7 @@
         },
         {
             "name": "Example Point Clouds",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/examples/example_point_clouds.py",
@@ -67,7 +91,7 @@
         },
         {
             "name": "Example Polylines",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/examples/example_polylines.py",
@@ -79,7 +103,7 @@
         },
         {
             "name": "Example Text",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/examples/example_text.py",
@@ -88,31 +112,6 @@
             "env": {
                 "PYTHONPATH": "${cwd}"
             }
-        },
-        {
-            "name": "Example Graph",
-            "type": "python",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/examples/example_graph.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "env": {
-                "PYTHONPATH": "${cwd}"
-            }
-        },
-        {
-            "name": "Example Blender",
-            "type": "python",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/examples/example_blender.py",
-            "console": "integratedTerminal",
-            "justMyCode": true,
-            "env": {
-                "PYTHONPATH": "${cwd}"
-            }
         }
-
     ]
 }
