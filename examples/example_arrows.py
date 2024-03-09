@@ -5,9 +5,6 @@ import numpy as np
 def main():
     v = viz.Visualizer()
     # Add arrow given start and end position
-    v.add_arrow('Arrow_0',
-                start=[0.0, 0.2, 0.0],
-                end=[1, 0.2, 0])
     v.add_arrow('Arrow_1',
                 start=np.array([0.0, 0.2, 0.0]),
                 end=np.array([1, 0.2, 0]))
