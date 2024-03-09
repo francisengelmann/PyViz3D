@@ -2,10 +2,10 @@
 
 
 class Cuboid:
-    def __init__(self, position, size, orientation, color, alpha, edge_width, visible):
+    def __init__(self, position, size, rotation, color, alpha, edge_width, visible):
         self.position = position
         self.size = size
-        self.orientation = orientation
+        self.rotation = rotation
         self.color = color
         self.alpha = alpha
         self.edge_width = edge_width
@@ -19,7 +19,7 @@ class Cuboid:
             'type': 'cuboid',
             'position': self.position.tolist(),
             'size': self.size.tolist(),
-            'orientation': self.orientation.tolist(),
+            'orientation': self.rotation.tolist(),
             'color': self.color.tolist(),
             'alpha': float(self.alpha),
             'edge_width': float(self.edge_width),

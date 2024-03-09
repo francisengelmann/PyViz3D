@@ -32,5 +32,5 @@ class Arrow:
         return
 
     def write_blender(self, path):
-        print(type(self).__name__+'.write_blender() not yet implemented.' )
+        print(type(self).__name__ + '.write_blender() not yet implemented.' )
         return

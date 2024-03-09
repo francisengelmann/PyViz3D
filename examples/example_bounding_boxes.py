@@ -33,9 +33,10 @@ def main():
         orientation = q.as_float_array(q.from_euler_angles(euler_x, euler_y, euler_z))
         v.add_bounding_box(f'Box;_{i}',
                            position=np.array([1.0, 1.0, 0]),
-                           size=np.array([1.0, 2.0, 1.0]),
+                           size=np.array([1.0, 2.0, 0.5]),
                            orientation=orientation,
-                           color=np.array([130, 155, 50]),
+                           color=np.array([255, 255, 0]),
+                           alpha=0.1,
                            edge_width=0.02)
     v.save('example_bounding_boxes')
 

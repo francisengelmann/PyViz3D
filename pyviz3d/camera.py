@@ -5,7 +5,7 @@ import numpy as np
 class Camera:
     """Camera class looking at the scene"""
 
-    def __init__(self, position, look_at, up, focal_length=28):
+    def __init__(self, position, look_at, up, focal_length):
         self.position = position.astype(np.float32)
         self.look_at = look_at.astype(np.float32)
         self.up = up.astype(np.float32)

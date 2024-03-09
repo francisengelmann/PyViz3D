@@ -7,6 +7,10 @@
 - The examples in `examples` are a good starting point for developing new features.
 - When running code (e.g. `examples/example_instance.py`) set your working directory to the root directory of the code base such that the path to the pyviz module is correct.
 
+## Documenting the code
+- Use type hinting whenever useful to enable `<name>.__annotations__'
+- 
+
 ## Documentation
 The documentation pages are mainted using [mkdocs](https://www.mkdocs.org/).
 

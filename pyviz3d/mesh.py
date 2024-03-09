@@ -12,10 +12,10 @@ class Mesh:
         obj_file_extension = obj_file.split('.')[1]
         obj_file_size = os.path.getsize(filename)
         self.filename_destination = obj_file_name + '_' + str(obj_file_size) + '.' + obj_file_extension
-        self.translation = translation
-        self.rotation = rotation
-        self.scale = scale
-        self.color = color
+        self.translation = translation.tolist()
+        self.rotation = rotation.tolist()
+        self.scale = scale.tolist()
+        self.color = color.tolist()
         self.visible = visible
 
     def get_properties(self, filename):

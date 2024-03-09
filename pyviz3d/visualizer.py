@@ -41,149 +41,6 @@ class Visualizer:
         """
         return name.replace(':', ';')
 
-    def add_points(
-        self,
-        name: str,
-        positions: np.array,
-        colors: np.array=None,
-        normals: np.array=None,
-        point_size: int=25,
-        resolution: int=5,
-        visible: bool=True,
-        alpha: float=1.0,
-    ):
-        """Add points to the visualizer.
-
-        :param name: The name of the points displayed in the visualizer. Use ';' in the name to create sub-layers.
-        :param positions: The point positions.
-        :param normals: The point normals.
-        :param colors: The point colors.
-        :param point_size: The point size.
-        :param resolution: The resolution of the blender sphere.
-        :param visible: Bool if points are visible.
-        :param alpha: Alpha value of colors.
-        """
-
-        assert positions.shape[1] == 3
-        assert colors is None or positions.shape == colors.shape
-        assert normals is None or positions.shape == normals.shape
-
-        shading_type = 1  # Phong shading
-        if colors is None:
-            colors = np.ones(positions.shape, dtype=np.uint8) * 50  # gray
-        if normals is None:
-            normals = np.ones(positions.shape, dtype=np.float32)
-            shading_type = 0  # Uniform shading when no normals are available
-
-        positions = positions.astype(np.float32)
-        colors = colors.astype(np.uint8)
-        normals = normals.astype(np.float32)
-
-        alpha = min(max(alpha, 0.0), 1.0)  # cap alpha to [0..1]
-
-        self.elements[self.__parse_name(name)] = Points(
-            positions, colors, normals, point_size, resolution, visible, alpha, shading_type
-        )
-
-    def add_labels(self, name, labels, positions, colors, visible=True):
-        """Add labels to the visualizer.
-        
-        :param name: The name of the labels.
-        :param labels: The text value of the labels.
-        :param positions: The 3D positions of the labels.
-        :param colors: The text color of the individual labels.
-        :param visible: Bool if label is visible.
-        """
-        self.elements[self.__parse_name(name)] = Labels(labels, positions, colors, visible)
-
-    def add_circles_2d(self, name, labels, positions, border_colors, fill_colors, visible=True):
-        """Add node to the visualizer.
-        
-        :param name: The name of the node.
-        :param labels: The text value of the node.
-        :param positions: The 3D positions of the node.
-        :param border_colors: The text color of the individual node.
-        :param fill_colors: The text color of the individual node.
-        :param visible: Bool if lines are visible.
-        """
-        self.elements[self.__parse_name(name)] = Circles2D(labels, positions, border_colors, fill_colors, visible)
-
-    def add_lines(self, name, lines_start, lines_end, colors=None, visible=True):
-        """Add lines to the visualizer.
-
-        :param name: The name of the lines displayed in the visualizer.
-        :param lines_start: The start positions of the lines.
-        :param lines_end: The end positions of the lines.
-        :param colors: The line colors.
-        :param visible: Bool if lines are visible.
-        """
-
-        assert lines_start.shape[1] == 3
-        assert lines_start.shape == lines_end.shape
-        assert colors is None or lines_start.shape == colors.shape
-
-        if colors is None:
-            colors = np.ones(lines_start.shape, dtype=np.uint8) * 50  # gray
-
-        colors = colors.astype(np.uint8)
-        lines_start = lines_start.astype(np.float32)
-        lines_end = lines_end.astype(np.float32)
-        self.elements[self.__parse_name(name)] = Lines(lines_start, lines_end, colors, colors, visible)
-
-    def add_bounding_box(self,
-                         name: str,
-                         position: np.array,
-                         size: np.array,
-                         orientation: np.array=np.array([1.0, 0.0, 0.0, 0.0]),
-                         color: np.array=np.array([255, 0, 0]),
-                         alpha: float=1.0,
-                         edge_width: float=0.01,
-                         visible: bool=True):
-        """Add oriented 3D bounding box."""
-        orientation /= np.linalg.norm(orientation)  # normalize the orientation
-        self.elements[self.__parse_name(name)] = Cuboid(position, size, orientation, color, alpha, edge_width, visible)
-
-    def add_mesh(self, name, path, translation=[0, 0, 0], rotation=[0, 0, 0, 1], scale=[1, 1, 1], color=[255, 255, 255], visible=True):
-        """Adds a polygon mesh to the scene, as specified in the path, it has to be an .obj file.
-
-        :param name: The name of the mesh displayed in the layers.
-        :param path: The path to the .obj polygon mesh file.
-        :param translation: The 3D translation of the object.
-        :param rotation: The 3D rotation (quaternion w, x, y, z) of the object.
-        :param scale: The 3D scaling of the original object.
-        :param color: The uniform color of the object.
-        :param visible: Whether the object is visible or not.
-        """
-        rotation = np.array(rotation)
-        rotation = (rotation / np.linalg.norm(rotation)).tolist()
-        mesh = Mesh(path, translation=translation, rotation=rotation, scale=scale, color=color, visible=visible)
-        self.elements[self.__parse_name(name)] = mesh
-
-    def add_polyline(self, name, positions, color=None, alpha=1.0, edge_width=0.01, visible=True):
-        """Add polyline.
-
-        :param name: The bounding box name. (string)
-        :param positions: The N 3D positions along the polyline. (float32, Nx3)
-        :param color: The color. (int32, 3x1)
-        :param alpha: The transparency. (float32)
-        :param edge_width: The width of the edges. (float32)
-        :param visible: Bool, whether visible or not.
-        """
-        if color is None:
-            color = np.array([255, 0, 0])
-        self.elements[self.__parse_name(name)] = Polyline(positions, color, alpha, edge_width, visible)
-
-    def add_arrow(self, name:str,
-                  start: np.array,
-                  end: np.array,
-                  color: np.array=np.array([255, 0, 0]),
-                  alpha: float=1.0,
-                  stroke_width: float=0.01,
-                  head_width: float=0.03,
-                  visible: bool=True):
-        """Add an arrow."""
-        self.elements[self.__parse_name(name)] = Arrow(start, end, color, alpha, stroke_width, head_width, visible)
-
     def save(self, path, port=6008, show_in_blender=False, blender_output_path=None, blender_path=None, verbose=True):
         """Creates the visualization and displays the link to it.
 
@@ -267,3 +124,168 @@ blender_tools.main()")
         # cmd = ['cd', directory_destination+';', '/Applications/Blender.app/Contents/MacOS/Blender', '--python', 'blender_script.py', '--', blender_output_path]
         # print(cmd)
         # subprocess.call(cmd)
+
+    def add_points(
+        self,
+        name: str,
+        positions: np.array,
+        colors: np.array=None,
+        normals: np.array=None,
+        point_size: int=25,
+        resolution: int=5,
+        visible: bool=True,
+        alpha: float=1.0,
+    ):
+        """Add points to the visualizer.
+
+        :param name: The name of the points displayed in the visualizer. Use ';' in the name to create sub-layers.
+        :param positions: The point positions.
+        :param normals: The point normals.
+        :param colors: The point colors.
+        :param point_size: The point size.
+        :param resolution: The resolution of the blender sphere.
+        :param visible: Bool if points are visible.
+        :param alpha: Alpha value of colors.
+        """
+
+        assert positions.shape[1] == 3
+        assert colors is None or positions.shape == colors.shape
+        assert normals is None or positions.shape == normals.shape
+
+        shading_type = 1  # Phong shading
+        if colors is None:
+            colors = np.ones(positions.shape, dtype=np.uint8) * 50  # gray
+        if normals is None:
+            normals = np.ones(positions.shape, dtype=np.float32)
+            shading_type = 0  # Uniform shading when no normals are available
+
+        positions = positions.astype(np.float32)
+        colors = colors.astype(np.uint8)
+        normals = normals.astype(np.float32)
+
+        alpha = min(max(alpha, 0.0), 1.0)  # cap alpha to [0..1]
+
+        self.elements[self.__parse_name(name)] = Points(
+            positions, colors, normals, point_size, resolution, visible, alpha, shading_type
+        )
+
+    def add_labels(self,
+                   name: str,
+                   labels: list,
+                   positions: np.array,
+                   colors: np.array,
+                   visible: bool=True):
+        """Add labels to the visualizer.
+        
+        :param name: The name of the labels.
+        :param labels: The text value of the labels.
+        :param positions: The 3D positions of the labels.
+        :param colors: The text color of the individual labels.
+        :param visible: Bool if label is visible.
+        """
+        self.elements[self.__parse_name(name)] = Labels(labels, positions, colors, visible)
+
+    def add_circles_2d(self,
+                       name: str,
+                       labels: list,
+                       positions: np.array,
+                       border_colors: np.array,
+                       fill_colors: np.array,
+                       visible: bool=True):
+        """Add node to the visualizer.
+        
+        :param name: The name of the node.
+        :param labels: The text value of the node.
+        :param positions: The 3D positions of the node.
+        :param border_colors: The text color of the individual node.
+        :param fill_colors: The text color of the individual node.
+        :param visible: Bool if lines are visible.
+        """
+        self.elements[self.__parse_name(name)] = Circles2D(labels, positions, border_colors, fill_colors, visible)
+
+    def add_lines(self,
+                  name: str,
+                  lines_start: np.array,
+                  lines_end: np.array,
+                  colors: np.array=None,
+                  visible: bool=True):
+        """Add lines to the visualizer.
+
+        :param name: The name of the lines displayed in the visualizer.
+        :param lines_start: The start positions of the lines.
+        :param lines_end: The end positions of the lines.
+        :param colors: The line colors.
+        :param visible: Bool if lines are visible.
+        """
+
+        assert lines_start.shape[1] == 3
+        assert lines_start.shape == lines_end.shape
+        assert colors is None or lines_start.shape == colors.shape
+
+        if colors is None:
+            colors = np.ones(lines_start.shape, dtype=np.uint8) * 50  # gray
+
+        colors = colors.astype(np.uint8)
+        lines_start = lines_start.astype(np.float32)
+        lines_end = lines_end.astype(np.float32)
+        self.elements[self.__parse_name(name)] = Lines(lines_start, lines_end, colors, colors, visible)
+
+    def add_bounding_box(self,
+                         name: str,
+                         position: np.array,
+                         size: np.array,
+                         rotation: np.array=np.array([1.0, 0.0, 0.0, 0.0]),
+                         color: np.array=np.array([255, 0, 0]),
+                         alpha: float=1.0,
+                         edge_width: float=0.01,
+                         visible: bool=True):
+        """Add oriented 3D bounding box."""
+        rotation /= np.linalg.norm(rotation)  # normalize the orientation
+        self.elements[self.__parse_name(name)] = Cuboid(position, size, rotation, color, alpha, edge_width, visible)
+
+    def add_mesh(self,
+                 name: str,
+                 path: str,
+                 translation: np.array=np.array([0.0, 0.0, 0.0]),
+                 rotation: np.array=np.array([0, 0, 0, 1]),
+                 scale: np.array=np.array([1, 1, 1]),
+                 color: np.array=np.array([255, 255, 255]),
+                 visible: bool=True):
+        """Adds a polygon mesh to the scene as specified in the path.
+         
+          The path is currently limited to .obj files and the color is the uniform color of the objetc.
+        """
+        rotation /= np.linalg.norm(rotation)  # normalize the orientation
+        self.elements[self.__parse_name(name)] = Mesh(path, translation=translation, rotation=rotation, scale=scale, color=color, visible=visible)
+
+    def add_polyline(self,
+                     name: str,
+                     positions: np.array,
+                     color: np.array=np.array([255, 0, 0]),
+                     alpha: float=1.0,
+                     edge_width: float=0.01,
+                     visible: bool=True):
+        """Add polyline.
+
+        :param name: The bounding box name. (string)
+        :param positions: The N 3D positions along the polyline. (float32, Nx3)
+        :param color: The color. (int32, 3x1)
+        :param alpha: The transparency. (float32)
+        :param edge_width: The width of the edges. (float32)
+        :param visible: Bool, whether visible or not.
+        """
+
+        self.elements[self.__parse_name(name)] = Polyline(positions, color, alpha, edge_width, visible)
+
+    def add_arrow(self,
+                  name:str,
+                  start: np.array,
+                  end: np.array,
+                  color: np.array=np.array([255, 0, 0]),
+                  alpha: float=1.0,
+                  stroke_width: float=0.01,
+                  head_width: float=0.03,
+                  visible: bool=True):
+        """Add an arrow."""
+
+        self.elements[self.__parse_name(name)] = Arrow(start, end, color, alpha, stroke_width, head_width, visible)

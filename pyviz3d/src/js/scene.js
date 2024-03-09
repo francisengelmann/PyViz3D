@@ -95,6 +95,8 @@ function add_watermark(){
 }
 
 function set_camera_properties(properties){
+	camera.setFocalLength(properties['focal_length']);
+	console.log(camera.getFocalLength);
 	camera.up.set(properties['up'][0],
 		          properties['up'][1],
 				  properties['up'][2]);

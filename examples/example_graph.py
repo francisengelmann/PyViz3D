@@ -42,7 +42,7 @@ def read_ply_data(filename):
 def main():
 
     # First, we set up a visualizer
-    v = viz.Visualizer(position=[-0.265198, -0.411423, 7.11054], focal_length=28)
+    v = viz.Visualizer(position=np.array([-0.265198, -0.411423, 7.11054]), focal_length=28.0)
     
     # name = 'labels.instances.align.annotated.v2.ply'
     name = 'labels.instances.align.annotated.v2_neg_office.ply'
