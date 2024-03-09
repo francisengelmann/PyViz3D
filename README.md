@@ -5,7 +5,7 @@ PyViz3D is a python package to visualize 3D scenes directly in your browser, and
 
 #### Links
 
-- Install: ```pip install pyviz3d```
+- Install: ```pip3 install pyviz3d```
 - [Documentation](https://francisengelmann.github.io/PyViz3D/)
 - [Examples](https://github.com/francisengelmann/PyViz3D/tree/master/examples)
 - [Blender Instructions](https://github.com/francisengelmann/PyViz3D/tree/master?tab=readme-ov-file#blender)
@@ -71,6 +71,13 @@ To create beautiful illustrations with blender consider the following points:
 <!-- 6. The scene can also be opened in blender `bunny.blend` -->
 <!-- 7. Need to install ffmpeg and convert (on mac via brew)   -->
 <!-- brew install ffmpeg -->
+
+# Deployment
+- Make sure twine is installed: `python3 -m pip install build twine`
+- Create source archive and wheel: `python3 -m build`
+- Check that it will render properly on PyPi: `twine check dist/*`
+- Upload to PyPi: `twine upload dist/*`
+
 
 # BibTeX
 Please consider citing PyViz3D in your publications if it helps your research.
