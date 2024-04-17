@@ -15,6 +15,7 @@ import sys
 import shutil
 import json
 import numpy as np
+import open3d as o3d
 
 
 class Visualizer:
@@ -280,6 +281,55 @@ blender_tools.main()")
         """
 
         self.elements[self.__parse_name(name)] = Polyline(positions, color, alpha, edge_width, visible)
+
+    def add_superquadric(self,
+        name: str,
+        scalings: np.array=np.array([1.0, 1.0, 1.0]),
+        exponents: np.array=np.array([2.0, 2.0, 2.0]),
+        translation: np.array=np.array([0.0, 0.0, 0.0]),
+        rotation: np.array=np.array([0.0, 0.0, 0.0, 1.0]),
+        color: np.array=np.array([255, 255, 255]),
+        resolution: int=30,
+        visible: bool=True):
+        """Adds a superqiadroc mesh to the scene."""
+
+        def create_superquadric_mesh(A, B, C, r, s, t, N):
+            def f(o, m):
+                return np.sign(np.sin(o)) * np.abs(np.sin(o))**m
+            def g(o, m):
+                return np.sign(np.cos(o)) * np.abs(np.cos(o))**m
+            u = np.linspace(-np.pi, np.pi, N, endpoint=True)
+            v = np.linspace(-np.pi/2.0, np.pi/2.0, N, endpoint=True)
+            u = np.tile(u, N)
+            v = np.repeat(v, N)
+            triangles = []
+
+            x = A * g(v, 2.0 / r) * g(u, 2.0 / r)
+            y = B * g(v, 2.0 / s) * f(u, 2.0 / s)
+            z = C * f(v, 2.0 / t)
+            vertices =  np.concatenate([np.expand_dims(x, 1),
+                                        np.expand_dims(y, 1),
+                                        np.expand_dims(z, 1)], axis=1)
+            triangles = []
+            for i in range(N-1):
+                for j in range(N-1):
+                    triangles.append([i*N+j, (i+1)*N+j+1, (i+1)*N+j])
+                    triangles.append([i*N+j, i*N+(j+1), (i+1)*N+(j+1)])
+            return vertices, triangles
+
+        vertices, triangles = create_superquadric_mesh(scalings[0], scalings[1], scalings[2],
+                                                       exponents[0], exponents[1], exponents[2],
+                                                       resolution)
+
+        mesh_sq = o3d.geometry.TriangleMesh()
+        mesh_sq.vertices = o3d.utility.Vector3dVector(vertices)
+        mesh_sq.triangles = o3d.utility.Vector3iVector(triangles)
+        o3d.io.write_triangle_mesh(f"{name}.obj", mesh_sq, write_ascii=True, compressed=False, write_vertex_normals=False, write_vertex_colors=False, write_triangle_uvs=False, print_progress=False)
+
+        rotation /= np.linalg.norm(rotation)  # normalize the orientation
+        scale = np.array([1.0, 1.0, 1.0])
+        self.elements[self.__parse_name(name)] = Mesh(f"{name}.obj", translation=translation, rotation=rotation, scale=scale, color=color, visible=visible)
+
 
     def add_arrow(self,
                   name:str,

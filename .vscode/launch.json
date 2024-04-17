@@ -102,6 +102,18 @@
             }
         },
         {
+            "name": "Example Superquadric",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/examples/example_superquadric.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${cwd}"
+            }
+        },
+        {
             "name": "Example Text",
             "type": "debugpy",
             "request": "launch",
