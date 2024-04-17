@@ -252,7 +252,7 @@ blender_tools.main()")
                  name: str,
                  path: str,
                  translation: np.array=np.array([0.0, 0.0, 0.0]),
-                 rotation: np.array=np.array([0, 0, 0, 1]),
+                 rotation: np.array=np.array([0.0, 0.0, 0.0, 1.0]),
                  scale: np.array=np.array([1, 1, 1]),
                  color: np.array=np.array([255, 255, 255]),
                  visible: bool=True):
