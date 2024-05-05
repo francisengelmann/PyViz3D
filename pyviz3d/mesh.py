@@ -7,11 +7,11 @@ class Mesh:
 
     def __init__(self, filename, translation=None, rotation=None, scale=None, color=None, visible=True):
         self.filename_source = filename
-        obj_file = os.path.split(filename)[-1]
-        obj_file_name = obj_file.split('.')[0]
-        obj_file_extension = obj_file.split('.')[1]
-        obj_file_size = os.path.getsize(filename)
-        self.filename_destination = obj_file_name + '_' + str(obj_file_size) + '.' + obj_file_extension
+        mesh_file = os.path.split(filename)[-1]
+        mesh_file_name = mesh_file.split('.')[0]
+        self.mesh_file_extension = mesh_file.split('.')[1]
+        mesh_file_size = os.path.getsize(filename)
+        self.filename_destination = mesh_file_name + '_' + str(mesh_file_size) + '.' + self.mesh_file_extension
         self.translation = translation.tolist()
         self.rotation = rotation.tolist()
         self.scale = scale.tolist()
@@ -23,7 +23,7 @@ class Mesh:
         :return: A dict containing object properties. They are written into json and interpreted by javascript.
         """
         json_dict = {
-            'type': 'obj',
+            'type': 'mesh',
             'filename': self.filename_destination,
             'translation': self.translation,
             'rotation': self.rotation,
@@ -40,5 +40,4 @@ class Mesh:
             copyfile(self.filename_source, destination_path)
 
     def write_blender(self, path):
-        print(type(self).__name__+'.write_blender() not yet implemented.' )
         return

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { OBJLoader } from     'three/addons/loaders/OBJLoader.js';
+import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
 import { GUI } from           'three/addons/libs/lil-gui.module.min.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
@@ -207,14 +208,12 @@ function get_obj(properties){
 		object.translateZ(properties['translation'][2])
 
 		const q = new THREE.Quaternion(
+			properties['rotation'][0],
 			properties['rotation'][1],
 			properties['rotation'][2],
-			properties['rotation'][3],
-			properties['rotation'][0])
+			properties['rotation'][3])
 		object.setRotationFromQuaternion(q)
-
 		object.scale.set(properties['scale'][0], properties['scale'][1], properties['scale'][2])
-
 		container.add(object)
 		step_progress_bar();
 		render();
@@ -226,10 +225,112 @@ function get_obj(properties){
 					console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
 				},
 				function (error){ // called when loading has errors
-					console.log( 'An error happened' );
+					console.log( 'An error happened'+error );
 				});
 	return container
 }
+
+function get_ply(properties){
+	var container = new THREE.Object3D();
+	function loadModel(geometry) {
+		
+		const material = new THREE.MeshPhongMaterial({vertexColors: true});
+		const object = new THREE.Mesh( geometry, material );
+		// object.castShadow = true;
+		// object.receiveShadow = true;
+
+		object.scale.set(properties['scale'][0], properties['scale'][1], properties['scale'][2])
+
+		const q = new THREE.Quaternion(
+			properties['rotation'][0],
+			properties['rotation'][1],
+			properties['rotation'][2],
+			properties['rotation'][3])
+
+		console.log('quaternion')
+		console.log(properties['rotation'])
+		console.log(q)
+		object.setRotationFromQuaternion(q)
+
+		object.translateX(properties['translation'][0])
+		object.translateY(properties['translation'][1])
+		object.translateZ(properties['translation'][2])
+
+		container.add(object)
+		step_progress_bar();
+		render();
+	}
+
+	const loader = new PLYLoader();
+	loader.load(properties['filename'], loadModel,
+				function (xhr){ // called when loading is in progresses
+					console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+				},
+				function (error){ // called when loading has errors
+					console.log( 'An error happened' + error );
+				});
+	return container
+}
+
+function get_mesh(properties){
+	var container = new THREE.Object3D();
+	function loadModel(geometry) {
+		
+		let object;
+		let r = properties['color'][0]
+		let g = properties['color'][1]
+		let b = properties['color'][2]
+		let colorString = "rgb("+r+","+g+", "+b+")"
+		if (geometry.isObject3D) {
+			object = geometry;
+			object.traverse(
+				function(child) {
+					if (child.isMesh) {
+						child.material.color.set(new THREE.Color(colorString));
+					}
+				});
+		} else {
+			let material;
+			if (geometry.hasAttribute('color')){
+				material = new THREE.MeshPhongMaterial({vertexColors: true});
+			} else {
+				material = new THREE.MeshPhongMaterial({vertexColors: false});
+				material.color.set(new THREE.Color(colorString));
+			}
+			object = new THREE.Mesh( geometry, material );
+		}
+
+		// object.castShadow = true;
+		// object.receiveShadow = true;
+
+		object.scale.set(properties['scale'][0], properties['scale'][1], properties['scale'][2])
+		object.setRotationFromQuaternion(new THREE.Quaternion(properties['rotation'][0], properties['rotation'][1], properties['rotation'][2], properties['rotation'][3]))
+		object.position.set(properties['translation'][0], properties['translation'][1], properties['translation'][2])
+		container.add(object)
+		step_progress_bar();
+		render();
+	}
+	const filename_extension = properties['filename'].split('.').pop()
+	console.log(filename_extension)
+
+	let loader;
+	if (filename_extension === 'ply'){
+		loader = new PLYLoader();
+	} else if (filename_extension === 'obj'){
+		loader = new OBJLoader();
+	} else {
+		console.log( 'Unknown mesh extension: ' + filename_extension);
+	}
+	loader.load(properties['filename'], loadModel,
+				function (xhr){ // called when loading is in progresses
+					console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+				},
+				function (error){ // called when loading has errors
+					console.log( 'An error happened: ' + error );
+				});
+	return container
+}
+
 
 function get_material(alpha){
 	let uniforms = {
@@ -362,10 +463,10 @@ function get_cuboid(properties){
 	cuboid.add(corner_13)
 
 	const q = new THREE.Quaternion(
+			properties['orientation'][0],
 			properties['orientation'][1],
 			properties['orientation'][2],
-			properties['orientation'][3],
-			properties['orientation'][0])
+			properties['orientation'][3])
 	cuboid.setRotationFromQuaternion(q)
 	cuboid.position.set(properties['position'][0], properties['position'][1], properties['position'][2])
 	return cuboid
@@ -561,6 +662,12 @@ function create_threejs_objects(properties){
 		}
 		if (String(object_properties['type']).localeCompare('obj') == 0){
 			threejs_objects[object_name] = get_obj(object_properties);
+		}
+		if (String(object_properties['type']).localeCompare('ply') == 0){
+			threejs_objects[object_name] = get_ply(object_properties);
+		}
+		if (String(object_properties['type']).localeCompare('mesh') == 0){
+			threejs_objects[object_name] = get_mesh(object_properties);
 		}
 		if (String(object_properties['type']).localeCompare('cuboid') == 0){
 			threejs_objects[object_name] = get_cuboid(object_properties);

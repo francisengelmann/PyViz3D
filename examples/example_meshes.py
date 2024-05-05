@@ -32,7 +32,7 @@ def main():
                    scale=np.array([ii/2.0, ii/2.0, ii/2.0]))
 
     v.save('example_meshes',
-        show_in_blender=True,
+        show_in_blender=False,
         blender_output_path='./',
         blender_executable_path='/Applications/Blender.app/Contents/MacOS/Blender')
 
