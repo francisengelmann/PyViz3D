@@ -128,9 +128,9 @@ def init_scene(resolution_x=800, resolution_y=600):
   C.scene.view_settings.view_transform = 'Standard'
   C.scene.render.engine = 'CYCLES'
   C.scene.cycles.device = 'GPU'
-  C.scene.cycles.preview_samples = 100
-  C.scene.cycles.samples = 150
-  C.scene.frame_end = 60
+  C.scene.cycles.preview_samples = 50
+  C.scene.cycles.samples = 50
+
   # Add lights
   C.scene.objects['Light'].data.shadow_soft_size = 1.0
   C.scene.objects['Light'].data.cycles.cast_shadow = False
@@ -144,18 +144,21 @@ def init_scene(resolution_x=800, resolution_y=600):
     C.scene.objects[f'Point.{str(i+1).zfill(3)}'].data.shadow_soft_size = 0.1
     C.scene.objects[f'Point.{str(i+1).zfill(3)}'].data.color = (1, 0.795182, 0.375358)
 
-def create_mat(obj):
+def create_mat(obj, color=None):
     mat = bpy.data.materials.new(name="test")
     mat.use_backface_culling = True
     obj.data.materials.append(mat)
     mat.use_nodes = True
     mat.node_tree.nodes.new(type="ShaderNodeVertexColor")
-    mat.node_tree.nodes["Color Attribute"].layer_name = "Col"
-    mat.node_tree.links.new(
-      mat.node_tree.nodes["Principled BSDF"].inputs["Base Color"],
-      mat.node_tree.nodes["Color Attribute"].outputs["Color"])
     mat.node_tree.nodes["Principled BSDF"].inputs[7].default_value = 0  # specular
-    mat.node_tree.nodes["Principled BSDF"].inputs[12].default_value = 0
+    mat.node_tree.nodes["Principled BSDF"].inputs[12].default_value = 0  #
+    if color:
+      mat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (color[0]/255.0, color[1]/255.0, color[2]/255.0, 1.0)
+    else:
+      mat.node_tree.nodes["Color Attribute"].layer_name = "Col"
+      mat.node_tree.links.new(
+        mat.node_tree.nodes["Principled BSDF"].inputs["Base Color"],
+        mat.node_tree.nodes["Color Attribute"].outputs["Color"])
 
 
 
@@ -233,7 +236,7 @@ def main():
           obj.rotation_mode = 'QUATERNION'  # blender quats are WXYZ
           obj.rotation_quaternion = [properties['rotation'][3], properties['rotation'][0], properties['rotation'][1], properties['rotation'][2]]
           obj.location = [properties['translation'][0], properties['translation'][1], properties['translation'][2]]
-          create_mat(obj)
+          create_mat(obj, properties['color'])
 
 
     # Render if output filename is provided

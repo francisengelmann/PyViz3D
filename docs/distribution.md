@@ -1,4 +1,4 @@
-We keep the latest stable release of the ```pyviz3d``` package available on [PyPy](https://packaging.python.org/tutorials/packaging-projects/).
+The latest stable release of ```pyviz3d``` is available on [PyPy](https://packaging.python.org/tutorials/packaging-projects/).
 
 ## PyPi
 

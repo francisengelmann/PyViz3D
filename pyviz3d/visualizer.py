@@ -333,7 +333,6 @@ blender_tools.main()")
         vertices, triangles = create_superquadric_mesh(scalings[0], scalings[1], scalings[2],
                                                        exponents[0], exponents[1], exponents[2],
                                                        resolution)
-
         mesh_sq = o3d.geometry.TriangleMesh()
         mesh_sq.vertices = o3d.utility.Vector3dVector(vertices)
         mesh_sq.triangles = o3d.utility.Vector3iVector(triangles)
