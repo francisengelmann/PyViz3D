@@ -1,6 +1,6 @@
 import numpy as np
 import pyviz3d.visualizer as viz
-import plyfile
+import plyfile  # pip3 install plyfile
 import open3d as o3d
 import os
 from sklearn.neighbors import NearestNeighbors
@@ -46,7 +46,7 @@ def main():
 
     # Read input scene
     prefix = 'examples/data/'
-    name = 'office_chairs'
+    name = 'office_chairs_instances'
     scene = o3d.io.read_point_cloud(os.path.join(prefix, name+".ply"))
     scene_meta_data = read_ply_data(os.path.join(prefix, name+".ply"))
     scene.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
