@@ -1,5 +1,18 @@
 The latest stable release of ```pyviz3d``` is available on [PyPy](https://packaging.python.org/tutorials/packaging-projects/).
 
+## PyPi 2024
+Source https://packaging.python.org/en/latest/tutorials/packaging-projects/
+
+API Token: https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/#create-an-account
+
+1. Update the `pyproject.toml` with new version id
+2. `rm -rf dist`
+2. `rm -rf example_*`
+2. `python3 -m pip install --upgrade build`
+3. From the dir of the .toml file: `python3 -m build`
+3. Make sure to set the username to `__token__` in `~/.pypirc`
+4. `python3 -m twine upload --repository testpypi dist/*`
+
 ## PyPi
 
 Loosely following the instructions from [[1](https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56)]
