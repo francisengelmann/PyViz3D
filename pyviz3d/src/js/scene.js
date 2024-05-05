@@ -190,98 +190,15 @@ function get_circles_2d(properties){
 	return labels
 }
 
-function get_obj(properties){
-	var container = new THREE.Object3D();
-	function loadModel(object) {
-		object.traverse(
-		function(child) {
-			if (child.isMesh) {
-				let r = properties['color'][0]
-				let g = properties['color'][1]
-				let b = properties['color'][2]
-				let colorString = "rgb("+r+","+g+", "+b+")"
-				child.material.color.set(new THREE.Color(colorString));
-			}
-		});
-		object.translateX(properties['translation'][0])
-		object.translateY(properties['translation'][1])
-		object.translateZ(properties['translation'][2])
-
-		const q = new THREE.Quaternion(
-			properties['rotation'][0],
-			properties['rotation'][1],
-			properties['rotation'][2],
-			properties['rotation'][3])
-		object.setRotationFromQuaternion(q)
-		object.scale.set(properties['scale'][0], properties['scale'][1], properties['scale'][2])
-		container.add(object)
-		step_progress_bar();
-		render();
-	}
-
-	const loader = new OBJLoader();
-	loader.load(properties['filename'], loadModel,
-				function (xhr){ // called when loading is in progresses
-					console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-				},
-				function (error){ // called when loading has errors
-					console.log( 'An error happened'+error );
-				});
-	return container
-}
-
-function get_ply(properties){
-	var container = new THREE.Object3D();
-	function loadModel(geometry) {
-		
-		const material = new THREE.MeshPhongMaterial({vertexColors: true});
-		const object = new THREE.Mesh( geometry, material );
-		// object.castShadow = true;
-		// object.receiveShadow = true;
-
-		object.scale.set(properties['scale'][0], properties['scale'][1], properties['scale'][2])
-
-		const q = new THREE.Quaternion(
-			properties['rotation'][0],
-			properties['rotation'][1],
-			properties['rotation'][2],
-			properties['rotation'][3])
-
-		console.log('quaternion')
-		console.log(properties['rotation'])
-		console.log(q)
-		object.setRotationFromQuaternion(q)
-
-		object.translateX(properties['translation'][0])
-		object.translateY(properties['translation'][1])
-		object.translateZ(properties['translation'][2])
-
-		container.add(object)
-		step_progress_bar();
-		render();
-	}
-
-	const loader = new PLYLoader();
-	loader.load(properties['filename'], loadModel,
-				function (xhr){ // called when loading is in progresses
-					console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-				},
-				function (error){ // called when loading has errors
-					console.log( 'An error happened' + error );
-				});
-	return container
-}
-
 function get_mesh(properties){
 	var container = new THREE.Object3D();
 	function loadModel(geometry) {
-		
 		let object;
 		let r = properties['color'][0]
 		let g = properties['color'][1]
 		let b = properties['color'][2]
 		let colorString = "rgb("+r+","+g+", "+b+")"
-		if (geometry.isObject3D) {
+		if (geometry.isObject3D) {  // obj
 			object = geometry;
 			object.traverse(
 				function(child) {
@@ -289,19 +206,14 @@ function get_mesh(properties){
 						child.material.color.set(new THREE.Color(colorString));
 					}
 				});
-		} else {
-			let material;
-			if (geometry.hasAttribute('color')){
-				material = new THREE.MeshPhongMaterial({vertexColors: true});
-			} else {
-				material = new THREE.MeshPhongMaterial({vertexColors: false});
+		} else {  // ply
+			const materialShader = (geometry.hasAttribute('normal')) ? THREE.MeshPhongMaterial : THREE.MeshBasicMaterial
+			const material = new materialShader({vertexColors: geometry.hasAttribute('color')})
+			if (!geometry.hasAttribute){
 				material.color.set(new THREE.Color(colorString));
 			}
-			object = new THREE.Mesh( geometry, material );
+			object = new THREE.Mesh(geometry, material);
 		}
-
-		// object.castShadow = true;
-		// object.receiveShadow = true;
 
 		object.scale.set(properties['scale'][0], properties['scale'][1], properties['scale'][2])
 		object.setRotationFromQuaternion(new THREE.Quaternion(properties['rotation'][0], properties['rotation'][1], properties['rotation'][2], properties['rotation'][3]))
