@@ -27,14 +27,14 @@ def clear_scene():
   bpy.ops.object.delete()
 
 
-def render(path, file_format='PNG', color_mode='RGBA', animation=False):
+def render(output_prefix, file_format='PNG', color_mode='RGBA', animation=False):
   """
   :path: the file path of the rendered image
   :file_format: {PNG, JPEG}
   """
   C.scene.render.image_settings.file_format=file_format
-  C.scene.render.filepath = path
-  print(path)
+  C.scene.render.filepath = output_prefix
+  print('output_prefix:', output_prefix)
   
   # C.scene.view_settings.view_transform = 'Standard'
   # D.worlds["World"].node_tree.nodes["Background"].inputs[0].default_value = (1, 1, 1, 1)
@@ -42,14 +42,11 @@ def render(path, file_format='PNG', color_mode='RGBA', animation=False):
   # bpy.context.scene.world.color = (1, 1, 1)
   # C.scene.render.alpha_mode = 'SKY'
   
-  bpy.ops.render.render(use_viewport=True, animation=animation, write_still=True)
-  # bpy.data.scenes['Scene'].render.ffmpeg. 
-  print('Saved rendered file to:', os.path.abspath(path))
   if animation:
-
     bpy.ops.curve.primitive_bezier_circle_add(radius=1, enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
-    bpy.context.object.data.path_duration = 100
-    bpy.context.scene.frame_end = 100
+    animation_length = 60
+    bpy.context.object.data.path_duration = animation_length
+    bpy.context.scene.frame_end = animation_length
     bpy.context.scene.render.resolution_y = 406
     bpy.context.scene.render.resolution_x = 720
     bpy.context.scene.cycles.samples = 10
@@ -71,8 +68,11 @@ def render(path, file_format='PNG', color_mode='RGBA', animation=False):
     cam.constraints["Track To"].target = bpy.data.objects["Point"]
     bpy.ops.constraint.followpath_path_animate(constraint="Follow Path", owner='OBJECT')
 
-    output_filepath = os.path.join(path, path.split('/')[-2]+'.mp4')
-    subprocess.run(["ffmpeg", "-i", f'{path}/%04d.png', "-vcodec", "libx264", "-vf", "format=yuv420p", "-y", output_filepath])
+  bpy.ops.render.render(use_viewport=True, animation=animation, write_still=True)
+
+  if animation:
+    output_filepath = output_prefix + '.mp4'
+    subprocess.run(["ffmpeg", "-i", f'{output_prefix}%04d.png', "-vcodec", "libx264", "-vf", "format=yuv420p", "-y", output_filepath])
     subprocess.run(["ffmpeg", "-i", output_filepath, "-pix_fmt", "rgb24", output_filepath[:-3]+'gif'])
 
 
@@ -97,8 +97,7 @@ def look_at(camera,
                                           (r.y, u.y, d.y, eye.y),
                                           (r.z, u.z, d.z, eye.z),
                                           (0.0, 0.0, 0.0, 1.0)))
-
-
+  
 # def create_video(input_dir, pattern, output_filepath):
 #   trans_to_white = "format=yuva444p,\
 #   geq=\
@@ -243,7 +242,8 @@ def main():
 
     # Render if output filename is provided
     if len(argv) > 0:
-        render(argv[0], animation=animation)
+        print(argv)
+        render(os.path.abspath(argv[0]), animation=animation)
 
     output_blender_file = f'blender_scene.blend'
     output_blender_file = os.path.abspath(output_blender_file)

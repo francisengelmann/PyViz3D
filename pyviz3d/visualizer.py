@@ -60,9 +60,6 @@ class Visualizer:
             path: str,
             port: int=6008,
             blender_args: dict=None,
-            # show_in_blender: bool=False,
-            # blender_output_path=None,
-            # blender_executable_path=None,
             verbose=True):
         """Creates the visualization and displays the link to it.
 
@@ -115,14 +112,11 @@ class Visualizer:
         )
 
         if blender_args:
-            # self.show_in_blender(path, blender_output_path, blender_executable_path, verbose)
             self.show_in_blender(path, blender_args, verbose)
 
     def show_in_blender(self,
                         path: str,
                         blender_args: dict,
-                        # blender_output_path: str,
-                        # blender_executable_path: str,
                         verbose: bool=True):
 
         directory_destination = os.path.abspath(path)
@@ -136,8 +130,8 @@ import blender_tools\n\
 blender_tools.main()")
 
         cmd = "cd " + directory_destination + "; " + blender_args['executable_path'] + " --background --python blender_script.py"
-        if blender_args['executable_path']:
-            cmd = cmd + " -- " + blender_args['executable_path']
+        if blender_args['output_prefix']:
+            cmd = cmd + " -- " + blender_args['output_prefix']
         os.system(cmd)
 
         if verbose:

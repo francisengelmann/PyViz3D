@@ -41,8 +41,7 @@ def read_ply_data(filename):
 
 def main():
 
-
-    v = viz.Visualizer(position=np.array([-0.265198, -0.411423, 7.11054]), focal_length=28.0)
+    v = viz.Visualizer(position=np.array([-0.265198, -0.411423, 7.11054]), focal_length=28.0, animation=False)
 
     # Read input scene
     prefix = 'examples/data/'
@@ -96,7 +95,6 @@ def main():
 
     blender_args = {'output_path': render_path,
                     'executable_path': blender_path}
-
     v.save('example_graph', blender_args)
 
 
