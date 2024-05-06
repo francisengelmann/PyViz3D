@@ -265,7 +265,7 @@ blender_tools.main()")
                  translation: np.array=np.array([0.0, 0.0, 0.0]),
                  rotation: np.array=np.array([0.0, 0.0, 0.0, 1.0]),  # [x, y, z, w] - rotate w degrees rad around the axis xyz
                  scale: np.array=np.array([1, 1, 1]),
-                 color: np.array=np.array([255, 255, 255]),
+                 color: np.array=None,
                  visible: bool=True):
         """Adds a polygon mesh to the scene as specified in the path.
          

@@ -44,6 +44,7 @@ def render(output_prefix, file_format='PNG', color_mode='RGBA', animation=False)
   
   if animation:
     bpy.ops.curve.primitive_bezier_circle_add(radius=1, enter_editmode=False, align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+    bezier_circle = C.object
     animation_length = 60
     bpy.context.object.data.path_duration = animation_length
     bpy.context.scene.frame_end = animation_length
@@ -63,9 +64,9 @@ def render(output_prefix, file_format='PNG', color_mode='RGBA', animation=False)
     cam.matrix_world = mathutils.Matrix(np.eye(4))
     cam.location = [0.0, 0.0, 0.5]
     bpy.ops.object.constraint_add(type='FOLLOW_PATH')
-    cam.constraints["Follow Path"].target = bpy.data.objects["BezierCircle"]
+    cam.constraints["Follow Path"].target = bezier_circle
     bpy.ops.object.constraint_add(type='TRACK_TO')
-    cam.constraints["Track To"].target = bpy.data.objects["Point"]
+    cam.constraints["Track To"].target = light
     bpy.ops.constraint.followpath_path_animate(constraint="Follow Path", owner='OBJECT')
 
   bpy.ops.render.render(use_viewport=True, animation=animation, write_still=True)
@@ -154,6 +155,7 @@ def create_mat(obj, color=None):
     mat.node_tree.nodes["Principled BSDF"].inputs[7].default_value = 0  # specular
     mat.node_tree.nodes["Principled BSDF"].inputs[12].default_value = 0  #
     if color:
+      print('mesh color', color)
       mat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (color[0]/255.0, color[1]/255.0, color[2]/255.0, 1.0)
     else:
       mat.node_tree.nodes["Color Attribute"].layer_name = "Col"
@@ -237,7 +239,10 @@ def main():
           obj.rotation_mode = 'QUATERNION'  # blender quats are WXYZ
           obj.rotation_quaternion = [properties['rotation'][3], properties['rotation'][0], properties['rotation'][1], properties['rotation'][2]]
           obj.location = [properties['translation'][0], properties['translation'][1], properties['translation'][2]]
-          create_mat(obj, properties['color'])
+          try:
+            create_mat(obj, properties['color'])
+          except KeyError:
+            create_mat(obj)
         # somwhere here parse the blender parameters
 
     # Render if output filename is provided

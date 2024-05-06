@@ -32,9 +32,9 @@ def main():
                    translation=np.array([pos_x, pos_y, -1.0]),
                    rotation=viz.euler_to_quaternion(np.pi / 2.0, 0.0, np.pi / 4.0 * i))
 
-    blender_args = {'output_path': './',
+    blender_args = {'output_prefix': './',
                     'executable_path': '/Applications/Blender.app/Contents/MacOS/Blender'}
-    v.save('example_meshes', blender_args)
+    v.save('example_meshes', blender_args=blender_args)
 
 if __name__ == '__main__':
     main()

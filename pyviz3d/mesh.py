@@ -15,7 +15,7 @@ class Mesh:
         self.translation = translation.tolist()
         self.rotation = rotation.tolist()
         self.scale = scale.tolist()
-        self.color = color.tolist()
+        self.color = color
         self.visible = visible
 
     def get_properties(self, filename):
@@ -28,9 +28,10 @@ class Mesh:
             'translation': self.translation,
             'rotation': self.rotation,
             'scale': self.scale,
-            'color': self.color,
             'visible': self.visible,
             }
+        if self.color is not None:
+            json_dict['color'] = self.color.tolist()
         return json_dict
 
     def write_binary(self, path):
