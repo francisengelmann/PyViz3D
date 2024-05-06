@@ -5,12 +5,11 @@ PyViz3D is a python package to visualize 3D scenes directly in your browser, and
 
 #### Links
 
-- Install: ```pip3 install pyviz3d```
-- [Documentation](https://francisengelmann.github.io/PyViz3D/)
-- [Examples](https://github.com/francisengelmann/PyViz3D/tree/master/examples)
-- [Blender Instructions](https://github.com/francisengelmann/PyViz3D/tree/master?tab=readme-ov-file#blender)
+- Install: ```python -m pip install pyviz3d```
+- [Examples](#examples)
+- [Deployment](#deployment)
 
-### Examples
+# Examples
 Scene graph example, including blender rendering.
 [[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_graph.py)
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/graph/index.html)
@@ -62,11 +61,11 @@ Text Labels.
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/text/index.html)
 [<p align="center"><img width="60%" src="docs/img/example_text.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/text/index.html)
 
-# Blender
+<!-- # Blender
 To create beautiful illustrations with blender consider the following points:
 - Install Blender from https://www.blender.org/ (tested version 4.0).
 - Calling `v.save(..., show_in_blender=True)` creates a `.blend` file which you can open in blender.
-- Check `examples/examples_graph.py` for a complete example.
+- Check `examples/examples_graph.py` for a complete example. -->
 <!-- 2. Set up alias in you ~/.bashrc or ~/.zshrc etc. -->
 <!-- `alias blender="/Applications/Blender.app/Contents/MacOS/Blender"` -->
 <!-- then `source ~/.zshrc` -->
@@ -83,11 +82,24 @@ To create beautiful illustrations with blender consider the following points:
 <!-- brew install ffmpeg -->
 
 # Deployment
-- Make sure twine is installed: `python3 -m pip install build twine`
-- Create source archive and wheel: `python3 -m build`
-- Check that it will render properly on PyPi: `twine check dist/*`
-- Upload to PyPi: `twine upload dist/*`
 
+[Instructions for PyPi](https://packaging.python.org/en/latest/tutorials/packaging-projects/) and [API Token](https://packaging.python.org/en/latest/guides/distributing-packages-using-setuptools/#create-an-account).
+
+One time setup:
+```
+vim ~/.pypirc  # put __token__ as username 
+python3 -m pip install build twine`
+python3 -m pip install --upgrade build
+```
+
+Upload latest version to pypi:
+```
+vim pyproject.toml  # update version
+rm -rf dist
+rm -rf example_*
+python3 -m build
+python3 -m twine upload --repository testpypi dist/*
+```
 
 # BibTeX
 Please consider citing PyViz3D in your publications if it helps your research.
