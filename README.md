@@ -88,7 +88,7 @@ To create beautiful illustrations with blender consider the following points:
 One time setup:
 ```
 vim ~/.pypirc  # put __token__ as username 
-python3 -m pip install build twine`
+python3 -m pip install build twine
 python3 -m pip install --upgrade build
 ```
 
