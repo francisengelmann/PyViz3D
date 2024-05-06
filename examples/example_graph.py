@@ -93,7 +93,11 @@ def main():
     # Vsualize the scene and its graph in the browser and also in blender
     render_path =f'~/{name}.png'
     blender_path = '/Applications/Blender.app/Contents/MacOS/Blender'
-    v.save('example_graph', show_in_blender=True, blender_output_path=render_path, blender_executable_path=blender_path)
+
+    blender_args = {'output_path': render_path,
+                    'executable_path': blender_path}
+
+    v.save('example_graph', blender_args)
 
 
 if __name__ == '__main__':

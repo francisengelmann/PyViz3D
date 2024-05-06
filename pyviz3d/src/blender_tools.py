@@ -75,6 +75,7 @@ def render(path, file_format='PNG', color_mode='RGBA', animation=False):
     subprocess.run(["ffmpeg", "-i", f'{path}/%04d.png', "-vcodec", "libx264", "-vf", "format=yuv420p", "-y", output_filepath])
     subprocess.run(["ffmpeg", "-i", output_filepath, "-pix_fmt", "rgb24", output_filepath[:-3]+'gif'])
 
+
 def save_blender_scene(path: str) -> None:
   bpy.ops.wm.save_as_mainfile(filepath=path)
 
@@ -144,6 +145,7 @@ def init_scene(resolution_x=800, resolution_y=600):
     C.scene.objects[f'Point.{str(i+1).zfill(3)}'].data.shadow_soft_size = 0.1
     C.scene.objects[f'Point.{str(i+1).zfill(3)}'].data.color = (1, 0.795182, 0.375358)
 
+
 def create_mat(obj, color=None):
     mat = bpy.data.materials.new(name="test")
     mat.use_backface_culling = True
@@ -159,7 +161,6 @@ def create_mat(obj, color=None):
       mat.node_tree.links.new(
         mat.node_tree.nodes["Principled BSDF"].inputs["Base Color"],
         mat.node_tree.nodes["Color Attribute"].outputs["Color"])
-
 
 
 def cylinder_between(x1, y1, z1, x2, y2, z2, r, color, alpha):
@@ -192,7 +193,7 @@ def main():
     path_json = f'nodes.json'
     with open(path_json) as f:
         nodes_dict = json.load(f)
-
+    animation = False
     for name, properties in nodes_dict.items():
         print(name, properties)
         if properties['type'] == 'points':
@@ -207,6 +208,7 @@ def main():
            up = mathutils.Vector(properties['up'])
            look_at(C.scene.objects['Camera'], eye, at, up)
            C.scene.objects['Camera'].data.lens = properties['focal_length']
+           animation = properties['animation']
         
         if properties['type'] == 'cuboid':
            obj = bpy.ops.mesh.primitive_cube_add(size=1, enter_editmode=False, align='WORLD',
@@ -237,11 +239,11 @@ def main():
           obj.rotation_quaternion = [properties['rotation'][3], properties['rotation'][0], properties['rotation'][1], properties['rotation'][2]]
           obj.location = [properties['translation'][0], properties['translation'][1], properties['translation'][2]]
           create_mat(obj, properties['color'])
-
+        # somwhere here parse the blender parameters
 
     # Render if output filename is provided
     if len(argv) > 0:
-        render(argv[0])
+        render(argv[0], animation=animation)
 
     output_blender_file = f'blender_scene.blend'
     output_blender_file = os.path.abspath(output_blender_file)

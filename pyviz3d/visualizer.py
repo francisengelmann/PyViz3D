@@ -36,13 +36,14 @@ class Visualizer:
                  position: np.array = np.array([3.0, 3.0, 3.0]),
                  look_at: np.array = np.array([0.0, 0.0, 0.0]),
                  up: np.array = np.array([0.0, 0.0, 1.0]),
-                 focal_length: float = 28.0):
+                 focal_length: float = 28.0, animation=False):
 
         self.camera = Camera(
             position=np.array(position),
             look_at=np.array(look_at),
             up=np.array(up),
-            focal_length=focal_length
+            focal_length=focal_length,
+            animation=animation
         )
         self.elements = {"Camera_0": self.camera}
 
@@ -56,12 +57,13 @@ class Visualizer:
         return name.replace(':', ';')
 
     def save(self,
-             path: str,
-             port: int=6008,
-             show_in_blender: bool=False,
-             blender_output_path=None,
-             blender_executable_path=None,
-             verbose=True):
+            path: str,
+            port: int=6008,
+            blender_args: dict=None,
+            # show_in_blender: bool=False,
+            # blender_output_path=None,
+            # blender_executable_path=None,
+            verbose=True):
         """Creates the visualization and displays the link to it.
 
         :param path: The path to save the visualization files.
@@ -84,7 +86,7 @@ class Visualizer:
             binary_file_path = os.path.join(directory_destination, name + ".bin")
             nodes_dict[name] = e.get_properties(name + ".bin")
             e.write_binary(binary_file_path)
-            if show_in_blender:
+            if blender_args:
                 blender_file_oath = os.path.join(directory_destination, name + ".ply")
                 e.write_blender(blender_file_oath)
 
@@ -112,13 +114,15 @@ class Visualizer:
             "************************************************************************"
         )
 
-        if show_in_blender:
-            self.show_in_blender(path, blender_output_path, blender_executable_path, verbose)
+        if blender_args:
+            # self.show_in_blender(path, blender_output_path, blender_executable_path, verbose)
+            self.show_in_blender(path, blender_args, verbose)
 
     def show_in_blender(self,
                         path: str,
-                        blender_output_path: str,
-                        blender_executable_path: str,
+                        blender_args: dict,
+                        # blender_output_path: str,
+                        # blender_executable_path: str,
                         verbose: bool=True):
 
         directory_destination = os.path.abspath(path)
@@ -131,9 +135,9 @@ sys.path.append(os.getcwd())\n\
 import blender_tools\n\
 blender_tools.main()")
 
-        cmd = "cd " + directory_destination + "; " + blender_executable_path + " --background --python blender_script.py"
-        if blender_output_path:
-            cmd = cmd + " -- " + blender_output_path
+        cmd = "cd " + directory_destination + "; " + blender_args['executable_path'] + " --background --python blender_script.py"
+        if blender_args['executable_path']:
+            cmd = cmd + " -- " + blender_args['executable_path']
         os.system(cmd)
 
         if verbose:
