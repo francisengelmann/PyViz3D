@@ -55,14 +55,12 @@ Polylines.
 Superquadrics.
 [[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_superquadrics.py)
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/superquadrics/index.html)
-[<p align="center"><img width="60%" src="docs/img/example_text.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/superquadrics/index.html)
-
+[<p align="center"><img width="60%" src="docs/img/example_superquadrics.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/superquadrics/index.html)
 
 Text Labels.
 [[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_text.py)
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/text/index.html)
 [<p align="center"><img width="60%" src="docs/img/example_text.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/text/index.html)
-
 
 # Blender
 To create beautiful illustrations with blender consider the following points:
