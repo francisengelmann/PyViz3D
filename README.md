@@ -27,30 +27,42 @@ Blender example, including blender rendering.
   <img width="45%" src="docs/img/example_blender_blender.png" />
 </p>
 
-Polygon meshes example.
-[[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_meshes.py)
-[[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/meshes/index.html)
-[<p align="center"><img width="60%" src="docs/img/example_meshes.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/meshes/index.html)
+Arrow example.
+[[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_arrows.py)
+[[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/arrows/index.html)
+[<p align="center"><img width="60%" src="docs/img/example_arrows.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/arrows/index.html)
 
 Bounding boxes example.
 [[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_bounding_boxes.py)
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/bounding_boxes/index.html)
 [<p align="center"><img width="60%" src="docs/img/example_bounding_boxes.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/bounding_boxes/index.html)
 
-Polyline example.
+Polygon meshes (.obj and .ply).
+[[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_meshes.py)
+[[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/meshes/index.html)
+[<p align="center"><img width="60%" src="docs/img/example_meshes.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/meshes/index.html)
+
+Point clouds, segments and normals.
+[[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_normals.py)
+[[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)
+[<p align="center"><img width="60%" src="docs/img/example.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)
+
+Polylines.
 [[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_polylines.py)
 [[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/polylines/index.html)
 [<p align="center"><img width="60%" src="docs/img/example_polylines.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/polylines/index.html)
 
-Arrow example.
-[[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_arrows.py)
-[[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/arrows/index.html)
-[<p align="center"><img width="60%" src="docs/img/example_arrows.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/arrows/index.html)
+Superquadrics.
+[[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_superquadrics.py)
+[[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/superquadrics/index.html)
+[<p align="center"><img width="60%" src="docs/img/example_text.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/superquadrics/index.html)
 
-Point clouds and segments example.
-[[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_normals.py)
-[[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)
-[<p align="center"><img width="60%" src="docs/img/example.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/normals/index.html)
+
+Text Labels.
+[[Show Code]](https://github.com/francisengelmann/PyViz3D/blob/master/examples/example_text.py)
+[[Show Demo]](https://francisengelmann.github.io/pyviz3d_examples/text/index.html)
+[<p align="center"><img width="60%" src="docs/img/example_text.png" /></p>](https://francisengelmann.github.io/pyviz3d_examples/text/index.html)
+
 
 # Blender
 To create beautiful illustrations with blender consider the following points:
