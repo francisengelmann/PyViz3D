@@ -15,7 +15,6 @@ import sys
 import shutil
 import json
 import numpy as np
-import open3d as o3d
 
 def euler_to_quaternion(x: float, y: float, z: float):
     cr = np.cos(x * 0.5)
@@ -331,6 +330,7 @@ blender_tools.main()")
         vertices, triangles = create_superquadric_mesh(scalings[0], scalings[1], scalings[2],
                                                        exponents[0], exponents[1], exponents[2],
                                                        resolution)
+        import open3d as o3d
         mesh_sq = o3d.geometry.TriangleMesh()
         mesh_sq.vertices = o3d.utility.Vector3dVector(vertices)
         mesh_sq.triangles = o3d.utility.Vector3iVector(triangles)
@@ -380,7 +380,7 @@ blender_tools.main()")
         vertices, triangles = create_superquadric_mesh(scalings[0], scalings[1], scalings[2],
                                                     exponents[0], exponents[1], exponents[2],
                                                     resolution)
-
+        import open3d as o3d
         mesh_sq = o3d.geometry.TriangleMesh()
         mesh_sq.vertices = o3d.utility.Vector3dVector(vertices)
         mesh_sq.triangles = o3d.utility.Vector3iVector(triangles)
