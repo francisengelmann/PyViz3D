@@ -461,6 +461,110 @@ function get_arrow(properties){
 	return arrow;
 }
 
+function get_three_color(color) {
+	if (color[0] > 1. || color[1] > 1. || color[2] > 1. ) {
+		color[0] = color[0] / 255.
+		color[1] = color[1] / 255.
+		color[2] = color[2] / 255.
+	}
+
+	return new THREE.Color( color[0], color[1], color[2] )
+}
+
+function vector3ToArray(vector) {
+	return [vector.x, vector.y, vector.z];
+}
+
+function threejsColorToArray(vector) {
+	return [vector.r*255, vector.g*255, vector.b*255];
+}
+
+function get_motion(properties) {
+	var motion_type = properties['motion_type']
+	var motion_origin_pos_temp = properties['motion_origin_pos']
+	var motion_origin_pos = new THREE.Vector3(motion_origin_pos_temp[0], motion_origin_pos_temp[1], motion_origin_pos_temp[2]);
+	var motion_direction_temp = properties['motion_direction']
+	var motion_direction = new THREE.Vector3(motion_direction_temp[0], motion_direction_temp[1], motion_direction_temp[2]);
+	var motion_viz_orient = properties['motion_viz_orient']
+	var motion_dir_color = get_three_color(properties['motion_dir_color'])
+	var motion_origin_color = get_three_color(properties['motion_origin_color'])
+	let annotation_motion_group = new THREE.Group();
+	
+	let motion_origin_pos_ = new THREE.Vector3(motion_origin_pos.x, motion_origin_pos.y, motion_origin_pos.z);
+	let motion_direction_ = motion_direction.clone()
+	motion_direction_.normalize()
+
+	let arrow_len = 0.5;
+	let originSphereRadius = 0.02;
+
+	const originGeometry = new THREE.SphereGeometry( originSphereRadius, 16); 
+	const originMaterial = new THREE.MeshBasicMaterial( { color: motion_origin_color } ); 
+	const originSphere = new THREE.Mesh( originGeometry, originMaterial ); 
+	originSphere.position.copy(motion_origin_pos_);
+
+	annotation_motion_group.add(originSphere)
+
+	let torusPos;
+	if (motion_type === "rot") {
+		let torusDir = motion_direction_.clone()
+		torusDir.multiplyScalar(arrow_len/2)
+
+		torusPos = new THREE.Vector3();
+		torusPos.addVectors(motion_origin_pos_, torusDir);
+	}
+
+	let pseudoOrigin = motion_origin_pos_.clone()
+	if (motion_viz_orient === "inwards") {
+		let arrowDirection = motion_direction_.clone()
+		pseudoOrigin.addScaledVector(arrowDirection, -arrow_len);
+
+		if (motion_type === "rot") {
+			torusPos.addScaledVector(arrowDirection, -arrow_len);
+		}
+	}
+
+	if (motion_type === "rot") {
+		const geometry = new THREE.TorusGeometry( 0.04, 0.008, 16, 100 ); 
+		const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } ); 
+		const torus = new THREE.Mesh( geometry, material ); 
+
+		const normal = new THREE.Vector3(0, 0, 1); // The normal vector in the direction you want the ring's normal to point (z-axis in this case)
+
+		const quaternion = new THREE.Quaternion();
+		quaternion.setFromUnitVectors(normal, motion_direction_);
+		torus.setRotationFromQuaternion(quaternion);
+		torus.position.copy(torusPos);
+		annotation_motion_group.add(torus)
+	}
+
+	let arrow_start = motion_origin_pos.clone()
+	
+	let arrow_end = motion_origin_pos.clone()
+	if (motion_viz_orient === "inwards") {
+		arrow_start.addScaledVector(motion_direction_, -(0.5+0.02));
+
+		arrow_end.addScaledVector(motion_direction_, -(0.02));
+	}
+    else {
+		arrow_start.addScaledVector(motion_direction_, (0.02));
+
+		arrow_end.addScaledVector(motion_direction_, (0.5+0.02));
+	}
+
+	const arrow_properties = {
+		'start': vector3ToArray(arrow_start),
+		'end': vector3ToArray(arrow_end),
+		'color': threejsColorToArray(motion_dir_color),
+		'alpha': 0.85,
+		'stroke_width': 0.04*0.25,
+		'head_width': 0.2*0.2,
+	}
+	const arrow = get_arrow(arrow_properties)
+	annotation_motion_group.add(arrow)
+
+	return annotation_motion_group
+}
+
 function get_ground(){
 	let mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(2000, 2000),
 							  new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: true}));
@@ -593,6 +697,11 @@ function create_threejs_objects(properties){
 		}
 		if (String(object_properties['type']).localeCompare('arrow') == 0){
 			threejs_objects[object_name] = get_arrow(object_properties);
+			step_progress_bar();
+			render();
+		}
+		if (String(object_properties['type']).localeCompare('motion') == 0){
+			threejs_objects[object_name] = get_motion(object_properties);
 			step_progress_bar();
 			render();
 		}
