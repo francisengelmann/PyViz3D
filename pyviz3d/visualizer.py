@@ -9,6 +9,7 @@ from .cuboid import Cuboid
 from .polyline import Polyline
 from .arrow import Arrow
 from .circles_2d import Circles2D
+from .motion import Motion
 
 import os
 import sys
@@ -404,3 +405,48 @@ blender_tools.main()")
         """Add an arrow."""
 
         self.elements[self.__parse_name(name)] = Arrow(start, end, color, alpha, stroke_width, head_width, visible)
+
+    def add_motion(self, 
+                   name: str, 
+                   motion_type: str, 
+                   motion_direction: np.array, 
+                   motion_origin_pos: np.array,
+                   motion_viz_orient: str, 
+                   motion_dir_color: np.array=np.array([0, 255, 0]), 
+                   motion_origin_color: np.array=np.array([0, 255, 0]), 
+                   visible: bool=True):
+        """
+        Adds a motion vector to the visualizer.
+
+        :param name: 
+            Name of the motion vector, which will be displayed in the visualizer.
+        :param motion_type: 
+            Type of motion: 
+            - "trans" for translational motion
+            - "rot" for rotational motion
+        :param motion_direction: 
+            A 3D vector (shape: 3x1, dtype: float32) representing the direction of the motion vector.
+        :param motion_origin_pos: 
+            A 3D point (shape: 3x1, dtype: float32) representing the origin position of the motion vector.
+        :param motion_viz_orient: 
+            Orientation of the motion vector visualization. 
+            - "outwards": The motion vector points away from the origin.
+            - "inwards": The motion vector points towards the origin.
+        :param motion_dir_color: 
+            RGB color (shape: 3x1, dtype: int32) for the motion vector. 
+            Defaults to green ([0, 255, 0]).
+        :param motion_origin_color: 
+            RGB color (shape: 3x1, dtype: int32) for the origin of the motion vector. 
+            Defaults to green ([0, 255, 0]).
+        :param visible: 
+            Boolean indicating whether the motion vector should be visible in the visualizer. 
+            Defaults to True.
+        
+        :raises AssertionError: 
+            If `motion_type` is not one of ["trans", "rot"] or 
+            if `motion_viz_orient` is not one of ["outwards", "inwards"].
+        """
+        assert motion_type in ["trans", "rot"], f"Unknown motion_type option {motion_type}"
+        assert motion_viz_orient in ["outwards", "inwards"], f"Unknown motion_viz_orient option {motion_viz_orient}"
+
+        self.elements[self.__parse_name(name)] = Motion(motion_type, motion_origin_pos, motion_direction, motion_viz_orient, motion_dir_color, motion_origin_color, visible)
