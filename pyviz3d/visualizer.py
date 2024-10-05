@@ -449,4 +449,4 @@ blender_tools.main()")
         assert motion_type in ["trans", "rot"], f"Unknown motion_type option {motion_type}"
         assert motion_viz_orient in ["outwards", "inwards"], f"Unknown motion_viz_orient option {motion_viz_orient}"
 
-        self.elements[self.__parse_name(name)] = Motion(motion_type, motion_origin_pos, motion_direction, motion_viz_orient, motion_dir_color, motion_origin_color, visible)
+        self.elements[self.__parse_name(name)] = Motion(motion_type, motion_direction, motion_origin_pos, motion_viz_orient, motion_dir_color, motion_origin_color, visible)
