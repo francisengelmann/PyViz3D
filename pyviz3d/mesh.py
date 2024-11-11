@@ -15,7 +15,7 @@ class Mesh:
         self.translation = translation.tolist()
         self.rotation = rotation.tolist()
         self.scale = scale.tolist()
-        self.color = color
+        self.color = color.tolist()
         self.visible = visible
 
     def get_properties(self, filename):
