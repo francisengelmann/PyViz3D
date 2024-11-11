@@ -93,9 +93,9 @@ def main():
     render_path =f'~/{name}.png'
     blender_path = '/Applications/Blender.app/Contents/MacOS/Blender'
 
-    blender_args = {'output_path': render_path,
+    blender_args = {'output_prefix': render_path,
                     'executable_path': blender_path}
-    v.save('example_graph', blender_args)
+    v.save('example_graph', blender_args=blender_args)
 
 
 if __name__ == '__main__':

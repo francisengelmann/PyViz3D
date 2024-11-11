@@ -73,8 +73,8 @@ def render(output_prefix, file_format='PNG', color_mode='RGBA', animation=False)
 
   if animation:
     output_filepath = output_prefix + '.mp4'
-    subprocess.run(["ffmpeg", "-i", f'{output_prefix}%04d.png', "-vcodec", "libx264", "-vf", "format=yuv420p", "-y", output_filepath])
-    subprocess.run(["ffmpeg", "-i", output_filepath, "-pix_fmt", "rgb24", output_filepath[:-3]+'gif'])
+    subprocess.run(["ffmpeg", "-y", "-i", f'{output_prefix}%04d.png', "-vcodec", "libx264", "-vf", "format=yuv420p", "-y", output_filepath])
+    subprocess.run(["ffmpeg", "-y", "-i", output_filepath, "-pix_fmt", "rgb24", output_filepath[:-3]+'gif'])
 
 
 def save_blender_scene(path: str) -> None:
