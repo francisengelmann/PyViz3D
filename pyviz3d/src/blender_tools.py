@@ -132,11 +132,17 @@ def init_scene(resolution_x=800, resolution_y=600):
   C.scene.cycles.preview_samples = 50
   C.scene.cycles.samples = 50
 
+  bpy.data.worlds["World"].node_tree.nodes["Background"].inputs[1].default_value = 5
+
   # Add lights
   C.scene.objects['Light'].data.shadow_soft_size = 1.0
   C.scene.objects['Light'].data.cycles.cast_shadow = False
+  C.scene.objects['Light'].data.energy = 1000.0
+  C.scene.objects['Light'].data.use_shadow = False
+
   bpy.ops.object.light_add(type='POINT', radius=1, align='WORLD', location=(-1, 1, 10), scale=(1, 1, 1))
-  C.scene.objects['Point'].data.energy = 7000.0
+  C.scene.objects['Point'].data.energy = 3000.0
+  C.scene.objects['Light'].data.use_shadow = True
   C.scene.objects['Point'].data.shadow_soft_size = 3
 
   for i in range(4):
@@ -146,8 +152,8 @@ def init_scene(resolution_x=800, resolution_y=600):
     C.scene.objects[f'Point.{str(i+1).zfill(3)}'].data.color = (1, 0.795182, 0.375358)
 
 
-def create_mat(obj, color=None):
-    mat = bpy.data.materials.new(name="test")
+def create_mat(obj, color=None, alpha=1.0):
+    mat = bpy.data.materials.new(name="material")
     mat.use_backface_culling = True
     obj.data.materials.append(mat)
     mat.use_nodes = True
@@ -157,6 +163,7 @@ def create_mat(obj, color=None):
     if color:
       print('mesh color', color)
       mat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (color[0]/255.0, color[1]/255.0, color[2]/255.0, 1.0)
+      mat.node_tree.nodes["Principled BSDF"].inputs[4].default_value = alpha
     else:
       mat.node_tree.nodes["Color Attribute"].layer_name = "Col"
       mat.node_tree.links.new(
@@ -197,6 +204,7 @@ def main():
     animation = False
     for name, properties in nodes_dict.items():
         print(name, properties)
+
         if properties['type'] == 'points':
            bpy.ops.wm.ply_import(filepath=name+'.ply')
            bpy.ops.object.shade_smooth()
@@ -210,12 +218,12 @@ def main():
            look_at(C.scene.objects['Camera'], eye, at, up)
            C.scene.objects['Camera'].data.lens = properties['focal_length']
            animation = properties['animation']
-        
+
         if properties['type'] == 'cuboid':
            obj = bpy.ops.mesh.primitive_cube_add(size=1, enter_editmode=False, align='WORLD',
                                            location=mathutils.Vector(properties['position']),
                                            scale=mathutils.Vector(properties['size']))
-        
+
         if properties['type'] == 'polyline':
             if len(properties['positions']) <= 1:
                 continue
@@ -234,7 +242,8 @@ def main():
           if properties['filename'].split('.')[-1] == 'obj':
             bpy.ops.wm.obj_import(filepath=properties['filename'], forward_axis='Y', up_axis='Z')          
           bpy.ops.object.shade_smooth()
-          obj = bpy.data.objects[properties['filename'].split('.')[0]]
+          obj = bpy.context.view_layer.objects.active
+          # obj = bpy.data.objects[properties['filename'].split('.')[0]]
           obj.scale = [properties['scale'][0], properties['scale'][1], properties['scale'][2]]
           obj.rotation_mode = 'QUATERNION'  # blender quats are WXYZ
           obj.rotation_quaternion = [properties['rotation'][3], properties['rotation'][0], properties['rotation'][1], properties['rotation'][2]]
