@@ -1,5 +1,5 @@
 import numpy as np
-import pyviz3d.visualizer as viz
+import pyviz3d as viz
 import plyfile  # pip3 install plyfile
 import open3d as o3d
 import os
@@ -41,7 +41,7 @@ def read_ply_data(filename):
 
 def main():
 
-    v = viz.Visualizer(position=np.array([-0.265198, -0.411423, 7.11054]), focal_length=28.0, animation=False)
+    v = viz.Visualizer(position=np.array([-0.265198, -0.411423, 7.11054]), focal_length=28.0)
 
     # Read input scene
     prefix = 'examples/data/'
@@ -90,12 +90,11 @@ def main():
     v.add_points('Instances', obj_centers, obj_colors * 255, point_size=200, resolution=15, visible=True)
 
     # Vsualize the scene and its graph in the browser and also in blender
-    render_path =f'~/{name}.png'
-    blender_path = '/Applications/Blender.app/Contents/MacOS/Blender'
+    blender_config = viz.BlenderConfig(
+        output_prefix=f'~/{name}.png',
+        blender_path='/Applications/Blender.app/Contents/MacOS/Blender')
+    v.save(f'example_blender', blender_config=blender_config)
 
-    blender_args = {'output_prefix': render_path,
-                    'executable_path': blender_path}
-    v.save('example_graph', blender_args=blender_args)
 
 
 if __name__ == '__main__':

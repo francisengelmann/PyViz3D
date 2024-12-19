@@ -29,9 +29,8 @@ class Mesh:
             'rotation': self.rotation,
             'scale': self.scale,
             'visible': self.visible,
+            'color': self.color,
             }
-        if self.color is not None:
-            json_dict['color'] = self.color.tolist()
         return json_dict
 
     def write_binary(self, path):

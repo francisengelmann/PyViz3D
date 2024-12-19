@@ -1,4 +1,4 @@
-import pyviz3d.visualizer as viz
+import pyviz3d as viz
 import numpy as np
 import open3d as o3d
 
@@ -32,9 +32,10 @@ def main():
                    translation=np.array([pos_x, pos_y, -1.0]),
                    rotation=viz.euler_to_quaternion(np.pi / 2.0, 0.0, np.pi / 4.0 * i))
 
-    blender_args = {'output_prefix': './',
-                    'executable_path': '/Applications/Blender.app/Contents/MacOS/Blender'}
-    v.save('example_meshes', blender_args=blender_args)
+    blender_config = viz.BlenderConfig(
+        output_prefix='./',
+        blender_path='/Applications/Blender.app/Contents/MacOS/Blender')
+    v.save(f'example_meshes', blender_config=blender_config)
 
 if __name__ == '__main__':
     main()

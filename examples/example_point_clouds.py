@@ -1,5 +1,5 @@
 import numpy as np
-import pyviz3d.visualizer as viz
+import pyviz3d as viz
 
 
 def main():

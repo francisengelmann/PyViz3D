@@ -10,6 +10,7 @@ from .polyline import Polyline
 from .arrow import Arrow
 from .circles_2d import Circles2D
 from .motion import Motion
+from .blender_config import BlenderConfig
 
 import os
 import sys
@@ -36,14 +37,13 @@ class Visualizer:
                  position: np.array = np.array([3.0, 3.0, 3.0]),
                  look_at: np.array = np.array([0.0, 0.0, 0.0]),
                  up: np.array = np.array([0.0, 0.0, 1.0]),
-                 focal_length: float = 28.0, animation=False):
+                 focal_length: float = 28.0):
 
         self.camera = Camera(
             position=np.array(position),
             look_at=np.array(look_at),
             up=np.array(up),
             focal_length=focal_length,
-            animation=animation
         )
         self.elements = {"Camera_0": self.camera}
 
@@ -59,8 +59,8 @@ class Visualizer:
     def save(self,
             path: str,
             port: int=6008,
-            blender_args: dict=None,
-            verbose=True):
+            blender_config: BlenderConfig=None,
+            verbose: bool=True) -> None:
         """Creates the visualization and displays the link to it.
 
         :param path: The path to save the visualization files.
@@ -83,44 +83,47 @@ class Visualizer:
             binary_file_path = os.path.join(directory_destination, name + ".bin")
             nodes_dict[name] = e.get_properties(name + ".bin")
             e.write_binary(binary_file_path)
-            if blender_args:
-                blender_file_oath = os.path.join(directory_destination, name + ".ply")
-                e.write_blender(blender_file_oath)
+            if blender_config:
+                blender_file_path = os.path.join(directory_destination, name + ".ply")
+                e.write_blender(blender_file_path)
 
         # Write json file containing all scene elements
         json_file = os.path.join(directory_destination, "nodes.json")
         with open(json_file, "w") as outfile:
             json.dump(nodes_dict, outfile)
 
-        if not verbose:
-            return
-
         # Display link
-        http_server_string = "python -m SimpleHTTPServer " + str(port)
-        if sys.version[0] == "3":
-            http_server_string = "python -m http.server " + str(port)
-        print("")
-        print(
-            "************************************************************************"
-        )
-        print("1) Start local server:")
-        print("    cd " + directory_destination + "; " + http_server_string)
-        print("2) Open in browser:")
-        print("    http://localhost:" + str(port))
-        print(
-            "************************************************************************"
-        )
+        if verbose:
+          http_server_string = "python -m SimpleHTTPServer " + str(port)
+          if sys.version[0] == "3":
+              http_server_string = "python -m http.server " + str(port)
+          print("")
+          print(
+              "************************************************************************"
+          )
+          print("1) Start local server:")
+          print("    cd " + directory_destination + "; " + http_server_string)
+          print("2) Open in browser:")
+          print("    http://localhost:" + str(port))
+          print(
+              "************************************************************************"
+          )
 
-        if blender_args:
-            self.show_in_blender(path, blender_args, verbose)
+        # Render in blender if arguments are not None
+        if blender_config:
+            self.show_in_blender(path, blender_config, verbose)
 
     def show_in_blender(self,
                         path: str,
-                        blender_args: dict,
+                        blender_config: BlenderConfig,
                         verbose: bool=True):
 
         directory_destination = os.path.abspath(path)
         blender_script_path = os.path.join(directory_destination, "blender_script.py")
+        blender_config_path = os.path.join(directory_destination, "blender_config.json")
+        with open(blender_config_path, 'w') as json_file:
+          json.dump(blender_config.to_dict(), json_file, indent=2)
+          
         with open(blender_script_path, "w") as outfile:
             outfile.write(
 "import bpy\nimport os\n\
@@ -129,9 +132,9 @@ sys.path.append(os.getcwd())\n\
 import blender_tools\n\
 blender_tools.main()")
 
-        cmd = "cd " + directory_destination + "; " + blender_args['executable_path'] + " --background --python blender_script.py"
-        if blender_args['output_prefix']:
-            cmd = cmd + " -- " + blender_args['output_prefix']
+        cmd = "cd " + directory_destination + "; " + blender_config.blender_path + " --background --python blender_script.py"
+        if blender_config.render:
+            cmd = cmd + " -- " + blender_config.output_prefix
         os.system(cmd)
 
         if verbose:
@@ -148,7 +151,7 @@ blender_tools.main()")
         colors: np.array=None,
         normals: np.array=None,
         point_size: int=25,
-        resolution: int=5,
+        resolution: int=3,
         visible: bool=True,
         alpha: float=1.0,
     ):
@@ -265,7 +268,7 @@ blender_tools.main()")
                  translation: np.array=np.array([0.0, 0.0, 0.0]),
                  rotation: np.array=np.array([0.0, 0.0, 0.0, 1.0]),  # [x, y, z, w] - rotate w degrees rad around the axis xyz
                  scale: np.array=np.array([1, 1, 1]),
-                 color: np.array=None,
+                 color: np.array=np.array([200, 200, 200]),
                  visible: bool=True):
         """Adds a polygon mesh to the scene as specified in the path.
          

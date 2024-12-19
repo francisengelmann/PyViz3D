@@ -1,5 +1,5 @@
 import numpy as np
-import pyviz3d.visualizer as viz
+import pyviz3d as viz
 
 
 def main():
@@ -17,8 +17,7 @@ def main():
             position=np.array([0.0, 5.0, 2.0]),
             look_at=np.array([0.0, 0.0, 0.0]),
             up=np.array([0.0, 0.0, 1.0]),
-            focal_length=45.0,
-            animation=False)
+            focal_length=45.0)
     
     # Add the point cloud
     v.add_points('Horse', points, colors, point_size=15, visible=True)
@@ -27,9 +26,10 @@ def main():
     v.add_bounding_box('background', np.array([0.0, 0.0, np.min(points[:, 2])]), np.array([3, 3, 0.001]))
 
     # Save everything
-    blender_args = {'output_prefix': 'horse/horse_',
-                    'executable_path': '/Applications/Blender.app/Contents/MacOS/Blender'}
-    v.save(f'example_blender', blender_args=blender_args)
+    blender_config = viz.BlenderConfig(
+        output_prefix='horse/horse_',
+        blender_path='/Applications/Blender.app/Contents/MacOS/Blender')
+    v.save(f'example_blender', blender_config=blender_config)
 
 if __name__ == '__main__':
     main()

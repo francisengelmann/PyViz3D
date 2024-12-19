@@ -1,4 +1,4 @@
-import pyviz3d.visualizer as viz
+import pyviz3d as viz
 import numpy as np
 
 
