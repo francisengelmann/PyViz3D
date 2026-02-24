@@ -1,5 +1,5 @@
 """Points class i.e. point cloud."""
-
+import trimesh
 
 class Points:
     """Set of points defined by positions, colors, normals and more."""
@@ -56,25 +56,15 @@ class Points:
             f.write(bin_colors)
 
     def write_blender(self, path):
-        """Write a Blender-friendly mesh for the points using Open3D."""
-        import open3d as o3d
-        import tqdm
-        pcd_combined = o3d.geometry.TriangleMesh()
-
-        def _create_sphere_at_xyz(xyz, colors, radius, resolution):
-            sphere = o3d.geometry.TriangleMesh.create_sphere(radius=radius, resolution=resolution)
-            sphere.compute_vertex_normals()
-            sphere.paint_uniform_color(colors)
-            sphere = sphere.translate(xyz)
-            return sphere
-
-        # Make no-ob points whiter
-        # pcd[np.all(pcd[:, 6:] == 120, axis=1), 6:] = [220., 220., 220.]
-
-        for i in range(self.positions.shape[0]):
-            pcd_combined += _create_sphere_at_xyz(self.positions[i],
-                                                  self.colors[i] / 255.0,
-                                                  self.point_size / 1000.0,
-                                                  resolution=self.resolution)
-
-        o3d.io.write_triangle_mesh(path, pcd_combined)
+      """Write a Blender-friendly mesh for the points using trimesh."""
+      meshes = []
+      
+      for i in range(self.positions.shape[0]):
+          sphere = trimesh.creation.icosphere(subdivisions=self.resolution)
+          sphere.apply_scale(self.point_size / 1000.0)
+          sphere.apply_translation(self.positions[i])
+          sphere.visual.vertex_colors = (self.colors[i])
+          meshes.append(sphere)
+      
+      combined = trimesh.util.concatenate(meshes)
+      combined.export(path)
