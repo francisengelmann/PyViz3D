@@ -28,15 +28,15 @@ def main():
     # Save everything
     blender_config = viz.BlenderConfig(
         animation=True,
-        animation_length=60,
+        animation_length=10,
         animation_circle_radius=5,
         animation_circle_center=[0.0, 0.0, 0.0],
-        animation_circle_rotation=[3.1415/2.0, 0.0, 0.0],
+        animation_circle_rotation=[0.0, 0.0, 0.0],
         cycles_samples=10,
         render_resolution=[800, 600],
         output_prefix='horse/horse_',
         blender_path='/Applications/Blender.app/Contents/MacOS/Blender')
-    v.save(f'example_blender', blender_config=blender_config)
+    v.save('examples_output/example_blender', blender_config=blender_config)
 
 if __name__ == '__main__':
     main()
