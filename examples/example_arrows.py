@@ -21,7 +21,14 @@ def main():
                 alpha=0.5,
                 stroke_width=0.04,
                 head_width=0.1)
-    v.save('example_arrows')
+    # pos = np.array([[0.0, 1.0, 0.0], [0.0, 1.0, 1.0], [0.0, 2.0, 0.0]])
+    # v.add_polyline('poly', positions=pos, color=np.array([255,255,0]), edge_width=0.1)
+
+    # v.save('example_arrows')
+    blender_config = viz.BlenderConfig(
+        output_prefix='teaser_middle.png',
+        blender_path='/Applications/Blender.app/Contents/MacOS/Blender')
+    v.save('example_arrow', blender_config=blender_config)
 
 if __name__ == '__main__':
     main()

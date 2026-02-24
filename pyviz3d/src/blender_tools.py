@@ -43,7 +43,9 @@ def render(output_prefix, configuration):
     print(configuration['animation_circle_center'])
     bpy.ops.curve.primitive_bezier_circle_add(
        radius=configuration['animation_circle_radius'], enter_editmode=False, align='WORLD',
-       location=configuration['animation_circle_center'], scale=(1, 1, 1))
+       location=configuration['animation_circle_center'],
+       rotation=configuration['animation_circle_rotation'],
+       scale=(1, 1, 1))
     bezier_circle = C.object
     bpy.context.object.data.path_duration = configuration['animation_length']
     bpy.context.scene.frame_end = configuration['animation_length']
@@ -169,8 +171,11 @@ def cylinder_between(x1, y1, z1, x2, y2, z2, r, color, alpha):
     mat.use_backface_culling = True
     C.object.data.materials.append(mat)
     mat.use_nodes = True
-    mat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (color[0]/255.0, color[1]/255.0, color[2]/255.0, alpha)
-    return C.object
+    mat.node_tree.nodes["Principled BSDF"].inputs[7].default_value = 0  # specular
+    mat.node_tree.nodes["Principled BSDF"].inputs[12].default_value = 0  #
+    mat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (color[0]/255.0, color[1]/255.0, color[2]/255.0, 1.0)
+    mat.node_tree.nodes["Principled BSDF"].inputs[4].default_value = alpha
+    return C.object   
 
 
 def main():
@@ -209,14 +214,98 @@ def main():
             if len(properties['positions']) <= 1:
                 continue
             for i in range(len(properties['positions']) - 1):
-                x1 = properties['positions'][i][0]
-                y1 = properties['positions'][i][1]
-                z1 = properties['positions'][i][2]
-                x2 = properties['positions'][i + 1][0]
-                y2 = properties['positions'][i + 1][1]
-                z2 = properties['positions'][i + 1][2]
-                obj = cylinder_between(x1, y1, z1, x2, y2, z2, properties['edge_width'] * 2, properties['color'], properties['alpha'])
-        
+                x1, y1, z1 = properties['positions'][i]
+                x2, y2, z2 = properties['positions'][i + 1]
+                obj = cylinder_between(
+                   x1, y1, z1,
+                   x2, y2, z2,
+                   properties['edge_width'],
+                   properties['color'],
+                   properties['alpha'])
+            for i in range(len(properties['positions'])):
+                x, y, z = properties['positions'][i]
+                bpy.ops.mesh.primitive_uv_sphere_add(
+                    radius=properties['edge_width'],
+                    location=(x, y, z),
+                    segments=16,
+                    ring_count=8
+                )
+                sphere = bpy.context.active_object
+                # Reuse cylinder material if available
+                if getattr(obj, "active_material", None) is not None:
+                    sphere.active_material = obj.active_material
+
+                # mat = bpy.data.materials.new(name="test")
+                # mat.use_backface_culling = True
+                # C.object.data.materials.append(mat)
+                # mat.use_nodes = True
+                # mat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (color[0]/255.0, color[1]/255.0, color[2]/255.0, alpha)
+
+
+        if properties['type'] == 'arrow':
+            start = mathutils.Vector(properties['start'])
+            end   = mathutils.Vector(properties['end'])
+            color = properties['color']
+            alpha = float(properties['alpha'])
+            r_shaft = float(properties['stroke_width'])
+            r_head  = float(properties['head_width'])
+            visible = bool(properties['visible'])
+
+            d = end - start
+            L = d.length
+            if L <= 1e-9:
+                return None, None
+            n = d.normalized()
+            head_h  = 2.0 * r_head
+            shaft_h = max(1e-6, L - head_h)
+
+            # Material
+            mat = bpy.data.materials.new(name="ArrowMat")
+            mat.use_nodes = True
+
+            #bpy.ops.node.add_node(use_transform=True, type="ShaderNodeBsdfDiffuse")
+
+            bsdf = mat.node_tree.nodes["Principled BSDF"]
+            bsdf.inputs["Base Color"].default_value = (color[0], color[1], color[2], 1.0)
+            bsdf.inputs["Alpha"].default_value = alpha
+            # match old Diffuse-style look
+            bsdf.inputs["Metallic"].default_value = 0.0
+            bsdf.inputs["Specular"].default_value = 0.0
+            bsdf.inputs["Roughness"].default_value = 1.0
+
+            # make sure it's not glowing
+            bsdf.inputs["Emission"].default_value = (0.0, 0.0, 0.0, 1.0)
+            bsdf.inputs["Emission Strength"].default_value = 0.0
+            bsdf.inputs["Clearcoat"].default_value = 0.0
+            bsdf.inputs["Sheen"].default_value = 0.0
+            mat.blend_method = 'BLEND'
+            mat.shadow_method = 'HASHED'
+
+            # Rotation: +Z -> direction
+            rot = mathutils.Vector((0,0,1)).rotation_difference(n)
+
+            # Shaft: cylinder along +Z, centered at start + n * (shaft_h/2)
+            bpy.ops.mesh.primitive_cylinder_add(radius=r_shaft, depth=shaft_h, location=(0,0,0))
+            shaft = bpy.context.active_object
+            shaft.rotation_mode = 'QUATERNION'
+            shaft.rotation_quaternion = rot
+            shaft.location = start + n * (shaft_h * 0.5)
+            shaft.data.materials.append(mat)
+
+            # Head: cone along +Z, centered at end - n * (head_h/2)
+            bpy.ops.mesh.primitive_cone_add(radius1=r_head, radius2=0.0, depth=head_h, location=(0,0,0))
+            head = bpy.context.active_object
+            head.rotation_mode = 'QUATERNION'
+            head.rotation_quaternion = rot
+            head.location = end - n * (head_h * 0.5)
+            head.data.materials.append(mat)
+
+            # Visibility
+            for obj in (shaft, head):
+                obj.hide_set(not visible)
+                obj.hide_render = not visible
+
+
         if properties['type'] == 'mesh':
           if properties['filename'].split('.')[-1] == 'ply':
             bpy.ops.wm.ply_import(filepath=properties['filename'], forward_axis='Y', up_axis='Z')

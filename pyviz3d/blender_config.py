@@ -12,6 +12,7 @@ class BlenderConfig:
     animation_length: int = 60  # Number of frames in the animation.
     animation_circle_radius: float = 5.0  # Radius of cirlce on which the camera moves around the center
     animation_circle_center: List[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
+    animation_circle_rotation: List[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
     cycles_samples: int = 10  # Number of cycles samples
     file_format: str = 'PNG'
 
