@@ -114,11 +114,11 @@
             }
         },
         {
-            "name": "Example Superquadric",
+            "name": "Example Superquadrics",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/examples/example_superquadric.py",
+            "program": "${workspaceFolder}/examples/example_superquadrics.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "env": {
