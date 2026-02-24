@@ -30,7 +30,7 @@ def main():
         v.add_points(scene_name, point_positions, point_colors, point_size=point_size)
 
     # When we added everything we need to the visualizer, we save it.
-    v.save('example_point_clouds')
+    v.save('examples_output/example_point_clouds')
 
 
 if __name__ == '__main__':

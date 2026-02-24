@@ -306,17 +306,17 @@ blender_tools.main()")
                  scale: np.array=np.array([1, 1, 1]),
                  color: np.array=np.array([200, 200, 200]),
                  visible: bool=True):
-                """Add a polygon mesh to the scene.
+        """Add a polygon mesh to the scene.
 
-                Args:
-                        name: Element name.
-                        path: Path to an .obj mesh file.
-                        translation: Translation vector.
-                        rotation: Quaternion rotation.
-                        scale: Scale vector.
-                        color: RGB color array-like in 0-255.
-                        visible: Whether the mesh is visible.
-                """
+        Args:
+            name: Element name.
+            path: Path to an .obj mesh file.
+            translation: Translation vector.
+            rotation: Quaternion rotation.
+            scale: Scale vector.
+            color: RGB color array-like in 0-255.
+            visible: Whether the mesh is visible.
+        """
         rotation /= np.linalg.norm(rotation)  # normalize the orientation
         self.elements[self.__parse_name(name)] = Mesh(path, translation=translation, rotation=rotation, scale=scale, color=color, visible=visible)
 
@@ -378,11 +378,9 @@ blender_tools.main()")
         vertices, triangles = create_superquadric_mesh(scalings[0], scalings[1], scalings[2],
                                                        exponents[0], exponents[1], exponents[2],
                                                        resolution)
-        import open3d as o3d
-        mesh_sq = o3d.geometry.TriangleMesh()
-        mesh_sq.vertices = o3d.utility.Vector3dVector(vertices)
-        mesh_sq.triangles = o3d.utility.Vector3iVector(triangles)
-        o3d.io.write_triangle_mesh(f"{name}.obj", mesh_sq, write_ascii=True, compressed=False, write_vertex_normals=False, write_vertex_colors=False, write_triangle_uvs=False, print_progress=False)
+        import trimesh
+        mesh_sq = trimesh.Trimesh(vertices=vertices, faces=triangles)
+        mesh_sq.export(f"{name}.obj")
 
         rotation /= np.linalg.norm(rotation)  # normalize the orientation
         scale = np.array([1.0, 1.0, 1.0])
@@ -428,13 +426,11 @@ blender_tools.main()")
         vertices, triangles = create_superquadric_mesh(scalings[0], scalings[1], scalings[2],
                                                     exponents[0], exponents[1], exponents[2],
                                                     resolution)
-        import open3d as o3d
-        mesh_sq = o3d.geometry.TriangleMesh()
-        mesh_sq.vertices = o3d.utility.Vector3dVector(vertices)
-        mesh_sq.triangles = o3d.utility.Vector3iVector(triangles)
+        import trimesh
+        mesh_sq = trimesh.Trimesh(vertices=vertices, faces=triangles)
         if not os.path.exists("objs"):
             os.makedirs("objs")
-        o3d.io.write_triangle_mesh(f"objs/{name}.obj", mesh_sq, write_ascii=True, compressed=False, write_vertex_normals=False, write_vertex_colors=False, write_triangle_uvs=False, print_progress=False)
+        mesh_sq.export(f"objs/{name}.obj")
         
         id_rot_quat = np.array([1,0,0,0])
         scale = np.array([1.0, 1.0, 1.0])

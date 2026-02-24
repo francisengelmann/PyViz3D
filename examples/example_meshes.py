@@ -1,17 +1,15 @@
 import pyviz3d as viz
 import numpy as np
-import open3d as o3d
-
 
 def main():
-    v = viz.Visualizer(position=[5, 5, 1])
+    v = viz.Visualizer(position=[-1.5, 0.5, 1.5])
 
     v.add_mesh('Plane',
         path='examples/data/plane.obj',
         scale=np.array([0.5, 0.5, 0.5]),
         translation=np.array([1.0, -0.6, -0.7]),
         rotation=viz.euler_to_quaternion(-np.pi / 2.0, -np.pi, np.pi / 2.0),
-        color=np.array([100, 170, 255]))
+        color=np.array([0, 0, 255]))
 
     v.add_mesh('Motorbike',
         path='examples/data/motorbike.obj',
@@ -33,9 +31,9 @@ def main():
                    rotation=viz.euler_to_quaternion(np.pi / 2.0, 0.0, np.pi / 4.0 * i))
 
     blender_config = viz.BlenderConfig(
-        output_prefix='./',
+        output_prefix='output.png',
         blender_path='/Applications/Blender.app/Contents/MacOS/Blender')
-    v.save(f'example_meshes', blender_config=blender_config)
+    v.save('examples_output/example_meshes', blender_config=blender_config)
 
 if __name__ == '__main__':
     main()

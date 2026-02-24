@@ -14,7 +14,7 @@ def main():
                  visible=False)
 
     # When we added everything we need to the visualizer, we save it.
-    v.save('example_text')
+    v.save('examples_output/example_text')
 
 
 if __name__ == '__main__':

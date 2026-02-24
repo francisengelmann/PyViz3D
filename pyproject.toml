@@ -19,7 +19,7 @@ classifiers = [
 keywords = ["3d", "visualizer", "blender"]
 
 dependencies = [
-    "numpy",
+    "numpy<2.0.0",  #
     "trimesh",
 ]
 requires-python = ">=3.9"

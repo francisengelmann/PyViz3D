@@ -1,9 +1,9 @@
+import os
 import numpy as np
 import pyviz3d as viz
 import plyfile  # pip3 install plyfile
-import open3d as o3d
-import os
-from sklearn.neighbors import NearestNeighbors
+import open3d as o3d  # pip3 install open3d
+from sklearn.neighbors import NearestNeighbors  # pip3 install scikit-learn
 
 def read_ply_data(filename):
     filename_in = filename
@@ -91,10 +91,18 @@ def main():
 
     # Vsualize the scene and its graph in the browser and also in blender
     blender_config = viz.BlenderConfig(
-        output_prefix=f'~/{name}.png',
+        output_prefix=f'{name}.png',
         blender_path='/Applications/Blender.app/Contents/MacOS/Blender')
-    v.save(f'example_blender', blender_config=blender_config)
+    v.save('examples_output/example_graph', blender_config=blender_config)
 
+
+
+    # # Save everything
+    # blender_config = viz.BlenderConfig(
+    #     render_resolution=[800, 600],
+    #     output_prefix='horse/horse_',
+    #     blender_path='/Applications/Blender.app/Contents/MacOS/Blender')
+    # v.save('examples_output/example_blender', blender_config=blender_config)
 
 
 if __name__ == '__main__':

@@ -30,18 +30,6 @@
             }
         },
         {
-          "name": "Example Blender2",
-          "type": "debugpy",
-          "request": "launch",
-          "cwd": "${workspaceFolder}",
-          "program": "${workspaceFolder}/examples/example_blender2.py",
-          "console": "integratedTerminal",
-          "justMyCode": true,
-          "env": {
-              "PYTHONPATH": "${cwd}"
-          }
-      },
-        {
             "name": "Example Bounding Boxes",
             "type": "debugpy",
             "request": "launch",

@@ -68,7 +68,7 @@ def main():
     v.add_lines('Normals', point_positions, point_positions + point_normals/10.0, visible=True)
 
     # When we added everything we need to the visualizer, we save it.
-    v.save('example_normals')
+    v.save('examples_output/example_normals')
 
 
 if __name__ == '__main__':

@@ -36,7 +36,7 @@ def main():
                            color=np.array([255, 255, 0]),
                            alpha=0.1,
                            edge_width=0.02)
-    v.save('example_bounding_boxes')
+    v.save('examples_output/example_bounding_boxes')
 
 
 if __name__ == '__main__':
