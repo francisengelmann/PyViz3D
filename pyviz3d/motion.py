@@ -1,8 +1,21 @@
-# Motion class.
+"""Motion vector element."""
 
 
 class Motion:
+    """Visual representation of translational or rotational motion."""
+
     def __init__(self, motion_type, motion_direction, motion_origin_pos, motion_viz_orient, motion_dir_color, motion_origin_color, visible):
+        """Initialize a motion vector element.
+
+        Args:
+            motion_type: "trans" or "rot".
+            motion_direction: 3D direction vector.
+            motion_origin_pos: 3D origin position.
+            motion_viz_orient: "outwards" or "inwards".
+            motion_dir_color: RGB color for the motion vector.
+            motion_origin_color: RGB color for the origin marker.
+            visible: Whether the motion vector is visible.
+        """
         self.motion_type = motion_type
         self.motion_direction = motion_direction
         self.motion_origin_pos = motion_origin_pos
@@ -12,8 +25,13 @@ class Motion:
         self.visible = visible
     
     def get_properties(self, binary_filename):
-        """ 
-        :return: A dict containing object properties. They are written into json and interpreted by javascript.
+        """Return JSON-serializable properties for this element.
+
+        Args:
+            binary_filename: Name of the binary data file (unused for motion).
+
+        Returns:
+            A dict of properties for the web viewer.
         """
         json_dict = {
             'type': 'motion',
@@ -28,5 +46,5 @@ class Motion:
         return json_dict
 
     def write_binary(self, path):
-        """Write lines to binary file."""
+        """Write binary payload for this element (no-op)."""
         return

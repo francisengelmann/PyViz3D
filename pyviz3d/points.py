@@ -5,6 +5,18 @@ class Points:
     """Set of points defined by positions, colors, normals and more."""
 
     def __init__(self, positions, colors, normals, point_size, resolution, visible, alpha, shading_type=1):
+        """Initialize point cloud data.
+
+        Args:
+            positions: Nx3 float32 positions.
+            colors: Nx3 uint8 RGB colors.
+            normals: Nx3 float32 normals.
+            point_size: Point size in viewer units.
+            resolution: Blender sphere resolution.
+            visible: Whether points are visible.
+            alpha: Transparency in [0, 1].
+            shading_type: 0 for uniform, 1 for Phong.
+        """
         self.positions = positions
         self.colors = colors
         self.normals = normals
@@ -15,8 +27,13 @@ class Points:
         self.shading_type = shading_type
 
     def get_properties(self, binary_filename):
-        """
-        :return: A dict conteining object properties. They are written into json and interpreted by javascript.
+        """Return JSON-serializable properties for this element.
+
+        Args:
+            binary_filename: Name of the binary data file containing point data.
+
+        Returns:
+            A dict of properties for the web viewer.
         """
         json_dict = {
             'type': 'points',
@@ -29,7 +46,7 @@ class Points:
         return json_dict
 
     def write_binary(self, path):
-        """Write points to binary file."""
+        """Write positions, normals, and colors to a binary file."""
         bin_positions = self.positions.tobytes()
         bin_normals = self.normals.tobytes()
         bin_colors = self.colors.tobytes()
@@ -39,6 +56,7 @@ class Points:
             f.write(bin_colors)
 
     def write_blender(self, path):
+        """Write a Blender-friendly mesh for the points using Open3D."""
         import open3d as o3d
         import tqdm
         pcd_combined = o3d.geometry.TriangleMesh()

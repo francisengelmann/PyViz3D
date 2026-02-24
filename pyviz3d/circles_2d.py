@@ -1,11 +1,20 @@
-"""Labels class e.g. to visualize the labels of instances."""
+"""2D circle annotations anchored in 3D space."""
 import numpy as np
 
 
 class Circles2D:
-    """Set of labels."""
+    """A set of 2D circles with labels projected in the scene."""
 
     def __init__(self, labels, positions, border_colors, fill_colors, visible):
+        """Initialize 2D circles.
+
+        Args:
+            labels: List of label strings.
+            positions: Nx3 positions in world coordinates.
+            border_colors: Nx3 RGB colors for borders.
+            fill_colors: Nx3 RGB colors for fills.
+            visible: Whether circles are visible.
+        """
         self.labels = labels
         self.positions = positions
         self.border_colors = border_colors
@@ -13,8 +22,13 @@ class Circles2D:
         self.visible = visible
 
     def get_properties(self, binary_filename):
-        """ Get arrow properties, they are written into json and interpreted by javascript.
-        :return: A dict conteining object properties.
+        """Return JSON-serializable properties for this element.
+
+        Args:
+            binary_filename: Name of the binary data file (unused for circles).
+
+        Returns:
+            A dict of properties for the web viewer.
         """
 
         positions = np.array(self.positions)
@@ -32,9 +46,10 @@ class Circles2D:
         return json_dict
 
     def write_binary(self, path):
-        """Write lines to binary file."""
+        """Write binary payload for this element (no-op)."""
         return
 
     def write_blender(self, path):
-        print(type(self).__name__+'.write_blender() not yet implemented.' )
+        """Write a Blender-friendly asset for this element (not implemented)."""
+        print(type(self).__name__ + '.write_blender() not yet implemented.')
         return

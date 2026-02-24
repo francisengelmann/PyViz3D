@@ -1,8 +1,11 @@
+"""Configuration for Blender rendering."""
+
 from dataclasses import dataclass, field
-from typing import List, Dict
+from typing import Dict, List
 
 @dataclass
 class BlenderConfig:
+    """Settings used when exporting and rendering with Blender."""
     blender_path: str 
     render: bool = True  # Whether or not to render in blender
     render_resolution: List[int] = field(default_factory=lambda: [800, 600])
@@ -20,4 +23,5 @@ class BlenderConfig:
     address: Dict[str, str] = field(default_factory=lambda: {"city": "Unknown", "state": "Unknown"})
 
     def to_dict(self):
+        """Return a JSON-serializable representation of the config."""
         return self.__dict__

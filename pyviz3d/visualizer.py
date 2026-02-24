@@ -19,6 +19,16 @@ import json
 import numpy as np
 
 def euler_to_quaternion(x: float, y: float, z: float):
+    """Convert Euler angles (radians) to a quaternion.
+
+    Args:
+        x: Rotation around X in radians.
+        y: Rotation around Y in radians.
+        z: Rotation around Z in radians.
+
+    Returns:
+        Quaternion as array [x, y, z, w].
+    """
     cr = np.cos(x * 0.5)
     sr = np.sin(x * 0.5)
     cp = np.cos(y * 0.5)
@@ -33,11 +43,21 @@ def euler_to_quaternion(x: float, y: float, z: float):
     return q
 
 class Visualizer:
+    """Scene builder and exporter for PyViz3D visualizations."""
+
     def __init__(self,
                  position: np.array = np.array([3.0, 3.0, 3.0]),
                  look_at: np.array = np.array([0.0, 0.0, 0.0]),
                  up: np.array = np.array([0.0, 0.0, 1.0]),
                  focal_length: float = 28.0):
+        """Initialize a visualizer with a default camera.
+
+        Args:
+            position: Camera position (3,).
+            look_at: Camera look-at point (3,).
+            up: Camera up vector (3,).
+            focal_length: Camera focal length in mm.
+        """
 
         self.camera = Camera(
             position=np.array(position),
@@ -49,10 +69,13 @@ class Visualizer:
 
     def __parse_name(self,
                      name: str) -> str:
-        """Makes sure the name does not contain invalid character combinations.
+        """Return a sanitized element name safe for use in filenames.
 
-        :param name:
-        :return:
+        Args:
+            name: Element name.
+
+        Returns:
+            Sanitized name string.
         """
         return name.replace(':', ';')
 
@@ -63,9 +86,11 @@ class Visualizer:
             verbose: bool=True) -> None:
         """Creates the visualization and displays the link to it.
 
-        :param path: The path to save the visualization files.
-        :param port: The port to show the visualization.
-        :param verbose: Whether to print the web-server message or not.
+        Args:
+            path: Destination directory for the visualization.
+            port: Port used in the printed local server command.
+            blender_config: Optional Blender render configuration.
+            verbose: Whether to print the web-server message.
         """
 
         # Delete destination directory if it exists already
@@ -117,6 +142,13 @@ class Visualizer:
                         path: str,
                         blender_config: BlenderConfig,
                         verbose: bool=True):
+        """Generate Blender scripts and optionally render a scene.
+
+        Args:
+            path: Destination directory with scene files.
+            blender_config: Blender render configuration.
+            verbose: Whether to print Blender instructions.
+        """
 
         directory_destination = os.path.abspath(path)
         blender_script_path = os.path.join(directory_destination, "blender_script.py")
@@ -157,14 +189,15 @@ blender_tools.main()")
     ):
         """Add points to the visualizer.
 
-        :param name: The name of the points displayed in the visualizer. Use ';' in the name to create sub-layers.
-        :param positions: The point positions.
-        :param normals: The point normals.
-        :param colors: The point colors.
-        :param point_size: The point size.
-        :param resolution: The resolution of the blender sphere.
-        :param visible: Bool if points are visible.
-        :param alpha: Alpha value of colors.
+        Args:
+            name: Element name. Use ';' to create sub-layers.
+            positions: Nx3 point positions.
+            colors: Optional Nx3 RGB colors.
+            normals: Optional Nx3 normals.
+            point_size: Point size in viewer units.
+            resolution: Blender sphere resolution.
+            visible: Whether points are visible.
+            alpha: Transparency in [0, 1].
         """
 
         assert positions.shape[1] == 3
@@ -196,11 +229,12 @@ blender_tools.main()")
                    visible: bool=True):
         """Add labels to the visualizer.
         
-        :param name: The name of the labels.
-        :param labels: The text value of the labels.
-        :param positions: The 3D positions of the labels.
-        :param colors: The text color of the individual labels.
-        :param visible: Bool if label is visible.
+        Args:
+            name: Element name.
+            labels: List of label strings.
+            positions: Nx3 label positions.
+            colors: Nx3 RGB colors for labels.
+            visible: Whether labels are visible.
         """
         self.elements[self.__parse_name(name)] = Labels(labels, positions, colors, visible)
 
@@ -213,12 +247,13 @@ blender_tools.main()")
                        visible: bool=True):
         """Add node to the visualizer.
         
-        :param name: The name of the node.
-        :param labels: The text value of the node.
-        :param positions: The 3D positions of the node.
-        :param border_colors: The text color of the individual node.
-        :param fill_colors: The text color of the individual node.
-        :param visible: Bool if lines are visible.
+        Args:
+            name: Element name.
+            labels: List of label strings.
+            positions: Nx3 circle positions.
+            border_colors: Nx3 RGB border colors.
+            fill_colors: Nx3 RGB fill colors.
+            visible: Whether circles are visible.
         """
         self.elements[self.__parse_name(name)] = Circles2D(labels, positions, border_colors, fill_colors, visible)
 
@@ -230,11 +265,12 @@ blender_tools.main()")
                   visible: bool=True):
         """Add lines to the visualizer.
 
-        :param name: The name of the lines displayed in the visualizer.
-        :param lines_start: The start positions of the lines.
-        :param lines_end: The end positions of the lines.
-        :param colors: The line colors.
-        :param visible: Bool if lines are visible.
+        Args:
+            name: Element name.
+            lines_start: Nx3 start points.
+            lines_end: Nx3 end points.
+            colors: Optional Nx3 RGB colors.
+            visible: Whether lines are visible.
         """
 
         assert lines_start.shape[1] == 3
@@ -258,7 +294,7 @@ blender_tools.main()")
                          alpha: float=1.0,
                          edge_width: float=0.01,
                          visible: bool=True):
-        """Add oriented 3D bounding box."""
+        """Add an oriented 3D bounding box."""
         rotation /= np.linalg.norm(rotation)  # normalize the orientation
         self.elements[self.__parse_name(name)] = Cuboid(position, size, rotation, color, alpha, edge_width, visible)
 
@@ -270,10 +306,17 @@ blender_tools.main()")
                  scale: np.array=np.array([1, 1, 1]),
                  color: np.array=np.array([200, 200, 200]),
                  visible: bool=True):
-        """Adds a polygon mesh to the scene as specified in the path.
-         
-          The path is currently limited to .obj files and the color is the uniform color of the objetc.
-        """
+                """Add a polygon mesh to the scene.
+
+                Args:
+                        name: Element name.
+                        path: Path to an .obj mesh file.
+                        translation: Translation vector.
+                        rotation: Quaternion rotation.
+                        scale: Scale vector.
+                        color: RGB color array-like in 0-255.
+                        visible: Whether the mesh is visible.
+                """
         rotation /= np.linalg.norm(rotation)  # normalize the orientation
         self.elements[self.__parse_name(name)] = Mesh(path, translation=translation, rotation=rotation, scale=scale, color=color, visible=visible)
 
@@ -286,12 +329,13 @@ blender_tools.main()")
                      visible: bool=True):
         """Add polyline.
 
-        :param name: The bounding box name. (string)
-        :param positions: The N 3D positions along the polyline. (float32, Nx3)
-        :param color: The color. (int32, 3x1)
-        :param alpha: The transparency. (float32)
-        :param edge_width: The width of the edges. (float32)
-        :param visible: Bool, whether visible or not.
+        Args:
+            name: Element name.
+            positions: Nx3 positions along the polyline.
+            color: RGB color array-like in 0-255.
+            alpha: Transparency in [0, 1].
+            edge_width: Line width.
+            visible: Whether the polyline is visible.
         """
 
         self.elements[self.__parse_name(name)] = Polyline(positions, color, alpha, edge_width, visible)
@@ -305,7 +349,7 @@ blender_tools.main()")
         color: np.array=np.array([255, 255, 255]),
         resolution: int=30,
         visible: bool=True):
-        """Adds a superqiadroc mesh to the scene."""
+        """Add a superquadric mesh to the scene."""
 
         def create_superquadric_mesh(A, B, C, r, s, t, N):
             def f(o, m):
@@ -353,7 +397,7 @@ blender_tools.main()")
         color: np.array=np.array([255, 255, 255]),
         resolution: int=30,
         visible: bool=True):
-        """Adds a superqiadroc mesh to the scene."""
+        """Add a superquadric mesh using a rotation matrix."""
 
         def create_superquadric_mesh(A, B, C, r, s, t, N):
             def f(o, m):
@@ -405,7 +449,7 @@ blender_tools.main()")
                   stroke_width: float=0.01,
                   head_width: float=0.03,
                   visible: bool=True):
-        """Add an arrow."""
+        """Add an arrow element."""
 
         self.elements[self.__parse_name(name)] = Arrow(start, end, color, alpha, stroke_width, head_width, visible)
 
@@ -418,36 +462,20 @@ blender_tools.main()")
                    motion_dir_color: np.array=np.array([0, 255, 0]), 
                    motion_origin_color: np.array=np.array([0, 255, 0]), 
                    visible: bool=True):
-        """
-        Adds a motion vector to the visualizer.
+        """Add a motion vector to the visualizer.
 
-        :param name: 
-            Name of the motion vector, which will be displayed in the visualizer.
-        :param motion_type: 
-            Type of motion: 
-            - "trans" for translational motion
-            - "rot" for rotational motion
-        :param motion_direction: 
-            A 3D vector (shape: 3x1, dtype: float32) representing the direction of the motion vector.
-        :param motion_origin_pos: 
-            A 3D point (shape: 3x1, dtype: float32) representing the origin position of the motion vector.
-        :param motion_viz_orient: 
-            Orientation of the motion vector visualization. 
-            - "outwards": The motion vector points away from the origin.
-            - "inwards": The motion vector points towards the origin.
-        :param motion_dir_color: 
-            RGB color (shape: 3x1, dtype: int32) for the motion vector. 
-            Defaults to green ([0, 255, 0]).
-        :param motion_origin_color: 
-            RGB color (shape: 3x1, dtype: int32) for the origin of the motion vector. 
-            Defaults to green ([0, 255, 0]).
-        :param visible: 
-            Boolean indicating whether the motion vector should be visible in the visualizer. 
-            Defaults to True.
-        
-        :raises AssertionError: 
-            If `motion_type` is not one of ["trans", "rot"] or 
-            if `motion_viz_orient` is not one of ["outwards", "inwards"].
+        Args:
+            name: Element name.
+            motion_type: "trans" for translation or "rot" for rotation.
+            motion_direction: 3D direction vector.
+            motion_origin_pos: 3D origin position.
+            motion_viz_orient: "outwards" or "inwards".
+            motion_dir_color: RGB color for the motion vector.
+            motion_origin_color: RGB color for the origin marker.
+            visible: Whether the motion vector is visible.
+
+        Raises:
+            AssertionError: If motion options are invalid.
         """
         assert motion_type in ["trans", "rot"], f"Unknown motion_type option {motion_type}"
         assert motion_viz_orient in ["outwards", "inwards"], f"Unknown motion_viz_orient option {motion_viz_orient}"

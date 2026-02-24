@@ -6,14 +6,27 @@ class Labels:
     """Set of labels."""
 
     def __init__(self, labels, positions, colors, visible):
+        """Initialize labels.
+
+        Args:
+            labels: List of label strings.
+            positions: Nx3 positions in world coordinates.
+            colors: Nx3 RGB colors for each label.
+            visible: Whether labels are visible.
+        """
         self.labels = labels
         self.positions = positions
         self.colors = colors
         self.visible = visible
 
     def get_properties(self, binary_filename):
-        """ Get arrow properties, they are written into json and interpreted by javascript.
-        :return: A dict conteining object properties.
+        """Return JSON-serializable properties for this element.
+
+        Args:
+            binary_filename: Name of the binary data file (unused for labels).
+
+        Returns:
+            A dict of properties for the web viewer.
         """
 
         positions = np.array(self.positions)
@@ -29,9 +42,10 @@ class Labels:
         return json_dict
 
     def write_binary(self, path):
-        """Write lines to binary file."""
+        """Write binary payload for this element (no-op)."""
         return
 
     def write_blender(self, path):
-        print(type(self).__name__+'.write_blender() not yet implemented.' )
+        """Write a Blender-friendly asset for this element (not implemented)."""
+        print(type(self).__name__ + '.write_blender() not yet implemented.')
         return

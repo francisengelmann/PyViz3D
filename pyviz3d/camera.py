@@ -3,18 +3,30 @@ import numpy as np
 
 
 class Camera:
-    """Camera class looking at the scene"""
+    """Camera definition for the scene."""
 
     def __init__(self, position, look_at, up, focal_length):
+        """Initialize a camera.
+
+        Args:
+            position: Camera position (3,).
+            look_at: Target point the camera looks at (3,).
+            up: Up direction vector (3,).
+            focal_length: Focal length in mm.
+        """
         self.position = position.astype(np.float32)
         self.look_at = look_at.astype(np.float32)
         self.up = up.astype(np.float32)
         self.focal_length = float(focal_length)
 
     def get_properties(self, binary_filename):
-        """Get the camera properties, they are written into json and interpreted by javascript.
+        """Return JSON-serializable properties for this camera.
 
-        :return: A dict conteining object properties.
+        Args:
+            binary_filename: Name of the binary data file (unused for cameras).
+
+        Returns:
+            A dict of properties for the web viewer.
         """
         json_dict = {
             'type': 'camera',
@@ -26,11 +38,12 @@ class Camera:
         return json_dict
 
     def write_binary(self, path):
-        """Write camera to binary file."""
+        """Write camera position to a binary file."""
         bin_position = self.position.tobytes()
         with open(path, "wb") as f:
             f.write(bin_position)
 
     def write_blender(self, path):
+        """Write a Blender-friendly asset for this element (no-op)."""
         # all info is on the json, nothing needs to be done
         pass

@@ -1,8 +1,21 @@
-# Cuboid class e.g. a bounding box.
+"""Cuboid (bounding box) scene element."""
 
 
 class Cuboid:
+    """An oriented 3D bounding box."""
+
     def __init__(self, position, size, rotation, color, alpha, edge_width, visible):
+        """Initialize a cuboid.
+
+        Args:
+            position: Center position (3,).
+            size: Box dimensions (3,).
+            rotation: Orientation as quaternion (4,).
+            color: RGB color array-like in 0-255.
+            alpha: Transparency value in [0, 1].
+            edge_width: Edge line width.
+            visible: Whether the cuboid is visible.
+        """
         self.position = position
         self.size = size
         self.rotation = rotation
@@ -12,8 +25,13 @@ class Cuboid:
         self.visible = visible
 
     def get_properties(self, binary_filename):
-        """ Get line properties, they are written into json and interpreted by javascript.
-        :return: A dict containing object properties.
+        """Return JSON-serializable properties for this cuboid.
+
+        Args:
+            binary_filename: Name of the binary data file (unused for cuboids).
+
+        Returns:
+            A dict of properties for the web viewer.
         """
         json_dict = {
             'type': 'cuboid',
@@ -28,9 +46,10 @@ class Cuboid:
         return json_dict
 
     def write_binary(self, path):
-        """Write lines to binary file."""
+        """Write binary payload for this element (no-op)."""
         return
 
     def write_blender(self, path):
-        print(type(self).__name__+'.write_blender() not yet implemented.' )
+        """Write a Blender-friendly asset for this element (not implemented)."""
+        print(type(self).__name__ + '.write_blender() not yet implemented.')
         return

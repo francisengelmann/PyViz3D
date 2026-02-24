@@ -1,8 +1,19 @@
-# Cuboid class e.g. a bounding box.
+"""Polyline element."""
 
 
 class Polyline:
-    def __init__(self, positions,color, alpha, edge_width, visible):
+    """A connected series of line segments."""
+
+    def __init__(self, positions, color, alpha, edge_width, visible):
+        """Initialize a polyline.
+
+        Args:
+            positions: Nx3 positions along the polyline.
+            color: RGB color array-like in 0-255.
+            alpha: Transparency value in [0, 1].
+            edge_width: Line width.
+            visible: Whether the polyline is visible.
+        """
         self.positions = positions
         self.color = color
         self.alpha = alpha
@@ -10,8 +21,13 @@ class Polyline:
         self.visible = visible
 
     def get_properties(self, binary_filename):
-        """ Get line properties, they are written into json and interpreted by javascript.
-        :return: A dict conteining object properties.
+        """Return JSON-serializable properties for this element.
+
+        Args:
+            binary_filename: Name of the binary data file (unused for polylines).
+
+        Returns:
+            A dict of properties for the web viewer.
         """
         json_dict = {
             'type': 'polyline',
@@ -24,8 +40,9 @@ class Polyline:
         return json_dict
 
     def write_binary(self, path):
-        """Write lines to binary file."""
+        """Write binary payload for this element (no-op)."""
         return
 
     def write_blender(self, path):
+        """Write a Blender-friendly asset for this element (no-op)."""
         return
