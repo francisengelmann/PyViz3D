@@ -20,8 +20,9 @@ keywords = ["3d", "visualizer", "blender"]
 
 dependencies = [
     "numpy",
+    "trimesh",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 
 [project.urls]
 Homepage = "https://github.com/francisengelmann/pyviz3d"
