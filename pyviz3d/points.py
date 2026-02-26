@@ -1,8 +1,4 @@
 """Points class i.e. point cloud."""
-import numpy as np
-import trimesh
-
-_SPHERE_CACHE = {}
 
 class Points:
     """Set of points defined by positions, colors, normals and more."""

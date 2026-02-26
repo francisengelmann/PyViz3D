@@ -243,6 +243,450 @@ function get_mesh(properties){
 	return container
 }
 
+function get_superquadric(properties){
+	// Generate superquadric mesh procedurally from parameters
+	let geometry = new THREE.BufferGeometry();
+	let scalings = properties['scalings'];
+	let exponents = properties['exponents'];
+	let resolution = properties['resolution'];
+	let tapering = properties['tapering'];
+	let bending = properties['bending'];
+
+	// Helper functions for superquadric surface
+	function f(o, m) {
+		let sin_o = Math.sin(o);
+		return Math.sign(sin_o) * Math.pow(Math.abs(sin_o), m);
+	}
+
+	function g(o, m) {
+		let cos_o = Math.cos(o);
+		return Math.sign(cos_o) * Math.pow(Math.abs(cos_o), m);
+	}
+
+	// Helper function for bending transformation
+	function apply_bending_axis(x, y, z, val_kb, val_alpha, axis) {
+		if (Math.abs(val_kb) < 1e-3) return {x: x, y: y, z: z};
+		
+		let u, v_coord, w;
+		if (axis === 'z') {
+			u = x; v_coord = y; w = z;
+		} else if (axis === 'x') {
+			u = y; v_coord = z; w = x;
+		} else if (axis === 'y') {
+			u = z; v_coord = x; w = y;
+		}
+		
+		let sin_alpha = Math.sin(val_alpha);
+		let cos_alpha = Math.cos(val_alpha);
+		
+		let beta = Math.atan2(v_coord, u);
+		let r = Math.sqrt(u*u + v_coord*v_coord) * Math.cos(val_alpha - beta);
+		
+		// Clamp kb (simplified version - proper clamping would need array operations)
+		let inv_kb = 1.0 / val_kb;
+		let gamma = w * val_kb;
+		let rho = inv_kb - r;
+		let R = inv_kb - rho * Math.cos(gamma);
+		
+		let expr = (R - r);
+		u = u + expr * cos_alpha;
+		v_coord = v_coord + expr * sin_alpha;
+		w = rho * Math.sin(gamma);
+		
+		if (axis === 'z') {
+			return {x: u, y: v_coord, z: w};
+		} else if (axis === 'x') {
+			return {x: w, y: u, z: v_coord};
+		} else if (axis === 'y') {
+			return {x: v_coord, y: w, z: u};
+		}
+	}
+
+	// Generate vertices using simple uniform sampling
+	let positions = [];
+	let indices = [];
+	let A = scalings[0], B = scalings[1], C = scalings[2];
+	let r = exponents[0], s = exponents[1], t = exponents[2];
+	let N = Math.max(10, Math.min(Math.round((resolution || 30) * 0.8), 50));
+
+	function deform_vertex(x, y, z) {
+		// Apply tapering
+		if (tapering && (Math.abs(tapering[0]) > 1e-6 || Math.abs(tapering[1]) > 1e-6)) {
+			let z_norm = z / C;
+			let fx = tapering[0] * z_norm + 1.0;
+			let fy = tapering[1] * z_norm + 1.0;
+			x = x * fx;
+			y = y * fy;
+		}
+
+		// Apply bending (y-axis, then x-axis, then z-axis)
+		if (bending) {
+			let result = apply_bending_axis(x, y, z, bending[4], bending[5], 'y');
+			x = result.x; y = result.y; z = result.z;
+			result = apply_bending_axis(x, y, z, bending[2], bending[3], 'x');
+			x = result.x; y = result.y; z = result.z;
+			result = apply_bending_axis(x, y, z, bending[0], bending[1], 'z');
+			x = result.x; y = result.y; z = result.z;
+		}
+
+		// Apply rotation matrix if provided
+		if (properties['rotation_matrix']) {
+			let R = properties['rotation_matrix'];
+			let x_rot = R[0][0] * x + R[0][1] * y + R[0][2] * z;
+			let y_rot = R[1][0] * x + R[1][1] * y + R[1][2] * z;
+			let z_rot = R[2][0] * x + R[2][1] * y + R[2][2] * z;
+			x = x_rot;
+			y = y_rot;
+			z = z_rot;
+		}
+
+		return {x: x, y: y, z: z};
+	}
+
+	// Arc-length parameterization: find parameter values that produce
+	// equally-spaced points on the actual 3D surface curve.
+	function arc_length_sample(param_start, param_end, n_out, eval_fn) {
+		// 1. Densely sample the curve to approximate arc length
+		let n_dense = 500;
+		let dense_params = new Array(n_dense);
+		let dense_pts = new Array(n_dense);
+		for (let i = 0; i < n_dense; i++) {
+			let t = param_start + (param_end - param_start) * i / (n_dense - 1);
+			dense_params[i] = t;
+			dense_pts[i] = eval_fn(t);
+		}
+
+		// 2. Compute cumulative chord lengths
+		let cum_len = new Array(n_dense);
+		cum_len[0] = 0;
+		for (let i = 1; i < n_dense; i++) {
+			let dx = dense_pts[i][0] - dense_pts[i - 1][0];
+			let dy = dense_pts[i][1] - dense_pts[i - 1][1];
+			let dz = dense_pts[i][2] - dense_pts[i - 1][2];
+			cum_len[i] = cum_len[i - 1] + Math.sqrt(dx * dx + dy * dy + dz * dz);
+		}
+
+		let total_len = cum_len[n_dense - 1];
+		if (total_len < 1e-12) {
+			// Degenerate curve, fall back to uniform
+			let result = new Array(n_out);
+			for (let i = 0; i < n_out; i++) {
+				result[i] = param_start + (param_end - param_start) * i / (n_out - 1);
+			}
+			return result;
+		}
+
+		// 3. Invert: for each desired equal arc-length, find corresponding parameter
+		let result = new Array(n_out);
+		result[0] = param_start;
+		result[n_out - 1] = param_end;
+		let j = 0;
+		for (let i = 1; i < n_out - 1; i++) {
+			let target_len = total_len * i / (n_out - 1);
+			// Advance j until we bracket the target
+			while (j < n_dense - 2 && cum_len[j + 1] < target_len) j++;
+			// Linear interpolation between dense_params[j] and dense_params[j+1]
+			let seg_len = cum_len[j + 1] - cum_len[j];
+			let frac = seg_len > 1e-15 ? (target_len - cum_len[j]) / seg_len : 0;
+			result[i] = dense_params[j] + frac * (dense_params[j + 1] - dense_params[j]);
+		}
+		return result;
+	}
+
+	// Sample u at the equator (v=0) for arc-length parameterization
+	let u_samples = arc_length_sample(-Math.PI, Math.PI, N, function(u) {
+		let x = A * g(0, r) * g(u, s);
+		let y = B * g(0, r) * f(u, s);
+		let z = C * f(0, t);
+		return [x, y, z];
+	});
+
+	// Sample v at the prime meridian (u=0) for arc-length parameterization
+	let v_samples = arc_length_sample(-Math.PI * 0.5, Math.PI * 0.5, N, function(v) {
+		let x = A * g(v, r) * g(0, s);
+		let y = B * g(v, r) * f(0, s);
+		let z = C * f(v, t);
+		return [x, y, z];
+	});
+
+	function build_mesh(u_samp, v_samp) {
+		let pos = [];
+		let idx = [];
+		let pMap = new Map();
+		let cnt = 0;
+		let nu = u_samp.length;
+		let nv = v_samp.length;
+		
+		for (let j = 0; j < nv; j++) {
+			for (let i = 0; i < nu; i++) {
+				let u = u_samp[i % nu];
+				let v = v_samp[j % nv];
+				let x = A * g(v, r) * g(u, s);
+				let y = B * g(v, r) * f(u, s);
+				let z = C * f(v, t);
+				let p = deform_vertex(x, y, z);
+				pos.push(p.x, p.y, p.z);
+				pMap.set(i + ',' + j, cnt++);
+			}
+		}
+		
+		for (let j = 0; j < nv - 1; j++) {
+			for (let i = 0; i < nu - 1; i++) {
+				let i00 = pMap.get(i + ',' + j);
+				let i10 = pMap.get((i + 1) + ',' + j);
+				let i11 = pMap.get((i + 1) + ',' + (j + 1));
+				let i01 = pMap.get(i + ',' + (j + 1));
+				idx.push(i00, i10, i11, i00, i11, i01);
+			}
+			// Connect seam
+			let iLast = nu - 1;
+			let i00 = pMap.get(iLast + ',' + j);
+			let i10 = pMap.get(0 + ',' + j);
+			let i11 = pMap.get(0 + ',' + (j + 1));
+			let i01 = pMap.get(iLast + ',' + (j + 1));
+			idx.push(i00, i10, i11, i00, i11, i01);
+		}
+		return {pos: pos, idx: idx};
+	}
+
+	// Resample the grid so all edges are equal length on the actual 3D surface.
+	// For each v-row, compute arc lengths along u, then redistribute u params equally.
+	// Then for each u-column, compute arc lengths along v, redistribute v params equally.
+	function resample_grid(u_samp, v_samp) {
+		let nu = u_samp.length;
+		let nv = v_samp.length;
+
+		// Evaluate a surface point (before deformation, since we parameterize pre-deform)
+		function eval_pt(u, v) {
+			let x = A * g(v, r) * g(u, s);
+			let y = B * g(v, r) * f(u, s);
+			let z = C * f(v, t);
+			let p = deform_vertex(x, y, z);
+			return [p.x, p.y, p.z];
+		}
+
+		function dist3(a, b) {
+			let dx = a[0]-b[0], dy = a[1]-b[1], dz = a[2]-b[2];
+			return Math.sqrt(dx*dx + dy*dy + dz*dz);
+		}
+
+		// Step 1: For each v value, resample u by arc length
+		// Average the arc-length distributions across all v-rows
+		let u_cum = new Float64Array(nu); // averaged cumulative arc lengths
+		for (let j = 0; j < nv; j++) {
+			let v = v_samp[j];
+			let prev = eval_pt(u_samp[0], v);
+			let row_cum = 0;
+			for (let i = 1; i < nu; i++) {
+				let cur = eval_pt(u_samp[i], v);
+				row_cum += dist3(prev, cur);
+				u_cum[i] += row_cum;
+				prev = cur;
+			}
+		}
+		for (let i = 0; i < nu; i++) u_cum[i] /= nv;
+
+		let u_total = u_cum[nu - 1];
+		let new_u = new Array(nu);
+		new_u[0] = u_samp[0];
+		new_u[nu - 1] = u_samp[nu - 1];
+		if (u_total > 1e-12) {
+			let k = 0;
+			for (let i = 1; i < nu - 1; i++) {
+				let target = u_total * i / (nu - 1);
+				while (k < nu - 2 && u_cum[k + 1] < target) k++;
+				let seg = u_cum[k + 1] - u_cum[k];
+				let frac = seg > 1e-15 ? (target - u_cum[k]) / seg : 0;
+				new_u[i] = u_samp[k] + frac * (u_samp[k + 1] - u_samp[k]);
+			}
+		} else {
+			new_u = u_samp.slice();
+		}
+
+		// Step 2: For each u value, resample v by arc length
+		let v_cum = new Float64Array(nv);
+		for (let i = 0; i < nu; i++) {
+			let u = new_u[i];
+			let prev = eval_pt(u, v_samp[0]);
+			let col_cum = 0;
+			for (let j = 1; j < nv; j++) {
+				let cur = eval_pt(u, v_samp[j]);
+				col_cum += dist3(prev, cur);
+				v_cum[j] += col_cum;
+				prev = cur;
+			}
+		}
+		for (let j = 0; j < nv; j++) v_cum[j] /= nu;
+
+		let v_total = v_cum[nv - 1];
+		let new_v = new Array(nv);
+		new_v[0] = v_samp[0];
+		new_v[nv - 1] = v_samp[nv - 1];
+		if (v_total > 1e-12) {
+			let k = 0;
+			for (let j = 1; j < nv - 1; j++) {
+				let target = v_total * j / (nv - 1);
+				while (k < nv - 2 && v_cum[k + 1] < target) k++;
+				let seg = v_cum[k + 1] - v_cum[k];
+				let frac = seg > 1e-15 ? (target - v_cum[k]) / seg : 0;
+				new_v[j] = v_samp[k] + frac * (v_samp[k + 1] - v_samp[k]);
+			}
+		} else {
+			new_v = v_samp.slice();
+		}
+
+		return {u: new_u, v: new_v};
+	}
+
+	// Subdivide in high-curvature areas by inserting midpoints where
+	// normals change direction rapidly between adjacent grid cells
+	function subdivide_high_curvature(u_samp, v_samp) {
+		let nu = u_samp.length;
+		let nv = v_samp.length;
+
+		function eval_pt(u, v) {
+			let x = A * g(v, r) * g(u, s);
+			let y = B * g(v, r) * f(u, s);
+			let z = C * f(v, t);
+			let p = deform_vertex(x, y, z);
+			return [p.x, p.y, p.z];
+		}
+
+		// Compute normals at each grid point via central differences
+		let normals = new Array(nu * nv);
+		let eps = 1e-4;
+		for (let j = 0; j < nv; j++) {
+			for (let i = 0; i < nu; i++) {
+				let u = u_samp[i], v = v_samp[j];
+				let du_p = eval_pt(u + eps, v), du_m = eval_pt(u - eps, v);
+				let dv_p = eval_pt(u, v + eps), dv_m = eval_pt(u, v - eps);
+				let tu = [(du_p[0]-du_m[0]), (du_p[1]-du_m[1]), (du_p[2]-du_m[2])];
+				let tv = [(dv_p[0]-dv_m[0]), (dv_p[1]-dv_m[1]), (dv_p[2]-dv_m[2])];
+				// Cross product tu x tv
+				let nx = tu[1]*tv[2] - tu[2]*tv[1];
+				let ny = tu[2]*tv[0] - tu[0]*tv[2];
+				let nz = tu[0]*tv[1] - tu[1]*tv[0];
+				let len = Math.sqrt(nx*nx + ny*ny + nz*nz);
+				if (len > 1e-12) { nx /= len; ny /= len; nz /= len; }
+				normals[j * nu + i] = [nx, ny, nz];
+			}
+		}
+
+		// For each grid edge, compute dot product of adjacent normals.
+		// Small dot product = high curvature = insert midpoint.
+		let u_set = new Set(u_samp);
+		let v_set = new Set(v_samp);
+
+		// Check u-edges (along rows)
+		for (let j = 0; j < nv; j++) {
+			for (let i = 0; i < nu - 1; i++) {
+				let n1 = normals[j * nu + i];
+				let n2 = normals[j * nu + i + 1];
+				let dot = n1[0]*n2[0] + n1[1]*n2[1] + n1[2]*n2[2];
+				if (dot < 0.95) { // normal changes by > ~18 degrees
+					u_set.add((u_samp[i] + u_samp[i + 1]) * 0.5);
+				}
+			}
+		}
+
+		// Check v-edges (along columns)
+		for (let i = 0; i < nu; i++) {
+			for (let j = 0; j < nv - 1; j++) {
+				let n1 = normals[j * nu + i];
+				let n2 = normals[(j + 1) * nu + i];
+				let dot = n1[0]*n2[0] + n1[1]*n2[1] + n1[2]*n2[2];
+				if (dot < 0.95) {
+					v_set.add((v_samp[j] + v_samp[j + 1]) * 0.5);
+				}
+			}
+		}
+
+		return {
+			u: Array.from(u_set).sort((a, b) => a - b),
+			v: Array.from(v_set).sort((a, b) => a - b)
+		};
+	}
+
+	// Iteratively resample to converge on equal-edge-length grid
+	let cur_u = u_samples;
+	let cur_v = v_samples;
+	for (let iter = 0; iter < 5; iter++) {
+		let resampled = resample_grid(cur_u, cur_v);
+		cur_u = resampled.u;
+		cur_v = resampled.v;
+	}
+
+	// Subdivide high-curvature regions, then re-equalize
+	let subdiv = subdivide_high_curvature(cur_u, cur_v);
+	cur_u = subdiv.u;
+	cur_v = subdiv.v;
+	for (let iter = 0; iter < 3; iter++) {
+		let resampled = resample_grid(cur_u, cur_v);
+		cur_u = resampled.u;
+		cur_v = resampled.v;
+	}
+
+	let final_mesh = build_mesh(cur_u, cur_v);
+	positions = final_mesh.pos;
+	indices = final_mesh.idx;
+
+	geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+	geometry.setIndex(indices);
+	geometry.computeVertexNormals();
+
+	// Set vertex colors
+	let r_color = Math.fround(properties['color'][0] / 255.0);
+	let g_color = Math.fround(properties['color'][1] / 255.0);
+	let b_color = Math.fround(properties['color'][2] / 255.0);
+	let num_vertices = positions.length / 3;
+	let colors = new Float32Array(num_vertices * 3);
+	for (let i = 0; i < num_vertices; i++){
+		colors[3 * i + 0] = r_color;
+		colors[3 * i + 1] = g_color;
+		colors[3 * i + 2] = b_color;
+	}
+	geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+	let uniforms = {
+		alpha: {value: properties['alpha']},
+		shading_type: {value: 1},
+	};
+	let material = new THREE.ShaderMaterial({
+		uniforms:       uniforms,
+		vertexShader:   document.getElementById('vertexshader').textContent,
+		fragmentShader: document.getElementById('fragmentshader').textContent,
+		transparent:    true,
+		side: THREE.DoubleSide,
+	});
+
+	let mesh = new THREE.Mesh(geometry, material);
+	mesh.setRotationFromQuaternion(new THREE.Quaternion(
+		properties['rotation'][0],
+		properties['rotation'][1],
+		properties['rotation'][2],
+		properties['rotation'][3]
+	));
+	mesh.position.set(properties['translation'][0], properties['translation'][1], properties['translation'][2]);
+
+	// Add wireframe if requested
+	if (properties['wireframe']) {
+		let wireframeGeometry = new THREE.WireframeGeometry(geometry);
+		let wireframeMaterial = new THREE.LineBasicMaterial({ 
+			color: 0x000000,
+			linewidth: 1,
+			opacity: 0.5,
+			transparent: true
+		});
+		let wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+		mesh.add(wireframe);
+	}
+
+	step_progress_bar();
+	render();
+
+	return mesh;
+}
+
 
 function get_material(alpha){
 	let uniforms = {
@@ -703,6 +1147,10 @@ function create_threejs_objects(properties){
 		if (String(object_properties['type']).localeCompare('motion') == 0){
 			threejs_objects[object_name] = get_motion(object_properties);
 			step_progress_bar();
+			render();
+		}
+		if (String(object_properties['type']).localeCompare('superquadric') == 0){
+			threejs_objects[object_name] = get_superquadric(object_properties);
 			render();
 		}
 		threejs_objects[object_name].visible = object_properties['visible'];

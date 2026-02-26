@@ -11,6 +11,7 @@ from .arrow import Arrow
 from .circles_2d import Circles2D
 from .motion import Motion
 from .blender_config import BlenderConfig
+from .superquadric import Superquadric
 
 import os
 import sys
@@ -67,23 +68,25 @@ class Visualizer:
         )
         self.elements = {"Camera_0": self.camera}
 
-    def __parse_name(self,
-                     name: str) -> str:
-        """Return a sanitized element name safe for use in filenames.
+    def __parse_name(self, name: str) -> str:
+        """Sanitize element name by replacing colons with semicolons.
+        
+        Colons are used to create sub-layers in the visualization hierarchy,
+        but semicolons are used internally for safe filename handling.
 
         Args:
-            name: Element name.
+            name: Element name, may contain colons for layering.
 
         Returns:
-            Sanitized name string.
+            Sanitized name string with colons replaced by semicolons.
         """
         return name.replace(':', ';')
 
     def save(self,
-            path: str,
-            port: int=6008,
-            blender_config: BlenderConfig=None,
-            verbose: bool=True) -> None:
+             path: str,
+             port: int = 6008,
+             blender_config: BlenderConfig = None,
+             verbose: bool = True) -> None:
         """Creates the visualization and displays the link to it.
 
         Args:
@@ -119,20 +122,16 @@ class Visualizer:
 
         # Display link
         if verbose:
-          http_server_string = "python -m SimpleHTTPServer " + str(port)
-          if sys.version[0] == "3":
-              http_server_string = "python -m http.server " + str(port)
-          print("")
-          print(
-              "************************************************************************"
-          )
-          print("1) Start local server:")
-          print("    cd " + directory_destination + "; " + http_server_string)
-          print("2) Open in browser:")
-          print("    http://localhost:" + str(port))
-          print(
-              "************************************************************************"
-          )
+            http_server_string = "python -m SimpleHTTPServer " + str(port)
+            if sys.version[0] == "3":
+                http_server_string = "python -m http.server " + str(port)
+            print("")
+            print("=" * 72)
+            print("1) Start local server:")
+            print("    cd " + directory_destination + "; " + http_server_string)
+            print("2) Open in browser:")
+            print("    http://localhost:" + str(port))
+            print("=" * 72)
 
         # Render in blender if arguments are not None
         if blender_config:
@@ -154,8 +153,8 @@ class Visualizer:
         blender_script_path = os.path.join(directory_destination, "blender_script.py")
         blender_config_path = os.path.join(directory_destination, "blender_config.json")
         with open(blender_config_path, 'w') as json_file:
-          json.dump(blender_config.to_dict(), json_file, indent=2)
-          
+            json.dump(blender_config.to_dict(), json_file, indent=2)
+        
         with open(blender_script_path, "w") as outfile:
             outfile.write(
 "import bpy\nimport os\n\
@@ -171,10 +170,10 @@ blender_tools.main()")
 
         if verbose:
             print("")
-            print("************************************************************************")
-            print("Blender instructions")
+            print("=" * 72)
+            print("Blender rendering:")
             print(cmd)
-            print("************************************************************************")
+            print("=" * 72)
         
     def add_points(
         self,
@@ -226,7 +225,7 @@ blender_tools.main()")
                    labels: list,
                    positions: np.array,
                    colors: np.array,
-                   visible: bool=True):
+                   visible: bool = True):
         """Add labels to the visualizer.
         
         Args:
@@ -244,8 +243,8 @@ blender_tools.main()")
                        positions: np.array,
                        border_colors: np.array,
                        fill_colors: np.array,
-                       visible: bool=True):
-        """Add node to the visualizer.
+                       visible: bool = True):
+        """Add circles to the visualizer.
         
         Args:
             name: Element name.
@@ -261,8 +260,8 @@ blender_tools.main()")
                   name: str,
                   lines_start: np.array,
                   lines_end: np.array,
-                  colors: np.array=None,
-                  visible: bool=True):
+                  colors: np.array = None,
+                  visible: bool = True):
         """Add lines to the visualizer.
 
         Args:
@@ -289,31 +288,42 @@ blender_tools.main()")
                          name: str,
                          position: np.array,
                          size: np.array,
-                         rotation: np.array=np.array([0.0, 0.0, 0.0, 1.0]),
-                         color: np.array=np.array([255, 0, 0]),
-                         alpha: float=1.0,
-                         edge_width: float=0.01,
-                         visible: bool=True):
-        """Add an oriented 3D bounding box."""
+                         rotation: np.array = np.array([0.0, 0.0, 0.0, 1.0]),
+                         color: np.array = np.array([255, 0, 0]),
+                         alpha: float = 1.0,
+                         edge_width: float = 0.01,
+                         visible: bool = True):
+        """Add an oriented 3D bounding box.
+        
+        Args:
+            name: Element name.
+            position: Box center position (3,).
+            size: Box dimensions (3,).
+            rotation: Quaternion rotation [x, y, z, w] (4,).
+            color: RGB color array-like in 0-255.
+            alpha: Transparency in [0, 1].
+            edge_width: Width of box edges.
+            visible: Whether the box is visible.
+        """
         rotation /= np.linalg.norm(rotation)  # normalize the orientation
         self.elements[self.__parse_name(name)] = Cuboid(position, size, rotation, color, alpha, edge_width, visible)
 
     def add_mesh(self,
                  name: str,
                  path: str,
-                 translation: np.array=np.array([0.0, 0.0, 0.0]),
-                 rotation: np.array=np.array([0.0, 0.0, 0.0, 1.0]),  # [x, y, z, w] - rotate w degrees rad around the axis xyz
-                 scale: np.array=np.array([1, 1, 1]),
-                 color: np.array=np.array([200, 200, 200]),
-                 visible: bool=True):
+                 translation: np.array = np.array([0.0, 0.0, 0.0]),
+                 rotation: np.array = np.array([0.0, 0.0, 0.0, 1.0]),
+                 scale: np.array = np.array([1, 1, 1]),
+                 color: np.array = np.array([200, 200, 200]),
+                 visible: bool = True):
         """Add a polygon mesh to the scene.
 
         Args:
             name: Element name.
             path: Path to an .obj mesh file.
-            translation: Translation vector.
-            rotation: Quaternion rotation.
-            scale: Scale vector.
+            translation: Translation vector (3,).
+            rotation: Quaternion rotation [x, y, z, w] (4,).
+            scale: Scale vector (3,).
             color: RGB color array-like in 0-255.
             visible: Whether the mesh is visible.
         """
@@ -323,11 +333,11 @@ blender_tools.main()")
     def add_polyline(self,
                      name: str,
                      positions: np.array,
-                     color: np.array=np.array([255, 0, 0]),
-                     alpha: float=1.0,
-                     edge_width: float=0.01,
-                     visible: bool=True):
-        """Add polyline.
+                     color: np.array = np.array([255, 0, 0]),
+                     alpha: float = 1.0,
+                     edge_width: float = 0.01,
+                     visible: bool = True):
+        """Add a polyline to the visualizer.
 
         Args:
             name: Element name.
@@ -340,124 +350,88 @@ blender_tools.main()")
 
         self.elements[self.__parse_name(name)] = Polyline(positions, color, alpha, edge_width, visible)
 
-    def add_superquadric(self,
+    def add_superquadric_direct(
+        self,
         name: str,
-        scalings: np.array=np.array([1.0, 1.0, 1.0]),
-        exponents: np.array=np.array([2.0, 2.0, 2.0]),
-        translation: np.array=np.array([0.0, 0.0, 0.0]),
-        rotation: np.array=np.array([1.0, 0.0, 0.0, 0.0]),
-        color: np.array=np.array([255, 255, 255]),
-        resolution: int=30,
-        visible: bool=True):
-        """Add a superquadric mesh to the scene."""
+        scalings: np.array = np.array([1.0, 1.0, 1.0]),
+        exponents: np.array = np.array([2.0, 2.0, 2.0]),
+        translation: np.array = np.array([0.0, 0.0, 0.0]),
+        rotation: np.array = np.array([0.0, 0.0, 0.0, 1.0]),
+        color: np.array = np.array([255, 255, 255]),
+        resolution: int = 30,
+        visible: bool = True,
+        alpha: float = 1.0,
+        rotation_matrix: np.array = None,
+        tapering: np.array = None,
+        bending: np.array = None,
+        wireframe: bool = False,
+    ):
+        """Add a superquadric mesh directly using the Superquadric class.
 
-        def create_superquadric_mesh(A, B, C, r, s, t, N):
-            def f(o, m):
-                return np.sign(np.sin(o)) * np.abs(np.sin(o))**m
-            def g(o, m):
-                return np.sign(np.cos(o)) * np.abs(np.cos(o))**m
-            u = np.linspace(-np.pi, np.pi, N, endpoint=True)
-            v = np.linspace(-np.pi/2.0, np.pi/2.0, N, endpoint=True)
-            u = np.tile(u, N)
-            v = np.repeat(v, N)
-            triangles = []
-
-            x = A * g(v, 2.0 / r) * g(u, 2.0 / r)
-            y = B * g(v, 2.0 / s) * f(u, 2.0 / s)
-            z = C * f(v, 2.0 / t)
-            vertices =  np.concatenate([np.expand_dims(x, 1),
-                                        np.expand_dims(y, 1),
-                                        np.expand_dims(z, 1)], axis=1)
-            triangles = []
-            for i in range(N-1):
-                for j in range(N-1):
-                    triangles.append([i*N+j, (i+1)*N+j+1, (i+1)*N+j])
-                    triangles.append([i*N+j, i*N+(j+1), (i+1)*N+(j+1)])
-            return vertices, triangles
-
-        vertices, triangles = create_superquadric_mesh(scalings[0], scalings[1], scalings[2],
-                                                       exponents[0], exponents[1], exponents[2],
-                                                       resolution)
-        import trimesh
-        mesh_sq = trimesh.Trimesh(vertices=vertices, faces=triangles)
-        mesh_sq.export(f"{name}.obj")
-
-        rotation /= np.linalg.norm(rotation)  # normalize the orientation
-        scale = np.array([1.0, 1.0, 1.0])
-        self.elements[self.__parse_name(name)] = Mesh(f"{name}.obj", translation=translation, rotation=rotation, scale=scale, color=color, visible=visible)
-
-    def add_superquadric_rot_mat(self,
-        name: str,
-        scalings: np.array=np.array([1.0, 1.0, 1.0]),
-        exponents: np.array=np.array([2.0, 2.0, 2.0]),
-        translation: np.array=np.array([0.0, 0.0, 0.0]),
-        rotation: np.array=np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0],[0.0, 0.0,1.0]]),
-        color: np.array=np.array([255, 255, 255]),
-        resolution: int=30,
-        visible: bool=True):
-        """Add a superquadric mesh using a rotation matrix."""
-
-        def create_superquadric_mesh(A, B, C, r, s, t, N):
-            def f(o, m):
-                return np.sign(np.sin(o)) * np.abs(np.sin(o))**m
-            def g(o, m):
-                return np.sign(np.cos(o)) * np.abs(np.cos(o))**m
-            u = np.linspace(-np.pi, np.pi, N, endpoint=True)
-            v = np.linspace(-np.pi/2.0, np.pi/2.0, N, endpoint=True)
-            u = np.tile(u, N)
-            v = np.repeat(v, N)
-            triangles = []
-
-            x = A * g(v, 2.0 / r) * g(u, 2.0 / r)
-            y = B * g(v, 2.0 / s) * f(u, 2.0 / s)
-            z = C * f(v, 2.0 / t)
-            vertices =  np.concatenate([np.expand_dims(x, 1),
-                                        np.expand_dims(y, 1),
-                                        np.expand_dims(z, 1)], axis=1)
-            vertices = vertices @ rotation # apply rotation 
-
-            triangles = []
-            for i in range(N-1):
-                for j in range(N-1):
-                    triangles.append([i*N+j, (i+1)*N+j+1, (i+1)*N+j])
-                    triangles.append([i*N+j, i*N+(j+1), (i+1)*N+(j+1)])
-            return vertices, triangles
-
-        vertices, triangles = create_superquadric_mesh(scalings[0], scalings[1], scalings[2],
-                                                    exponents[0], exponents[1], exponents[2],
-                                                    resolution)
-        import trimesh
-        mesh_sq = trimesh.Trimesh(vertices=vertices, faces=triangles)
-        if not os.path.exists("objs"):
-            os.makedirs("objs")
-        mesh_sq.export(f"objs/{name}.obj")
-        
-        id_rot_quat = np.array([1,0,0,0])
-        scale = np.array([1.0, 1.0, 1.0])
-        self.elements[self.__parse_name(name)] = Mesh(f"objs/{name}.obj", translation=translation, rotation=id_rot_quat, scale=scale, color=color, visible=visible)
+        Args:
+            name: Element name.
+            scalings: Scale factors along x, y, z (3,).
+            exponents: Superquadric shape exponents (3,).
+            translation: Translation vector (3,).
+            rotation: Quaternion rotation [x, y, z, w] (4,).
+            color: RGB color array-like in 0-255.
+            resolution: Mesh sampling resolution.
+            visible: Whether the superquadric is visible.
+            alpha: Transparency in [0, 1].
+            rotation_matrix: Optional 3x3 rotation matrix applied to vertices.
+            tapering: Optional tapering parameters [kx, ky] (2,).
+            bending: Optional bending parameters [kb_z, alpha_z, kb_x, alpha_x, kb_y, alpha_y] (6,).
+            wireframe: Whether to show wireframe overlay.
+        """
+        rotation = rotation / np.linalg.norm(rotation)  # normalize
+        self.elements[self.__parse_name(name)] = Superquadric(
+            scalings=scalings,
+            exponents=exponents,
+            translation=translation,
+            rotation=rotation,
+            color=color,
+            resolution=resolution,
+            visible=visible,
+            alpha=alpha,
+            rotation_matrix=rotation_matrix,
+            tapering=tapering,
+            bending=bending,
+            wireframe=wireframe,
+        )
 
     def add_arrow(self,
-                  name:str,
+                  name: str,
                   start: np.array,
                   end: np.array,
-                  color: np.array=np.array([255, 0, 0]),
-                  alpha: float=1.0,
-                  stroke_width: float=0.01,
-                  head_width: float=0.03,
-                  visible: bool=True):
-        """Add an arrow element."""
+                  color: np.array = np.array([255, 0, 0]),
+                  alpha: float = 1.0,
+                  stroke_width: float = 0.01,
+                  head_width: float = 0.03,
+                  visible: bool = True):
+        """Add an arrow element.
+        
+        Args:
+            name: Element name.
+            start: Arrow start position (3,).
+            end: Arrow end position (3,).
+            color: RGB color array-like in 0-255.
+            alpha: Transparency in [0, 1].
+            stroke_width: Width of arrow shaft.
+            head_width: Width of arrow head.
+            visible: Whether the arrow is visible.
+        """
 
         self.elements[self.__parse_name(name)] = Arrow(start, end, color, alpha, stroke_width, head_width, visible)
 
-    def add_motion(self, 
-                   name: str, 
-                   motion_type: str, 
-                   motion_direction: np.array, 
+    def add_motion(self,
+                   name: str,
+                   motion_type: str,
+                   motion_direction: np.array,
                    motion_origin_pos: np.array,
-                   motion_viz_orient: str, 
-                   motion_dir_color: np.array=np.array([0, 255, 0]), 
-                   motion_origin_color: np.array=np.array([0, 255, 0]), 
-                   visible: bool=True):
+                   motion_viz_orient: str,
+                   motion_dir_color: np.array = np.array([0, 255, 0]),
+                   motion_origin_color: np.array = np.array([0, 255, 0]),
+                   visible: bool = True):
         """Add a motion vector to the visualizer.
 
         Args:

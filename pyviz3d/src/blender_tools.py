@@ -61,7 +61,8 @@ def render(output_prefix, configuration):
     cam.constraints["Follow Path"].target = bezier_circle
     bpy.ops.object.constraint_add(type='TRACK_TO')
     empty = bpy.data.objects.new("TrackTarget", None)
-    empty.location = configuration['animation_circle_center']
+    look_at = configuration.get('animation_look_at_target') or configuration['animation_circle_center']
+    empty.location = look_at
     bpy.context.scene.collection.objects.link(empty)
     cam.constraints["Track To"].target = empty
     bpy.ops.constraint.followpath_path_animate(constraint="Follow Path", owner='OBJECT')
@@ -71,7 +72,9 @@ def render(output_prefix, configuration):
   # Combine individual frames into video using ffmpeg
   if configuration['animation']:
     output_filepath = output_prefix + '.mp4'
-    subprocess.run(["ffmpeg", "-y", "-i", f'{output_prefix}%04d.png', "-vcodec", "libx264", "-vf", "format=yuv420p", "-y", output_filepath])
+    subprocess.run(["ffmpeg", "-y", "-i", f'{output_prefix}%04d.png',
+                     "-vcodec", "libx264", "-crf", "18", "-preset", "slow",
+                     "-vf", "format=yuv420p", output_filepath])
     subprocess.run(["ffmpeg", "-y", "-i", output_filepath, "-pix_fmt", "rgb24", output_filepath[:-3]+'gif'])
 
 
@@ -103,7 +106,10 @@ def init_scene(configuration):
   C.scene.render.resolution_x = configuration['render_resolution'][0]
   C.scene.render.resolution_y = configuration['render_resolution'][1]
   C.scene.render.film_transparent = configuration['render_film_transparent']
-  C.scene.render.image_settings.color_mode = 'RGBA'
+  if configuration['render_film_transparent']:
+    C.scene.render.image_settings.color_mode = 'RGBA'
+  else:
+    C.scene.render.image_settings.color_mode = 'RGB'
   C.scene.render.image_settings.file_format=configuration['file_format']
   C.scene.render.filepath = configuration['output_prefix']
   C.scene.view_settings.look = 'AgX - Medium High Contrast'
@@ -139,16 +145,29 @@ def create_mat(obj, color=None, alpha=1.0):
     obj.data.materials.append(mat)
     mat.use_nodes = True
     mat.node_tree.nodes.new(type="ShaderNodeVertexColor")
-    mat.node_tree.nodes["Principled BSDF"].inputs[7].default_value = 0  # specular
-    mat.node_tree.nodes["Principled BSDF"].inputs[12].default_value = 0  #
+    bsdf = mat.node_tree.nodes["Principled BSDF"]
+
+    # Subtle specular + controlled roughness for soft highlights
+    bsdf.inputs["Specular IOR Level"].default_value = 0.35
+    bsdf.inputs["Roughness"].default_value = 0.45
+    bsdf.inputs["Metallic"].default_value = 0.0
+
+    # Light clearcoat layer for extra depth / edge sheen
+    bsdf.inputs["Coat Weight"].default_value = 0.15
+    bsdf.inputs["Coat Roughness"].default_value = 0.3
+
+    # Faint sheen gives a soft velvet-like rim on curved surfaces
+    bsdf.inputs["Sheen Weight"].default_value = 0.05
+    bsdf.inputs["Sheen Roughness"].default_value = 0.4
+
     if color:
       print('mesh color', color)
-      mat.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (color[0]/255.0, color[1]/255.0, color[2]/255.0, 1.0)
-      mat.node_tree.nodes["Principled BSDF"].inputs[4].default_value = alpha
+      bsdf.inputs["Base Color"].default_value = (color[0]/255.0, color[1]/255.0, color[2]/255.0, 1.0)
+      bsdf.inputs["Alpha"].default_value = alpha
     else:
       mat.node_tree.nodes["Color Attribute"].layer_name = "Col"
       mat.node_tree.links.new(
-        mat.node_tree.nodes["Principled BSDF"].inputs["Base Color"],
+        bsdf.inputs["Base Color"],
         mat.node_tree.nodes["Color Attribute"].outputs["Color"])
 
 
@@ -319,6 +338,15 @@ def main():
           obj.location = [properties['translation'][0], properties['translation'][1], properties['translation'][2]]
           try:
             create_mat(obj, properties['color'])
+          except KeyError:
+            create_mat(obj)
+
+        if properties['type'] == 'superquadric':
+          bpy.ops.wm.ply_import(filepath=name + '.ply', forward_axis='Y', up_axis='Z')
+          bpy.ops.object.shade_smooth()
+          obj = bpy.context.view_layer.objects.active
+          try:
+            create_mat(obj, properties['color'], properties.get('alpha', 1.0))
           except KeyError:
             create_mat(obj)
 
