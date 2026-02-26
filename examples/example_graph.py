@@ -95,15 +95,5 @@ def main():
         blender_path='/Applications/Blender.app/Contents/MacOS/Blender')
     v.save('examples_output/example_graph', blender_config=blender_config)
 
-
-
-    # # Save everything
-    # blender_config = viz.BlenderConfig(
-    #     render_resolution=[800, 600],
-    #     output_prefix='horse/horse_',
-    #     blender_path='/Applications/Blender.app/Contents/MacOS/Blender')
-    # v.save('examples_output/example_blender', blender_config=blender_config)
-
-
 if __name__ == '__main__':
     main()

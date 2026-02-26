@@ -96,7 +96,7 @@ Upload latest version to pypi:
 ```
 vim pyproject.toml  # update version
 rm -rf dist
-rm -rf example_*
+rm -rf examples_output
 python3 -m build
 python3 -m twine upload dist/*
 ```
