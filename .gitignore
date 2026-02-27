@@ -1,5 +1,12 @@
 **/.DS_Store
-example_*
+examples_output/
 **/__pycache__
 *egg-info
 dist
+build/
+
+# Internal documentation files
+RELEASE_NOTES.md
+IMPLEMENTATION_SUMMARY.md
+SPLINE_QUICK_REFERENCE.md
+docs/spline_camera_trajectory.md

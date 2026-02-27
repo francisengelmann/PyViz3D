@@ -1,3 +1,12 @@
+## Version 0.6.0 (February 27, 2026)
+ - **New Feature**: Spline-based camera trajectories for Blender animations
+   - Added `animation_spline_control_points` parameter to `BlenderConfig`
+   - Smooth Bezier curve interpolation through custom control points
+   - Full backward compatibility with circular trajectories
+   - Support for looping trajectories and variable height profiles
+ - New examples: `example_spline_camera_trajectory.py` and updated `example_superquadrics.py` with `--spline` flag
+ - Comprehensive documentation in `docs/spline_camera_trajectory.md`
+
 ## Version 0.2
  - 0.3: Overall cleanup and support for blender renderings.
  - 0.2.32: Bug fixes.

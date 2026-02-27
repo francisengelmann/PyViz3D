@@ -6,13 +6,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyviz3d"
-version = "0.5.0"
+version = "0.6.0"
 description = "PyViz3D is a python package to visualize 3D scenes."
 readme = "README.md"
 authors = [{ name = "Francis Engelmann", email = "francis.engelmann@gmail.com" }]
-license = { file = "LICENSE" }
+license = { text = "MIT" }
 classifiers = [
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
 ]
@@ -26,3 +25,9 @@ requires-python = ">=3.9"
 
 [project.urls]
 Homepage = "https://github.com/francisengelmann/pyviz3d"
+
+[tool.setuptools]
+packages = ["pyviz3d", "pyviz3d.src"]
+
+[tool.setuptools.package-data]
+"pyviz3d.src" = ["*.html", "*.py", "css/*.css", "js/*.js"]
