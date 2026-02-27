@@ -1,7 +1,7 @@
 """Configuration for Blender rendering."""
 
 from dataclasses import dataclass, field
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 @dataclass
 class BlenderConfig:
@@ -16,7 +16,8 @@ class BlenderConfig:
     animation_circle_radius: float = 5.0  # Radius of cirlce on which the camera moves around the center
     animation_circle_center: List[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
     animation_circle_rotation: List[float] = field(default_factory=lambda: [0.0, 0.0, 0.0])
-    animation_look_at_target: List[float] = field(default_factory=lambda: None)  # Camera look-at point (defaults to animation_circle_center if None)
+    animation_look_at_target: Optional[List[float]] = field(default_factory=lambda: None)  # Camera look-at point (defaults to animation_circle_center if None)
+    animation_spline_control_points: Optional[List[List[float]]] = field(default_factory=lambda: None)  # Control points for spline-based camera trajectory
     cycles_samples: int = 10  # Number of cycles samples
     file_format: str = 'PNG'
 

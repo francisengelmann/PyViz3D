@@ -27,26 +27,73 @@ def clear_scene():
   bpy.ops.object.delete()
 
 
+def create_bezier_curve_from_points(control_points, name="BezierPath"):
+  """Create a Bezier curve from control points.
+  
+  Args:
+    control_points: List of 3D points (list of lists or tuples)
+    name: Name of the curve object
+    
+  Returns:
+    The created curve object
+  """
+  curve_data = bpy.data.curves.new(name, type='CURVE')
+  curve_obj = bpy.data.objects.new(name, curve_data)
+  bpy.context.collection.objects.link(curve_obj)
+  
+  polyline = curve_data.splines.new('BEZIER')
+  polyline.bezier_points.add(len(control_points) - 1)
+  
+  for i, point in enumerate(control_points):
+    polyline.bezier_points[i].co = (point[0], point[1], point[2])
+  
+  # Set spline to smooth (automatic Bezier handles)
+  polyline.use_smooth = True
+  
+  # Optional: set handle types for smoother curves
+  for point in polyline.bezier_points:
+    point.handle_left_type = 'AUTO'
+    point.handle_right_type = 'AUTO'
+  
+  curve_data.resolution_u = 12  # Higher resolution for smoother curves
+  return curve_obj
+
+
 def render(output_prefix, configuration):
   """
   :path: the file path of the rendered image
   :file_format: {PNG, JPEG}
   """
   
-  # C.scene.view_settings.view_transform = 'Standard'
-  # D.worlds["World"].node_tree.nodes["Background"].inputs[0].default_value = (1, 1, 1, 1)
-  # bpy.context.scene.world.use_nodes = False
-  # bpy.context.scene.world.color = (1, 1, 1)
-  # C.scene.render.alpha_mode = 'SKY'
-  
   if configuration['animation']:
-    print(configuration['animation_circle_center'])
-    bpy.ops.curve.primitive_bezier_circle_add(
-       radius=configuration['animation_circle_radius'], enter_editmode=False, align='WORLD',
-       location=configuration['animation_circle_center'],
-       rotation=configuration['animation_circle_rotation'],
-       scale=(1, 1, 1))
-    bezier_circle = C.object
+    # Check if spline control points are provided
+    if configuration.get('animation_spline_control_points') is not None:
+      # Use spline-based trajectory
+      control_points = configuration['animation_spline_control_points']
+      if len(control_points) >= 2:
+        print("Creating spline-based camera trajectory from", len(control_points), "control points")
+        bezier_curve = create_bezier_curve_from_points(control_points, name="CameraSpline")
+        # Make the curve the active object
+        bezier_curve.select_set(True)
+        bpy.context.view_layer.objects.active = bezier_curve
+      else:
+        print("Warning: Need at least 2 control points for spline. Falling back to circular trajectory.")
+        bezier_curve = None
+    else:
+      # Use circular trajectory (original behavior)
+      bezier_curve = None
+    
+    if bezier_curve is None:
+      # Create circular trajectory
+      print("Creating circular camera trajectory")
+      print(configuration['animation_circle_center'])
+      bpy.ops.curve.primitive_bezier_circle_add(
+         radius=configuration['animation_circle_radius'], enter_editmode=False, align='WORLD',
+         location=configuration['animation_circle_center'],
+         rotation=configuration['animation_circle_rotation'],
+         scale=(1, 1, 1))
+      bezier_curve = C.object
+    
     bpy.context.object.data.path_duration = configuration['animation_length']
     bpy.context.scene.frame_end = configuration['animation_length']
     bpy.context.scene.cycles.samples = configuration['cycles_samples']
@@ -58,7 +105,7 @@ def render(output_prefix, configuration):
     cam.matrix_world = mathutils.Matrix(np.eye(4))
     cam.location = [0.0, 0.0, 0.5]
     bpy.ops.object.constraint_add(type='FOLLOW_PATH')
-    cam.constraints["Follow Path"].target = bezier_circle
+    cam.constraints["Follow Path"].target = bezier_curve
     bpy.ops.object.constraint_add(type='TRACK_TO')
     empty = bpy.data.objects.new("TrackTarget", None)
     look_at = configuration.get('animation_look_at_target') or configuration['animation_circle_center']
@@ -75,7 +122,24 @@ def render(output_prefix, configuration):
     subprocess.run(["ffmpeg", "-y", "-i", f'{output_prefix}%04d.png',
                      "-vcodec", "libx264", "-crf", "18", "-preset", "slow",
                      "-vf", "format=yuv420p", output_filepath])
-    subprocess.run(["ffmpeg", "-y", "-i", output_filepath, "-pix_fmt", "rgb24", output_filepath[:-3]+'gif'])
+    
+    # Generate high-quality GIF using two-pass palette generation
+    # Pass 1: Generate optimal color palette from video
+    palette_path = output_prefix + '_palette.png'
+    subprocess.run(["ffmpeg", "-y", "-i", output_filepath,
+                    "-vf", "palettegen=stats_mode=diff:max_colors=256",
+                    palette_path])
+    
+    # Pass 2: Use the palette with dithering for better quality
+    gif_path = output_filepath[:-3] + 'gif'
+    subprocess.run(["ffmpeg", "-y", "-i", output_filepath, "-i", palette_path,
+                    "-lavfi", "paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle",
+                    gif_path])
+    
+    # Clean up temporary palette file
+    import os
+    if os.path.exists(palette_path):
+        os.remove(palette_path)
 
 
 def save_blender_scene(path: str) -> None:

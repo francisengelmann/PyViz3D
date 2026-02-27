@@ -114,6 +114,18 @@
             }
         },
         {
+            "name": "Example Spline Camera Trajectory",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/examples/example_spline_camera_trajectory.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${cwd}"
+            }
+        },
+        {
             "name": "Example Text",
             "type": "debugpy",
             "request": "launch",

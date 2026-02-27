@@ -48,3 +48,7 @@ class Motion:
     def write_binary(self, path):
         """Write binary payload for this element (no-op)."""
         return
+
+    def write_blender(self, path):
+        """Write a Blender-friendly asset for this element (no-op)."""
+        return
