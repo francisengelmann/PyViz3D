@@ -20,6 +20,8 @@ class Mesh:
         mesh_file = os.path.split(filename)[-1]
         # splitext handles names like 'mesh_aligned_0.05.ply' → ('mesh_aligned_0.05', '.ply')
         mesh_file_name, ext = os.path.splitext(mesh_file)
+        if not ext:
+            raise ValueError("Mesh filename must include a supported file extension: %r" % filename)
         self.mesh_file_extension = ext.lstrip('.')
         mesh_file_size = os.path.getsize(filename)
         self.filename_destination = mesh_file_name + '_' + str(mesh_file_size) + '.' + self.mesh_file_extension
