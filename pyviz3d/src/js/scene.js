@@ -209,7 +209,7 @@ function get_mesh(properties){
 		} else {  // ply
 			const materialShader = (geometry.hasAttribute('normal')) ? THREE.MeshPhongMaterial : THREE.MeshBasicMaterial
 			const material = new materialShader({vertexColors: geometry.hasAttribute('color')})
-			if (!geometry.hasAttribute){
+			if (!geometry.hasAttribute('color')){
 				material.color.set(new THREE.Color(colorString));
 			}
 			object = new THREE.Mesh(geometry, material);
