@@ -18,8 +18,11 @@ class Mesh:
         """
         self.filename_source = filename
         mesh_file = os.path.split(filename)[-1]
-        mesh_file_name = mesh_file.split('.')[0]
-        self.mesh_file_extension = mesh_file.split('.')[1]
+        # splitext handles names like 'mesh_aligned_0.05.ply' → ('mesh_aligned_0.05', '.ply')
+        mesh_file_name, ext = os.path.splitext(mesh_file)
+        if not ext:
+            raise ValueError("Mesh filename must include a supported file extension: %r" % filename)
+        self.mesh_file_extension = ext.lstrip('.')
         mesh_file_size = os.path.getsize(filename)
         self.filename_destination = mesh_file_name + '_' + str(mesh_file_size) + '.' + self.mesh_file_extension
         self.translation = translation.tolist()
@@ -52,7 +55,10 @@ class Mesh:
         """Copy the mesh file into the destination directory."""
         destination_dir = os.path.dirname(path)
         destination_path = os.path.join(destination_dir, self.filename_destination)
-        if not os.path.exists(self.filename_destination):
+        # Cache by checking the actual destination path, not the basename
+        # (which would resolve relative to cwd and silently skip the copy
+        # if a same-named file happened to exist there).
+        if not os.path.exists(destination_path):
             copyfile(self.filename_source, destination_path)
 
     def write_blender(self, path):

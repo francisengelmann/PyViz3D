@@ -37,4 +37,6 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest
+        # pytest exits 5 when no tests are collected; treat that as success
+        # so CI passes on a tests-empty repo. Real failures (1, 2, 3, 4) still fail.
+        pytest || ([ $? = 5 ] && exit 0)
