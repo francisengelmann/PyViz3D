@@ -25,15 +25,21 @@ def main():
     # Add a white thin box below the point cloud for the shadow
     v.add_bounding_box('background', np.array([0.0, 0.0, np.min(points[:, 2])]), np.array([3, 3, 0.001]))
 
+    angles = np.linspace(0.0, 2.0 * np.pi, 8, endpoint=False)
+    camera_path = [
+        [5.0 * np.cos(angle), 5.0 * np.sin(angle), 1.5]
+        for angle in angles
+    ]
+
     # Save everything
     blender_config = viz.BlenderConfig(
         animation=True,
         animation_length=10,
-        animation_circle_radius=5,
-        animation_circle_center=[0.0, 0.0, 0.0],
-        animation_circle_rotation=[0.0, 0.0, 0.0],
+        animation_camera_path=camera_path,
+        animation_look_at_path=[[0.0, 0.0, 0.0]],
         cycles_samples=10,
         render_resolution=[800, 600],
+        render_film_transparent=False,
         output_prefix='horse/horse_',
         blender_path='/Applications/Blender.app/Contents/MacOS/Blender')
     v.save('examples_output/example_blender', blender_config=blender_config)

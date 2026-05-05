@@ -1,11 +1,13 @@
-## Version 0.6.0 (February 27, 2026)
- - **New Feature**: Spline-based camera trajectories for Blender animations
-   - Added `animation_spline_control_points` parameter to `BlenderConfig`
-   - Smooth Bezier curve interpolation through custom control points
-   - Full backward compatibility with circular trajectories
+## Version 0.5.1 (February 27, 2026)
+ - **New Feature**: Path-based camera animation for Blender renders
+   - Added `animation_camera_path` and `animation_look_at_path` to `BlenderConfig`
+   - Smooth Bezier curve interpolation through custom path points
    - Support for looping trajectories and variable height profiles
- - New examples: `example_spline_camera_trajectory.py` and updated `example_superquadrics.py` with `--spline` flag
- - Comprehensive documentation in `docs/spline_camera_trajectory.md`
+ - **Enhanced Camera Control**:
+   - Forward-facing mode: Camera automatically looks along the path direction when no look-at path is defined
+   - Fixed look-at target: Camera focuses on a specific point via a one-point `animation_look_at_path`
+   - Animated look-at path: Camera can animate both position and target using point paths
+ - New examples: `example_spline_camera_trajectory.py` with three modes (fixed, forward-facing, look-at spline)
 
 ## Version 0.2
  - 0.3: Overall cleanup and support for blender renderings.

@@ -203,8 +203,6 @@ if __name__ == "__main__":
   # color_layer = mesh.vertex_colors[vertex_colors_name]
   # print(len(obj.data.vertices))
 
-
-
     # loops = len(obj.data.loops)
     # verts = len(obj.data.vertices)
     # print(loops, verts, len(obj.data.vertex_colors['Col'].data))

@@ -66,33 +66,15 @@ def render(output_prefix, configuration):
   """
   
   if configuration['animation']:
-    # Check if spline control points are provided
-    if configuration.get('animation_spline_control_points') is not None:
-      # Use spline-based trajectory
-      control_points = configuration['animation_spline_control_points']
-      if len(control_points) >= 2:
-        print("Creating spline-based camera trajectory from", len(control_points), "control points")
-        bezier_curve = create_bezier_curve_from_points(control_points, name="CameraSpline")
-        # Make the curve the active object
-        bezier_curve.select_set(True)
-        bpy.context.view_layer.objects.active = bezier_curve
-      else:
-        print("Warning: Need at least 2 control points for spline. Falling back to circular trajectory.")
-        bezier_curve = None
-    else:
-      # Use circular trajectory (original behavior)
-      bezier_curve = None
-    
-    if bezier_curve is None:
-      # Create circular trajectory
-      print("Creating circular camera trajectory")
-      print(configuration['animation_circle_center'])
-      bpy.ops.curve.primitive_bezier_circle_add(
-         radius=configuration['animation_circle_radius'], enter_editmode=False, align='WORLD',
-         location=configuration['animation_circle_center'],
-         rotation=configuration['animation_circle_rotation'],
-         scale=(1, 1, 1))
-      bezier_curve = C.object
+    camera_path = configuration.get('animation_camera_path')
+    look_at_path = configuration.get('animation_look_at_path')
+    if camera_path is None or len(camera_path) < 2:
+      raise ValueError("animation_camera_path must contain at least two points when animation=True")
+
+    print("Creating camera path from", len(camera_path), "points")
+    bezier_curve = create_bezier_curve_from_points(camera_path, name="CameraPath")
+    bezier_curve.select_set(True)
+    bpy.context.view_layer.objects.active = bezier_curve
     
     bpy.context.object.data.path_duration = configuration['animation_length']
     bpy.context.scene.frame_end = configuration['animation_length']
@@ -103,16 +85,78 @@ def render(output_prefix, configuration):
     cam.select_set(True)
     bpy.context.view_layer.objects.active = cam
     cam.matrix_world = mathutils.Matrix(np.eye(4))
-    cam.location = [0.0, 0.0, 0.5]
+    cam.location = [0.0, 0.0, 0.0]
     bpy.ops.object.constraint_add(type='FOLLOW_PATH')
     cam.constraints["Follow Path"].target = bezier_curve
-    bpy.ops.object.constraint_add(type='TRACK_TO')
-    empty = bpy.data.objects.new("TrackTarget", None)
-    look_at = configuration.get('animation_look_at_target') or configuration['animation_circle_center']
-    empty.location = look_at
-    bpy.context.scene.collection.objects.link(empty)
-    cam.constraints["Track To"].target = empty
-    bpy.ops.constraint.followpath_path_animate(constraint="Follow Path", owner='OBJECT')
+    
+    forward_mode = look_at_path is None
+    
+    if look_at_path is not None and len(look_at_path) >= 2:
+      print("Creating look-at path from", len(look_at_path), "points")
+      look_at_curve = create_bezier_curve_from_points(look_at_path, name="LookAtPath")
+      
+      look_at_curve.data.path_duration = configuration['animation_length']
+      
+      empty = bpy.data.objects.new("LookAtTarget", None)
+      bpy.context.scene.collection.objects.link(empty)
+      empty.select_set(True)
+      bpy.context.view_layer.objects.active = empty
+      
+      bpy.ops.object.constraint_add(type='FOLLOW_PATH')
+      empty.constraints["Follow Path"].target = look_at_curve
+      
+      bpy.ops.constraint.followpath_path_animate(constraint="Follow Path", owner='OBJECT')
+      
+      cam.select_set(True)
+      bpy.context.view_layer.objects.active = cam
+      bpy.ops.object.constraint_add(type='TRACK_TO')
+      cam.constraints["Track To"].target = empty
+    elif look_at_path is not None and len(look_at_path) == 1:
+      bpy.ops.object.constraint_add(type='TRACK_TO')
+      empty = bpy.data.objects.new("TrackTarget", None)
+      empty.location = look_at_path[0]
+      bpy.context.scene.collection.objects.link(empty)
+      cam.constraints["Track To"].target = empty
+    else:
+      print("Forward-facing mode: Camera will look ahead along the spline")
+
+      look_ahead_curve = create_bezier_curve_from_points(
+        camera_path,
+        name="LookAheadPath"
+      )
+
+      look_ahead_curve.data.path_duration = configuration['animation_length']
+      
+      empty = bpy.data.objects.new("LookAhead", None)
+      bpy.context.scene.collection.objects.link(empty)
+      empty.select_set(True)
+      bpy.context.view_layer.objects.active = empty
+      
+      bpy.ops.object.constraint_add(type='FOLLOW_PATH')
+      empty.constraints["Follow Path"].target = look_ahead_curve
+      
+      cam_follow = cam.constraints["Follow Path"]
+      empty_follow = empty.constraints["Follow Path"]
+      cam_follow.use_fixed_location = True
+      empty_follow.use_fixed_location = True
+
+      cam_follow.offset_factor = 0.0
+      cam_follow.keyframe_insert(data_path="offset_factor", frame=1)
+      cam_follow.offset_factor = 0.97
+      cam_follow.keyframe_insert(data_path="offset_factor", frame=configuration['animation_length'])
+
+      empty_follow.offset_factor = 0.03
+      empty_follow.keyframe_insert(data_path="offset_factor", frame=1)
+      empty_follow.offset_factor = 1.0
+      empty_follow.keyframe_insert(data_path="offset_factor", frame=configuration['animation_length'])
+      
+      cam.select_set(True)
+      bpy.context.view_layer.objects.active = cam
+      bpy.ops.object.constraint_add(type='TRACK_TO')
+      cam.constraints["Track To"].target = empty
+
+    if not forward_mode:
+      bpy.ops.constraint.followpath_path_animate(constraint="Follow Path", owner='OBJECT')
 
   bpy.ops.render.render(use_viewport=True, animation=configuration['animation'], write_still=True)
 

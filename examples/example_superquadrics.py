@@ -60,13 +60,17 @@ def main():
 
     v.add_bounding_box('ground_plane', np.array([0.0, 0.0, -0.5]), np.array([5.0, 5.0, 0.001]))
 
+    angles = np.linspace(0.0, 2.0 * np.pi, 8, endpoint=False)
+    camera_path = [
+        [3.0 * np.cos(angle), 3.0 * np.sin(angle), 1.0 + 0.4 * np.sin(np.pi / 8.0)]
+        for angle in angles
+    ]
+
     blender_config = viz.BlenderConfig(
         animation=True,
         animation_length=50,
-        animation_circle_radius=3.0,
-        animation_circle_center=[0.0, 0.0, 1.0],
-        animation_circle_rotation=[np.pi/8, 0.0, 0.0],
-        animation_look_at_target=[0.0, 0.0, 0.0],
+        animation_camera_path=camera_path,
+        animation_look_at_path=[[0.0, 0.0, 0.0]],
         cycles_samples=50,
         render_resolution=[800, 600],
         render_film_transparent=False,
